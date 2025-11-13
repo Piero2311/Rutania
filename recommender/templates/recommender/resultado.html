@@ -1,0 +1,148 @@
+{% extends 'recommender/base.html' %}
+
+{% block title %}Resultado - Tu Rutina Recomendada{% endblock %}
+
+{% block content %}
+<section class="resultado-hero">
+    <div class="container">
+        <h1>Tu Rutina Recomendada</h1>
+        <p>Basada en tu perfil y objetivos personales</p>
+    </div>
+</section>
+
+<section class="resultado-principal">
+    <div class="container">
+        <div class="perfil-usuario">
+            <h2>Tu Perfil</h2>
+            <div class="perfil-grid">
+                <div class="perfil-item">
+                    <span class="perfil-label">Edad:</span>
+                    <span class="perfil-valor">{{ usuario.edad }} años</span>
+                </div>
+                <div class="perfil-item">
+                    <span class="perfil-label">IMC:</span>
+                    <span class="perfil-valor">{{ imc_texto }} ({{ imc_clasificacion_texto }})</span>
+                </div>
+                <div class="perfil-item">
+                    <span class="perfil-label">Nivel:</span>
+                    <span class="perfil-valor">{{ usuario.nivel_recomendado|title }}</span>
+                </div>
+                <div class="perfil-item">
+                    <span class="perfil-label">Objetivo:</span>
+                    <span class="perfil-valor">{{ usuario.objetivo_recomendado|title }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="rutina-principal-card">
+            <div class="rutina-header">
+                <h2>{{ rutina.nombre }}</h2>
+                <div class="rutina-badge">Compatibilidad: {{ puntuacion }}%</div>
+            </div>
+            
+            <p class="rutina-descripcion">{{ rutina.descripcion }}</p>
+            
+            <div class="rutina-detalles">
+                <div class="detalle-item">
+                    <span class="detalle-icon">📅</span>
+                    <div>
+                        <strong>Frecuencia</strong>
+                        <p>{{ rutina.dias_semana }} días/semana</p>
+                    </div>
+                </div>
+                <div class="detalle-item">
+                    <span class="detalle-icon">⏱️</span>
+                    <div>
+                        <strong>Duración</strong>
+                        <p>{{ rutina.duracion_minutos }} minutos</p>
+                    </div>
+                </div>
+                <div class="detalle-item">
+                    <span class="detalle-icon">💪</span>
+                    <div>
+                        <strong>Nivel</strong>
+                        <p>{{ rutina.nivel|title }}</p>
+                    </div>
+                </div>
+                <div class="detalle-item">
+                    <span class="detalle-icon">🔥</span>
+                    <div>
+                        <strong>Calorías</strong>
+                        <p>~{{ calorias_estimadas }} kcal/sesión</p>
+                    </div>
+                </div>
+            </div>
+
+            {% if not es_seguro %}
+            <div class="alert alert-warning">
+                <strong>⚠️ Advertencia:</strong> {{ razon_seguridad }}
+            </div>
+            {% else %}
+            <div class="alert alert-success">
+                <strong>✓ Rutina segura:</strong> {{ razon_seguridad }}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="explicacion-logica">
+            <h3>¿Por qué esta rutina?</h3>
+            <div class="explicacion-contenido">
+                <p><strong>Análisis basado en reglas lógicas:</strong></p>
+                <pre>{{ explicacion }}</pre>
+            </div>
+        </div>
+
+        <div class="plan-semanal">
+            <h3>Plan Semanal</h3>
+            <div class="semana-grid">
+                {% for dia, actividad in rutina.plan_semanal.items %}
+                <div class="dia-card">
+                    <h4>{{ dia }}</h4>
+                    <p>{{ actividad }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="ejercicios-lista">
+            <h3>Ejercicios Principales</h3>
+            <ul class="ejercicios">
+                {% for ejercicio in rutina.ejercicios %}
+                <li>{{ ejercicio }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% if alternativas %}
+<section class="alternativas-section">
+    <div class="container">
+        <h2>Rutinas Alternativas</h2>
+        <p>Otras opciones compatibles con tu perfil</p>
+        
+        <div class="alternativas-grid">
+            {% for rutina_alt, puntuacion_alt in alternativas %}
+            <div class="alternativa-card">
+                <h3>{{ rutina_alt.nombre }}</h3>
+                <div class="alt-badge">{{ puntuacion_alt|floatformat:1 }}% compatible</div>
+                <p>{{ rutina_alt.descripcion|truncatewords:20 }}</p>
+                <div class="alt-detalles">
+                    <span>{{ rutina_alt.dias_semana }} días/sem</span>
+                    <span>{{ rutina_alt.duracion_minutos }} min</span>
+                    <span>{{ rutina_alt.nivel|title }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="acciones-section">
+    <div class="container">
+        <a href="{% url 'recommender:index' %}" class="btn btn-secondary">Nueva Consulta</a>
+        <a href="{% url 'recommender:rutinas' %}" class="btn btn-primary">Ver Catálogo Completo</a>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,108 @@
+{% extends 'recommender/base.html' %}
+
+{% block title %}Catálogo de Rutinas{% endblock %}
+
+{% block content %}
+<section class="catalogo-hero">
+    <div class="container">
+        <h1>Catálogo de Rutinas</h1>
+        <p>Explora todas las rutinas disponibles</p>
+    </div>
+</section>
+
+<section class="filtros-section">
+    <div class="container">
+        <form method="GET" class="filtros-form">
+            <div class="filtro-group">
+                <label for="nivel">Nivel:</label>
+                <select id="nivel" name="nivel">
+                    <option value="">Todos</option>
+                    <option value="principiante" {% if nivel_filtro == 'principiante' %}selected{% endif %}>Principiante</option>
+                    <option value="intermedio" {% if nivel_filtro == 'intermedio' %}selected{% endif %}>Intermedio</option>
+                    <option value="avanzado" {% if nivel_filtro == 'avanzado' %}selected{% endif %}>Avanzado</option>
+                </select>
+            </div>
+            
+            <div class="filtro-group">
+                <label for="objetivo">Objetivo:</label>
+                <select id="objetivo" name="objetivo">
+                    <option value="">Todos</option>
+                    <option value="peso" {% if objetivo_filtro == 'peso' %}selected{% endif %}>Pérdida de Peso</option>
+                    <option value="musculacion" {% if objetivo_filtro == 'musculacion' %}selected{% endif %}>Ganancia Muscular</option>
+                    <option value="mantenimiento" {% if objetivo_filtro == 'mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
+            <a href="{% url 'recommender:rutinas' %}" class="btn btn-secondary">Limpiar</a>
+        </form>
+        
+        <div class="estadisticas">
+            <p><strong>Mostrando {{ total_rutinas }} rutinas</strong></p>
+            {% if estadisticas.total > 0 %}
+            <p>Duración promedio: {{ estadisticas.duracion_promedio }} min | Días promedio: {{ estadisticas.dias_promedio }}</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="catalogo-grid-section">
+    <div class="container">
+        <div class="rutinas-grid">
+            {% for rutina in rutinas %}
+            <div class="rutina-card">
+                <div class="rutina-card-header">
+                    <h3>{{ rutina.nombre }}</h3>
+                    <div class="badges">
+                        <span class="badge badge-{{ rutina.nivel }}">{{ rutina.nivel|title }}</span>
+                        <span class="badge badge-{{ rutina.intensidad }}">{{ rutina.intensidad|title }}</span>
+                    </div>
+                </div>
+                
+                <p class="rutina-card-desc">{{ rutina.descripcion|truncatewords:25 }}</p>
+                
+                <div class="rutina-card-info">
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <span>{{ rutina.dias_semana }} días/sem</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span>{{ rutina.duracion_minutos }} min</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🎯</span>
+                        <span>{{ rutina.objetivo|title }}</span>
+                    </div>
+                </div>
+                
+                <div class="rutina-card-ejercicios">
+                    <p><strong>Ejercicios:</strong></p>
+                    <ul>
+                        {% for ejercicio in rutina.ejercicios|slice:":3" %}
+                        <li>{{ ejercicio|truncatewords:5 }}</li>
+                        {% endfor %}
+                        {% if rutina.ejercicios|length > 3 %}
+                        <li>+ {{ rutina.ejercicios|length|add:"-3" }} más...</li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-resultados">
+                <p>No se encontraron rutinas con los filtros seleccionados.</p>
+                <a href="{% url 'recommender:rutinas' %}" class="btn btn-primary">Ver todas</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <h2>¿Necesitas una recomendación personalizada?</h2>
+        <p>Completa nuestro formulario y obtén la rutina perfecta para ti</p>
+        <a href="{% url 'recommender:index' %}" class="btn btn-primary btn-large">Obtener Recomendación</a>
+    </div>
+</section>
+{% endblock %}

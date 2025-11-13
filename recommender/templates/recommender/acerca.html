@@ -1,0 +1,174 @@
+{% extends 'recommender/base.html' %}
+
+{% block title %}Acerca del Proyecto{% endblock %}
+
+{% block content %}
+<section class="acerca-hero">
+    <div class="container">
+        <h1>Acerca del Proyecto</h1>
+        <p>Sistema de Recomendación Multiparadigma</p>
+    </div>
+</section>
+
+<section class="acerca-contenido">
+    <div class="container">
+        <div class="acerca-card">
+            <h2>¿Qué es FitRecommender?</h2>
+            <p>FitRecommender es un sistema inteligente de recomendación de rutinas deportivas que utiliza tres paradigmas de programación diferentes para proporcionar recomendaciones personalizadas, seguras y efectivas.</p>
+            <p>El sistema analiza tus características físicas (edad, peso, altura, IMC) junto con tus preferencias (días disponibles, objetivos) para encontrar la rutina deportiva más adecuada entre más de 10 opciones diferentes.</p>
+        </div>
+
+        <div class="paradigmas-section">
+            <h2>Implementación Multiparadigma</h2>
+            <p>Este proyecto demuestra la integración de tres paradigmas de programación diferentes trabajando en conjunto:</p>
+            
+            <div class="paradigma-card">
+                <h3>1. Paradigma Imperativo 🎮</h3>
+                <div class="paradigma-detalle">
+                    <p><strong>Implementado en:</strong> <code>views.py</code></p>
+                    <p><strong>Función:</strong> Control de flujo y coordinación del sistema</p>
+                    <p><strong>Características:</strong></p>
+                    <ul>
+                        <li>Flujo de control secuencial y estructurado</li>
+                        <li>Gestión de requests HTTP y responses</li>
+                        <li>Validación imperativa de datos del formulario</li>
+                        <li>Coordinación entre los diferentes módulos</li>
+                        <li>Manejo de estado y excepciones</li>
+                    </ul>
+                    <p class="codigo-ejemplo"><strong>Ejemplo de flujo imperativo:</strong></p>
+                    <pre>1. Recibir datos del formulario
+2. Validar entrada (edad, peso, altura, etc.)
+3. Llamar al procesador funcional
+4. Ejecutar motor de reglas lógicas
+5. Seleccionar mejor resultado
+6. Renderizar respuesta</pre>
+                </div>
+            </div>
+
+            <div class="paradigma-card">
+                <h3>2. Paradigma Funcional 🔄</h3>
+                <div class="paradigma-detalle">
+                    <p><strong>Implementado en:</strong> <code>processor.py</code></p>
+                    <p><strong>Función:</strong> Procesamiento de datos y transformaciones</p>
+                    <p><strong>Características:</strong></p>
+                    <ul>
+                        <li><strong>Funciones puras:</strong> calcular_imc(), clasificar_imc(), calcular_compatibilidad()</li>
+                        <li><strong>filter():</strong> Filtrar rutinas por nivel, objetivo, días disponibles</li>
+                        <li><strong>map():</strong> Transformar datos del usuario, calcular puntuaciones</li>
+                        <li><strong>sorted():</strong> Ordenar rutinas por compatibilidad</li>
+                        <li><strong>reduce():</strong> Generar estadísticas agregadas</li>
+                        <li><strong>Lambdas:</strong> Operaciones de transformación inline</li>
+                    </ul>
+                    <p class="codigo-ejemplo"><strong>Ejemplo de operaciones funcionales:</strong></p>
+                    <pre>rutinas_filtradas = filter(lambda r: r['nivel'] == nivel, rutinas)
+puntuaciones = map(lambda r: calcular_compatibilidad(r, usuario), rutinas)
+ordenadas = sorted(rutinas_puntuadas, key=lambda x: x[1], reverse=True)</pre>
+                </div>
+            </div>
+
+            <div class="paradigma-card">
+                <h3>3. Paradigma Lógico 🧠</h3>
+                <div class="paradigma-detalle">
+                    <p><strong>Implementado en:</strong> <code>logic_rules.py</code></p>
+                    <p><strong>Función:</strong> Motor de reglas e inferencia lógica</p>
+                    <p><strong>Características:</strong></p>
+                    <ul>
+                        <li><strong>Motor de reglas personalizado</strong> (compatible con Python 3.11)</li>
+                        <li><strong>Base de hechos:</strong> Almacena información conocida del usuario</li>
+                        <li><strong>Reglas de inferencia:</strong> Determinan conclusiones basadas en condiciones</li>
+                        <li><strong>Validación de seguridad:</strong> Evalúa si una rutina es apropiada</li>
+                    </ul>
+                    <p class="codigo-ejemplo"><strong>Ejemplos de reglas lógicas:</strong></p>
+                    <pre>REGLA: Si edad > 50 → intensidad_baja
+REGLA: Si IMC > 25 → objetivo_peso
+REGLA: Si días < 3 → nivel_principiante
+REGLA: Si edad > 60 Y intensidad_alta → NO_SEGURO</pre>
+                    
+                    <p><strong>Funciones lógicas implementadas:</strong></p>
+                    <ul>
+                        <li><code>determinar_nivel_usuario()</code> - Infiere el nivel apropiado</li>
+                        <li><code>determinar_objetivo_recomendado()</code> - Ajusta objetivo según IMC</li>
+                        <li><code>determinar_intensidad_segura()</code> - Calcula intensidad apropiada</li>
+                        <li><code>validar_seguridad_rutina()</code> - Verifica si es seguro</li>
+                        <li><code>generar_explicacion_recomendacion()</code> - Explica el razonamiento</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="flujo-integracion">
+            <h2>Flujo de Integración de Paradigmas</h2>
+            <div class="flujo-diagrama">
+                <div class="flujo-paso">
+                    <span class="paso-numero">1</span>
+                    <div class="paso-contenido">
+                        <h4>Imperativo: Recepción</h4>
+                        <p>El controlador recibe y valida los datos del formulario</p>
+                    </div>
+                </div>
+                <div class="flujo-flecha">↓</div>
+                <div class="flujo-paso">
+                    <span class="paso-numero">2</span>
+                    <div class="paso-contenido">
+                        <h4>Funcional: Transformación</h4>
+                        <p>Funciones puras calculan IMC, transforman datos, filtran rutinas</p>
+                    </div>
+                </div>
+                <div class="flujo-flecha">↓</div>
+                <div class="flujo-paso">
+                    <span class="paso-numero">3</span>
+                    <div class="paso-contenido">
+                        <h4>Lógico: Inferencia</h4>
+                        <p>Motor de reglas determina nivel, objetivo e intensidad seguros</p>
+                    </div>
+                </div>
+                <div class="flujo-flecha">↓</div>
+                <div class="flujo-paso">
+                    <span class="paso-numero">4</span>
+                    <div class="paso-contenido">
+                        <h4>Funcional: Ranking</h4>
+                        <p>Funciones map/sorted calculan compatibilidad y ordenan</p>
+                    </div>
+                </div>
+                <div class="flujo-flecha">↓</div>
+                <div class="flujo-paso">
+                    <span class="paso-numero">5</span>
+                    <div class="paso-contenido">
+                        <h4>Imperativo: Respuesta</h4>
+                        <p>El controlador prepara y renderiza el resultado final</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tecnologias">
+            <h2>Tecnologías Utilizadas</h2>
+            <ul class="tech-list">
+                <li><strong>Django 4.2.7</strong> - Framework web Python</li>
+                <li><strong>Python 3.11</strong> - Lenguaje de programación</li>
+                <li><strong>HTML5/CSS3</strong> - Interfaz web moderna</li>
+                <li><strong>JavaScript</strong> - Interactividad del cliente</li>
+                <li><strong>Motor de reglas personalizado</strong> - Paradigma lógico</li>
+            </ul>
+        </div>
+
+        <div class="base-conocimiento">
+            <h2>Base de Conocimiento</h2>
+            <p>El sistema incluye más de 10 rutinas deportivas profesionales que cubren:</p>
+            <ul>
+                <li>3 niveles de dificultad: Principiante, Intermedio, Avanzado</li>
+                <li>3 objetivos principales: Pérdida de peso, Ganancia muscular, Mantenimiento</li>
+                <li>3 niveles de intensidad: Baja, Media, Alta</li>
+                <li>Frecuencias de 3 a 6 días por semana</li>
+                <li>Duraciones de 30 a 60 minutos por sesión</li>
+            </ul>
+        </div>
+
+        <div class="cta-final">
+            <h2>Prueba el Sistema</h2>
+            <p>Experimenta cómo los tres paradigmas trabajan juntos para darte la mejor recomendación</p>
+            <a href="{% url 'recommender:index' %}" class="btn btn-primary btn-large">Probar Ahora</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
