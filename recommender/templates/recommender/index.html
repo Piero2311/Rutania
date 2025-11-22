@@ -1,164 +1,129 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Inicio - Sistema de Recomendación{% endblock %}
+{% block title %}Inicio - SportRoutineAI{% endblock %}
 
 {% block content %}
-<section class="hero">
-    <div class="container">
-        <h1>Encuentra Tu Rutina Deportiva Ideal</h1>
-        <p class="hero-subtitle">Sistema inteligente de recomendación basado en tus características personales</p>
+<!-- Hero Section -->
+<div class="jumbotron bg-primary text-white p-5 rounded mb-4">
+    <div class="container text-center">
+        <h1 class="display-4"><i class="bi bi-heart-pulse"></i> SportRoutineAI</h1>
+        <p class="lead">Sistema avanzado de recomendación deportiva y médica personalizada</p>
+        <p class="mb-0">Integrando Paradigmas: Imperativo + Funcional + Lógico</p>
     </div>
-</section>
+</div>
 
 {% if error %}
-<div class="container">
-    <div class="alert alert-error">
-        <strong>Error:</strong> {{ error }}
-    </div>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Error:</strong> {{ error }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 {% endif %}
 
 {% if errores %}
-<div class="container">
-    <div class="alert alert-error">
-        <strong>Errores encontrados:</strong>
-        <ul>
-        {% for error in errores %}
-            <li>{{ error }}</li>
-        {% endfor %}
-        </ul>
-    </div>
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <strong>Errores encontrados:</strong>
+    <ul class="mb-0">
+    {% for error in errores %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 </div>
 {% endif %}
 
-<section class="formulario-section">
-    <div class="container">
-        <div class="form-card">
-            <h2>Completa tus datos</h2>
-            <p>Ingresa tu información para recibir una recomendación personalizada</p>
-            
-            <form method="POST" action="{% url 'recommender:recomendar' %}" class="recomendacion-form">
-                {% csrf_token %}
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="edad">Edad (años)</label>
-                        <input type="number" id="edad" name="edad" min="15" max="100" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="peso">Peso (kg)</label>
-                        <input type="number" id="peso" name="peso" min="30" max="300" step="0.1" required>
-                    </div>
-                </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="altura">Altura (metros)</label>
-                        <input type="number" id="altura" name="altura" min="1.0" max="2.5" step="0.01" placeholder="ej: 1.75" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="dias_disponibles">Días disponibles por semana</label>
-                        <input type="number" id="dias_disponibles" name="dias_disponibles" min="1" max="7" required>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="objetivo">Objetivo principal</label>
-                    <select id="objetivo" name="objetivo" required>
-                        <option value="">Selecciona un objetivo</option>
-                        <option value="peso">Pérdida de peso</option>
-                        <option value="musculacion">Ganancia muscular</option>
-                        <option value="mantenimiento">Mantenimiento general</option>
-                    </select>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Obtener Recomendación</button>
-            </form>
-        </div>
+<!-- Formulario de Recomendación -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0"><i class="bi bi-clipboard-data"></i> Completa tus datos</h3>
     </div>
-</section>
+    <div class="card-body">
+        <p class="text-muted">Ingresa tu información para recibir una recomendación personalizada</p>
+        
+        <form method="POST" action="{% url 'recommender:recomendar' %}">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="edad" class="form-label">Edad (años)</label>
+                    <input type="number" class="form-control" id="edad" name="edad" min="15" max="100" required>
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="peso" class="form-label">Peso (kg)</label>
+                    <input type="number" class="form-control" id="peso" name="peso" min="30" max="300" step="0.1" required>
+                </div>
+            </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="altura" class="form-label">Altura (metros)</label>
+                    <input type="number" class="form-control" id="altura" name="altura" min="1.0" max="2.5" step="0.01" placeholder="ej: 1.75" required>
+                </div>
+                
+                <div class="col-md-6">
+                    <label for="dias_disponibles" class="form-label">Días disponibles por semana</label>
+                    <input type="number" class="form-control" id="dias_disponibles" name="dias_disponibles" min="1" max="7" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="objetivo" class="form-label">Objetivo principal</label>
+                <select class="form-select" id="objetivo" name="objetivo" required>
+                    <option value="">Selecciona un objetivo</option>
+                    <option value="peso">Pérdida de peso</option>
+                    <option value="musculacion">Ganancia muscular</option>
+                    <option value="mantenimiento">Mantenimiento general</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-search"></i> Obtener Recomendación
+            </button>
+        </form>
+    </div>
+</div>
 
-<section class="beneficios-section">
-    <div class="container">
-        <h2>Beneficios del Sistema</h2>
-        <div class="beneficios-grid">
-            <div class="beneficio-card">
-                <div class="beneficio-icon">🎯</div>
-                <h3>Recomendaciones Personalizadas</h3>
-                <p>Rutinas adaptadas a tu edad, condición física y objetivos específicos mediante reglas lógicas avanzadas.</p>
-            </div>
-            
-            <div class="beneficio-card">
-                <div class="beneficio-icon">🔬</div>
-                <h3>Análisis Científico</h3>
-                <p>Cálculo de IMC, nivel de intensidad segura y compatibilidad basada en múltiples factores de salud.</p>
-            </div>
-            
-            <div class="beneficio-card">
-                <div class="beneficio-icon">📊</div>
-                <h3>Múltiples Opciones</h3>
-                <p>Acceso a más de {{ total_rutinas }} rutinas diferentes con alternativas según tu perfil y disponibilidad.</p>
+<!-- Beneficios -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-bullseye display-4 text-primary"></i>
+                <h4 class="card-title mt-3">Recomendaciones Personalizadas</h4>
+                <p class="card-text">Rutinas adaptadas mediante reglas lógicas avanzadas basadas en tu perfil médico y deportivo.</p>
             </div>
         </div>
     </div>
-</section>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-clipboard-pulse display-4 text-success"></i>
+                <h4 class="card-title mt-3">Análisis Médico</h4>
+                <p class="card-text">Cálculo de IMC, evaluación de seguridad y recomendaciones basadas en condiciones médicas.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-list-check display-4 text-info"></i>
+                <h4 class="card-title mt-3">Múltiples Opciones</h4>
+                <p class="card-text">Acceso a más de {{ total_rutinas }} rutinas diferentes con alternativas personalizadas.</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-<section class="testimonios-section">
-    <div class="container">
-        <h2>Testimonios</h2>
-        <div class="testimonios-grid">
-            <div class="testimonio-card">
-                <p class="testimonio-texto">"El sistema me recomendó una rutina perfecta para mi edad y condición. He perdido 8 kg en 3 meses."</p>
-                <p class="testimonio-autor">- María, 52 años</p>
-            </div>
-            
-            <div class="testimonio-card">
-                <p class="testimonio-texto">"Como principiante, necesitaba algo adaptado a mi nivel. La recomendación fue exacta y segura."</p>
-                <p class="testimonio-autor">- Carlos, 28 años</p>
-            </div>
-            
-            <div class="testimonio-card">
-                <p class="testimonio-texto">"Me encanta que considera mi IMC y disponibilidad de tiempo. Muy profesional y efectivo."</p>
-                <p class="testimonio-autor">- Ana, 35 años</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="faq-section">
-    <div class="container">
-        <h2>Preguntas Frecuentes</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <button class="faq-question">¿Cómo funciona el sistema de recomendación?</button>
-                <div class="faq-answer">
-                    <p>Utilizamos tres paradigmas de programación: imperativo para el control de flujo, funcional para cálculos puros (IMC, compatibilidad) y lógico para reglas de inferencia que determinan la rutina más segura y efectiva para ti.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <button class="faq-question">¿Es seguro para principiantes?</button>
-                <div class="faq-answer">
-                    <p>Absolutamente. Nuestro motor de reglas lógicas evalúa tu edad, IMC y experiencia para asignar un nivel adecuado y una intensidad segura. Las rutinas de alta intensidad solo se recomiendan a personas con el perfil apropiado.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <button class="faq-question">¿Qué información necesito proporcionar?</button>
-                <div class="faq-answer">
-                    <p>Solo necesitamos tu edad, peso, altura, días disponibles para entrenar y objetivo principal. Con estos datos, calculamos tu IMC y aplicamos reglas lógicas para encontrar la rutina ideal.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <button class="faq-question">¿Puedo cambiar de rutina después?</button>
-                <div class="faq-answer">
-                    <p>Sí, siempre recibirás 3 rutinas alternativas además de la principal. También puedes explorar el catálogo completo y usar filtros por nivel y objetivo.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+{% if not user.is_authenticated %}
+<!-- Call to Action -->
+<div class="alert alert-info text-center">
+    <h5><i class="bi bi-info-circle"></i> ¿Quieres guardar tu progreso?</h5>
+    <p class="mb-2">Regístrate gratis para acceder a tu dashboard personalizado, historial de recomendaciones y seguimiento de progreso.</p>
+    <a href="{% url 'recommender:registro' %}" class="btn btn-primary">
+        <i class="bi bi-person-plus"></i> Crear Cuenta Gratis
+    </a>
+</div>
+{% endif %}
 {% endblock %}

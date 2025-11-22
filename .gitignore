@@ -20,20 +20,24 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
-venv/
-ENV/
-env/
-
 # Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
-/staticfiles
+/staticfiles/
+/media/
 
-# IDEs
+# Environment variables
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
 .vscode/
 .idea/
 *.swp
@@ -44,13 +48,13 @@ db.sqlite3-journal
 .DS_Store
 Thumbs.db
 
-# Replit
-.replit
-.config/
-.pythonlibs/
-.upm/
-.cache/
+# Static files
+/staticfiles/
+/static/
 
-# Logs
-/tmp/
-*.log
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover

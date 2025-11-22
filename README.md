@@ -1,222 +1,313 @@
-# Sistema de Recomendación de Rutinas Deportivas Multiparadigma
+# 🏋️ SportRoutineAI - Sistema Avanzado de Recomendación Deportiva y Médica
 
-Sistema inteligente de recomendación de rutinas deportivas implementado en Django que integra **tres paradigmas de programación**: Imperativo, Funcional y Lógico.
+Sistema completo de recomendación deportiva y médica personalizada implementado en Django 4.2.7 que integra **tres paradigmas de programación**: Imperativo, Funcional y Lógico, con base de datos PostgreSQL y despliegue en Render.com.
 
-## 🎯 Características
+## 🎯 Características Principales
 
-- **Recomendaciones Personalizadas**: Rutinas adaptadas a edad, IMC, objetivos y disponibilidad
-- **Análisis Científico**: Cálculo de IMC, nivel de intensidad segura y compatibilidad
-- **Motor de Reglas Lógicas**: Sistema de inferencia para determinar rutinas seguras
-- **Catálogo Completo**: Más de 10 rutinas profesionales diferentes
-- **Interfaz Web Moderna**: Diseño responsive y profesional
+- ✅ **Sistema de Autenticación Seguro**: Registro, login y gestión de usuarios personalizados
+- ✅ **Perfil Médico Completo**: IMC, condiciones médicas, alergias, medicamentos, historial de lesiones
+- ✅ **Motor de Recomendación Híbrido**: Integra los tres paradigmas para generar recomendaciones personalizadas
+- ✅ **Integración con Prolog**: Motor lógico para inferencia médica (con fallback a Python puro)
+- ✅ **Dashboard Personalizado**: Seguimiento de progreso, historial de recomendaciones
+- ✅ **Base de Datos PostgreSQL**: Configurado para Neon.tech (serverless) o Render.com
+- ✅ **SQLite para Desarrollo**: Fallback automático si no hay DATABASE_URL
+- ✅ **Despliegue en Render.com**: Configuración completa incluida
+- ✅ **Interfaz Bootstrap 5**: Diseño moderno y responsive
 
 ## 📐 Arquitectura Multiparadigma
 
 ### 1. Paradigma IMPERATIVO (`views.py`)
-- Control de flujo secuencial
-- Gestión de requests/responses HTTP
+- Control de flujo secuencial en vistas Django
+- Gestión de autenticación y sesiones
 - Validación imperativa de datos
-- Coordinación entre módulos
+- Coordinación entre módulos funcional y lógico
 
-### 2. Paradigma FUNCIONAL (`processor.py`)
+### 2. Paradigma FUNCIONAL (`processor.py`, `motor_recomendacion.py`)
 - **Funciones puras**: `calcular_imc()`, `clasificar_imc()`, `calcular_compatibilidad()`
-- **filter()**: Filtrar rutinas por nivel, objetivo, días
-- **map()**: Transformar datos del usuario, calcular puntuaciones
+- **filter()**: Filtrar rutinas por seguridad, nivel, objetivo
+- **map()**: Transformar datos, calcular puntuaciones
 - **sorted()**: Ordenar rutinas por compatibilidad
-- **reduce()**: Generar estadísticas agregadas
-- **Lambdas**: Operaciones inline
+- **reduce()**: Calcular promedios y estadísticas
 
-### 3. Paradigma LÓGICO (`logic_rules.py`)
-- Motor de reglas personalizado (compatible Python 3.11)
-- Reglas de inferencia:
-  - `Si edad > 50 → intensidad_baja`
-  - `Si IMC > 25 → objetivo_peso`
-  - `Si días < 3 → nivel_principiante`
+### 3. Paradigma LÓGICO (`prolog_engine.py`, `logic_rules.py`)
+- Motor Prolog con `pyswip` (fallback a Python puro)
+- Reglas de inferencia médica:
+  - `Si edad > 60 → intensidad_baja`
+  - `Si IMC > 30 → objetivo_peso`
+  - `Si condiciones_médicas → rutina_segura`
 - Validación de seguridad basada en reglas
-- Explicaciones lógicas de recomendaciones
+- Explicaciones médicas generadas lógicamente
 
-## 🚀 Instalación
+## 🚀 Instalación y Configuración
 
 ### Requisitos
 - Python 3.11+
+- PostgreSQL (Neon.tech recomendado) o SQLite (desarrollo)
 - pip
 
-### Pasos
+### Instalación Local
 
-1. **Instalar dependencias**:
+1. **Clonar el repositorio**:
+```bash
+git clone <repository-url>
+cd SportRoutineAI
+```
+
+2. **Crear entorno virtual**:
+```bash
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+```
+
+3. **Instalar dependencias**:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. **Ejecutar migraciones**:
+4. **Configurar base de datos**:
+
+   **Opción A: Neon.tech (Recomendado - PostgreSQL serverless gratuito)**
+   ```bash
+   # Ver guía completa en NEON_SETUP.md
+   # 1. Crear cuenta en https://neon.tech
+   # 2. Crear proyecto y copiar connection string
+   # 3. Configurar en .env:
+   cp env.example .env
+   # Editar .env y agregar: DATABASE_URL=postgresql://...
+   ```
+
+   **Opción B: SQLite (Desarrollo local)**
+   ```bash
+   # No necesitas configurar nada, se usa SQLite automáticamente
+   # si DATABASE_URL está vacío
+   ```
+
+5. **Ejecutar migraciones**:
 ```bash
 python manage.py migrate
 ```
 
-3. **Iniciar servidor**:
+6. **Crear superusuario**:
 ```bash
-python manage.py runserver 0.0.0.0:5000
+python manage.py createsuperuser
 ```
 
-4. **Abrir navegador**:
+7. **Iniciar servidor**:
+```bash
+python manage.py runserver
 ```
-http://localhost:5000
+
+8. **Abrir navegador**:
 ```
+http://localhost:8000
+```
+
+### Despliegue en Render.com
+
+1. **Conectar repositorio** a Render.com
+2. **Crear servicio Web** usando `render.yaml`
+3. **Crear base de datos PostgreSQL** (se configura automáticamente)
+4. **Variables de entorno** se configuran automáticamente desde `render.yaml`
+5. **Desplegar** - Render ejecutará `build.sh` automáticamente
 
 ## 📁 Estructura del Proyecto
 
 ```
-PROYECTO_RUTINAS_DJANGO/
+SportRoutineAI/
 ├── README.md
 ├── requirements.txt
+├── render.yaml              # Configuración Render.com
+├── build.sh                # Script de build para producción
 ├── manage.py
 │
-├── django_project/          # Configuración Django
-│   ├── __init__.py
-│   ├── settings.py         # Configuración principal
-│   ├── urls.py             # Router principal
+├── django_project/         # Configuración Django
+│   ├── settings.py         # Config con PostgreSQL, seguridad, etc.
+│   ├── urls.py
 │   └── wsgi.py
 │
 └── recommender/            # App principal
-    ├── __init__.py
-    ├── apps.py
-    ├── admin.py
-    │
-    ├── datos.py            # Base de conocimiento (10 rutinas)
-    ├── processor.py        # ✅ PARADIGMA FUNCIONAL
-    ├── logic_rules.py      # ✅ PARADIGMA LÓGICO
+    ├── models.py           # UsuarioPersonalizado, PerfilMedico, Rutina, etc.
     ├── views.py            # ✅ PARADIGMA IMPERATIVO
-    ├── urls.py             # URLs de la app
+    ├── processor.py        # ✅ PARADIGMA FUNCIONAL
+    ├── prolog_engine.py    # ✅ PARADIGMA LÓGICO (Prolog)
+    ├── logic_rules.py      # ✅ PARADIGMA LÓGICO (Python)
+    ├── motor_recomendacion.py  # Motor híbrido multiparadigma
+    ├── forms.py            # Formularios Django
+    ├── admin.py            # Configuración admin
     │
     ├── templates/recommender/
-    │   ├── base.html
+    │   ├── base.html       # Template base con Bootstrap 5
     │   ├── index.html      # Página principal
-    │   ├── resultado.html  # Recomendación
-    │   ├── rutinas.html    # Catálogo
-    │   └── acerca.html     # About
+    │   ├── registro.html    # Registro de usuarios
+    │   ├── login.html       # Login
+    │   ├── dashboard.html   # Dashboard personalizado
+    │   ├── perfil.html      # Perfil del usuario
+    │   ├── seguimiento.html # Registro de seguimiento
+    │   └── historial_recomendaciones.html
     │
     └── static/
         ├── css/
-        │   └── styles.css  # Estilos profesionales
         └── js/
-            └── script.js   # Interactividad FAQ
 ```
+
+## 🗄️ Modelos de Base de Datos
+
+### UsuarioPersonalizado
+- Extiende `AbstractUser` de Django
+- Campos: fecha_nacimiento, altura, peso, objetivos, nivel_experiencia, condiciones_medicas, etc.
+
+### PerfilMedico
+- Relación 1:1 con UsuarioPersonalizado
+- Campos: IMC, clasificación_IMC, presión arterial, frecuencia cardíaca, alergias, medicamentos, historial de lesiones
+
+### Rutina
+- Rutinas deportivas estructuradas
+- Campos: nombre, descripción, nivel, objetivo, ejercicios (JSON), duración, intensidad, calorías estimadas
+
+### RecomendacionMedica
+- Recomendaciones generadas por el motor
+- Campos: usuario, rutina_recomendada, explicación_medica, precauciones, reglas_aplicadas (JSON), score_confianza
+
+### SeguimientoUsuario
+- Historial de progreso del usuario
+- Campos: fecha, peso_actual, IMC_actual, rutina_realizada, satisfacción, comentarios
+
+## 🔐 Seguridad
+
+- Autenticación segura con validadores de contraseña
+- Sesiones seguras (SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)
+- Protección XSS y CSRF
+- HSTS en producción
+- Rate limiting (configurable con django-axes)
 
 ## 🌐 Vistas Disponibles
 
-### 1. Página Principal (`/`)
-- Hero section con presentación
-- Formulario de recomendación (edad, peso, altura, días, objetivo)
-- Sección de beneficios (3 tarjetas)
-- Testimonios simulados
-- FAQ colapsable
+### Públicas
+- `/` - Página principal con formulario de recomendación
+- `/recomendar/` - Generar recomendación (sin autenticación)
+- `/rutinas/` - Catálogo de rutinas
+- `/acerca-de/` - Información del proyecto
+- `/registro/` - Registro de nuevos usuarios
+- `/login/` - Inicio de sesión
 
-### 2. Resultados (`/recomendar`)
-- Rutina recomendada principal con compatibilidad
-- Perfil del usuario (IMC, nivel, objetivo)
-- Explicación basada en reglas lógicas
-- Plan semanal detallado
-- Rutinas alternativas
-- Validación de seguridad
-
-### 3. Catálogo (`/rutinas`)
-- Grid con todas las rutinas
-- Filtros por nivel y objetivo
-- Estadísticas (duración promedio, días promedio)
-
-### 4. Acerca de (`/acerca-de`)
-- Descripción del proyecto
-- Explicación técnica de los 3 paradigmas
-- Flujo de integración
-- Tecnologías utilizadas
+### Autenticadas (requieren login)
+- `/dashboard/` - Dashboard personalizado
+- `/perfil/` - Editar perfil y datos médicos
+- `/generar-recomendacion/` - Generar nueva recomendación
+- `/seguimiento/` - Registrar seguimiento de progreso
+- `/historial-recomendaciones/` - Ver historial completo
 
 ## 🔬 Ejemplos de Paradigmas
 
-### Paradigma Funcional (processor.py)
+### Paradigma Funcional
 ```python
 # Función pura
 def calcular_imc(peso: float, altura: float) -> float:
     return peso / (altura ** 2)
 
-# filter()
-rutinas_filtradas = filter(lambda r: r['nivel'] == nivel, rutinas)
+# filter() para seguridad
+rutinas_seguras = filter(lambda r: es_rutina_segura(r, perfil), rutinas)
 
-# map()
+# map() para puntuaciones
 puntuaciones = map(lambda r: calcular_compatibilidad(r, usuario), rutinas)
 
-# sorted()
-ordenadas = sorted(rutinas_puntuadas, key=lambda x: x[1], reverse=True)
+# reduce() para promedios
+promedio = reduce(lambda acc, s: acc + s.imc_actual, seguimientos, 0) / len(seguimientos)
 ```
 
-### Paradigma Lógico (logic_rules.py)
+### Paradigma Lógico (Prolog)
+```prolog
+% Reglas de seguridad
+rutina_segura(Usuario, Rutina) :-
+    tiene_condicion(Usuario, Condicion),
+    not contraindica_rutina(Rutina, Condicion).
+
+intensidad_recomendada(Usuario, baja) :-
+    edad(Usuario, Edad), Edad > 60.
+```
+
+### Paradigma Imperativo
 ```python
-# Motor de reglas
-motor.agregar_regla(
-    lambda h: h['edad'] > 50,
-    'intensidad',
-    'baja'
-)
-
-motor.agregar_regla(
-    lambda h: h['imc_clasificacion'] == 'obesidad',
-    'nivel',
-    'principiante'
-)
-
-resultados = motor.inferir()
+@login_required
+def dashboard(request):
+    # 1. Validar autenticación
+    usuario = request.user
+    
+    # 2. Obtener datos
+    perfil = usuario.perfil_medico
+    
+    # 3. Coordinar módulos
+    resultado = motor_recomendacion.generar_recomendacion_completa(usuario)
+    
+    # 4. Renderizar
+    return render(request, 'dashboard.html', context)
 ```
-
-### Paradigma Imperativo (views.py)
-```python
-def recomendar(request):
-    # 1. Validación
-    if request.method != 'POST':
-        return render(request, 'index.html')
-    
-    # 2. Procesamiento funcional
-    imc = processor.calcular_imc(peso, altura)
-    
-    # 3. Inferencia lógica
-    nivel = logic_rules.determinar_nivel_usuario(edad, dias, imc)
-    
-    # 4. Selección
-    rutina, puntuacion = processor.obtener_mejor_rutina(rutinas, usuario)
-    
-    # 5. Renderizado
-    return render(request, 'resultado.html', context)
-```
-
-## 📊 Base de Conocimiento
-
-10 rutinas profesionales que incluyen:
-- **Niveles**: Principiante, Intermedio, Avanzado
-- **Objetivos**: Pérdida de peso, Ganancia muscular, Mantenimiento
-- **Intensidades**: Baja, Media, Alta
-- **Frecuencias**: 3-6 días/semana
-- **Duraciones**: 30-60 minutos/sesión
-
-Ejemplos:
-- Cardio Suave (principiante, mantenimiento, 3 días)
-- Pérdida de Peso Intensiva (intermedio, peso, 5 días)
-- Musculación Avanzada (avanzado, musculación, 5 días)
-- Tonificación Femenina (intermedio, musculación, 4 días)
-- CrossFit para Principiantes (principiante, musculación, 3 días)
 
 ## 🛠️ Tecnologías
 
 - **Django 4.2.7** - Framework web
-- **Python 3.11** - Lenguaje base
-- **HTML5/CSS3** - Frontend moderno
-- **JavaScript** - Interactividad cliente
-- **Motor de reglas personalizado** - Paradigma lógico
+- **PostgreSQL** - Base de datos (producción)
+- **SQLite** - Base de datos (desarrollo)
+- **Prolog (pyswip)** - Motor lógico
+- **Bootstrap 5** - Frontend framework
+- **Whitenoise** - Servir archivos estáticos
+- **Gunicorn** - Servidor WSGI
+- **dj-database-url** - Configuración de BD
+- **django-crispy-forms** - Formularios Bootstrap
 
-## 🎓 Objetivo Académico
+## 📊 Motor de Recomendación
 
-Este proyecto demuestra:
-1. **Integración multiparadigma** en un sistema real
-2. **Separación clara** de responsabilidades por paradigma
-3. **Cooperación** entre paradigmas diferentes
-4. **Aplicación práctica** de conceptos teóricos
+El `MotorRecomendacion` integra los tres paradigmas:
+
+1. **Análisis Médico (Lógico)**: Evalúa condiciones médicas con Prolog
+2. **Filtrado Funcional**: Filtra rutinas seguras usando funciones puras
+3. **Cálculo de Compatibilidad (Funcional)**: Calcula scores usando map/sorted
+4. **Coordinación Imperativa**: Orquesta todo el proceso en las vistas
+
+## 🚀 Despliegue
+
+### 📖 Guía Completa de Despliegue
+
+**Consulta la guía completa en [`DEPLOYMENT.md`](DEPLOYMENT.md)** que incluye:
+- ✅ Render.com (con base de datos propia o Neon.tech)
+- ✅ Railway
+- ✅ Heroku
+- ✅ Vercel
+- ✅ Despliegue manual en VPS
+- ✅ Troubleshooting completo
+
+### Opciones Rápidas
+
+#### 🟢 Render.com (Más Fácil)
+1. Conecta tu repositorio a Render
+2. Usa el archivo `render.yaml` (despliegue automático)
+3. O crea servicio manual y configura variables de entorno
+
+#### 🟡 Render.com + Neon.tech (Recomendado)
+1. Configura Neon.tech (ver `NEON_SETUP.md`)
+2. Crea servicio en Render
+3. Agrega `DATABASE_URL` de Neon como variable de entorno
+4. Despliega
+
+#### 🔵 Railway
+1. Conecta repositorio
+2. Configura variables de entorno
+3. Despliega automáticamente
+
+### Variables de Entorno Necesarias
+
+```env
+DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
+SECRET_KEY=tu-clave-secreta-muy-larga
+DEBUG=False
+ALLOWED_HOSTS=tu-dominio.com
+CSRF_TRUSTED_ORIGINS=https://tu-dominio.com
+```
+
+### Guías Específicas
+
+- 📘 **Despliegue completo**: [`DEPLOYMENT.md`](DEPLOYMENT.md)
+- 🗄️ **Configuración Neon.tech**: [`NEON_SETUP.md`](NEON_SETUP.md)
 
 ## 📝 Licencia
 
@@ -224,4 +315,4 @@ Proyecto académico - 2025
 
 ## 👨‍💻 Autor
 
-Sistema desarrollado para demostrar la integración de paradigmas de programación en Django.
+Sistema desarrollado para demostrar la integración de paradigmas de programación en Django con características profesionales y desplegable en producción.

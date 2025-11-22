@@ -1,0 +1,86 @@
+{% extends 'recommender/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Registrar Seguimiento - SportRoutineAI{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="bi bi-clipboard-data"></i> Registrar Seguimiento</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Nuevo Seguimiento</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ formulario|crispy }}
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle"></i> Registrar Seguimiento
+                    </button>
+                    <a href="{% url 'recommender:dashboard' %}" class="btn btn-outline-secondary">
+                        Cancelar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <p>Registra tu progreso regularmente para:</p>
+                <ul>
+                    <li>Monitorear cambios en tu peso</li>
+                    <li>Calcular tu IMC automáticamente</li>
+                    <li>Evaluar tu satisfacción con las rutinas</li>
+                    <li>Generar reportes de progreso</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if seguimientos %}
+<div class="card shadow mt-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Historial de Seguimientos</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Peso (kg)</th>
+                        <th>IMC</th>
+                        <th>Rutina</th>
+                        <th>Satisfacción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seguimiento in seguimientos %}
+                    <tr>
+                        <td>{{ seguimiento.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ seguimiento.peso_actual|floatformat:1 }}</td>
+                        <td>{{ seguimiento.imc_actual|floatformat:1 }}</td>
+                        <td>{% if seguimiento.rutina_realizada %}{{ seguimiento.rutina_realizada.nombre }}{% else %}-{% endif %}</td>
+                        <td>
+                            {% for i in "12345"|make_list %}
+                            <i class="bi bi-star{% if forloop.counter <= seguimiento.satisfaccion %}-fill{% endif %} text-warning"></i>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+

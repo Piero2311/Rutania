@@ -239,6 +239,35 @@ def aplicar_filtros_multiples(rutinas: List[Dict], filtros: List[Callable]) -> L
     return reduce(lambda ruts, filtro: list(filter(filtro, ruts)), filtros, rutinas)
 
 
+def filtrar_rutinas_por_seguridad(rutinas: List[Dict], perfil_medico: Dict) -> List[Dict]:
+    """
+    Función que usa filter() para filtrar rutinas por seguridad médica.
+    
+    Args:
+        rutinas: Lista de rutinas
+        perfil_medico: Diccionario con perfil médico del usuario
+    
+    Returns:
+        Lista de rutinas seguras
+    """
+    def es_segura(rutina: Dict) -> bool:
+        edad = perfil_medico.get('edad', 30)
+        imc = perfil_medico.get('imc', 25.0)
+        nivel_usuario = perfil_medico.get('nivel_experiencia', 'principiante')
+        
+        # Reglas de seguridad
+        if edad > 60 and rutina.get('intensidad') == 'alta':
+            return False
+        if imc > 30 and rutina.get('dias_semana', 0) > 5:
+            return False
+        if nivel_usuario == 'principiante' and rutina.get('nivel') == 'avanzado':
+            return False
+        
+        return True
+    
+    return list(filter(es_segura, rutinas))
+
+
 def generar_resumen_estadistico(rutinas: List[Dict]) -> Dict:
     """
     Función que usa map() y reduce() para generar estadísticas.

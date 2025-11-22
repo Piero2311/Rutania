@@ -1,0 +1,185 @@
+{% extends 'recommender/base.html' %}
+
+{% block title %}Dashboard - SportRoutineAI{% endblock %}
+
+{% block content %}
+<h1 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard Personal</h1>
+
+<!-- Información del Usuario -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-person-circle display-4 text-primary"></i>
+                <h5 class="card-title mt-2">{{ usuario.username }}</h5>
+                <p class="text-muted">{{ usuario.email }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-heart-pulse display-4 text-danger"></i>
+                <h5 class="card-title mt-2">IMC</h5>
+                {% if perfil_medico.imc %}
+                <h3>{{ perfil_medico.imc|floatformat:1 }}</h3>
+                <small class="text-muted">{{ perfil_medico.clasificacion_imc|title }}</small>
+                {% else %}
+                <p class="text-muted">No disponible</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center shadow-sm">
+            <div class="card-body">
+                <i class="bi bi-graph-up display-4 text-success"></i>
+                <h5 class="card-title mt-2">Progreso</h5>
+                {% if progreso.total_seguimientos > 0 %}
+                <h3>{{ progreso.promedio_imc|floatformat:1 }}</h3>
+                <small class="text-muted">{{ progreso.total_seguimientos }} seguimientos</small>
+                {% else %}
+                <p class="text-muted">Sin seguimientos</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recomendación Actual -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0"><i class="bi bi-star-fill"></i> Recomendación Actual</h4>
+        <a href="{% url 'recommender:generar_recomendacion' %}" class="btn btn-light btn-sm">
+            <i class="bi bi-arrow-clockwise"></i> Generar Nueva
+        </a>
+    </div>
+    <div class="card-body">
+        {% if recomendacion_actual %}
+        <div class="row">
+            <div class="col-md-8">
+                <h5>{{ recomendacion_actual.rutina_recomendada.nombre }}</h5>
+                <p class="text-muted">{{ recomendacion_actual.rutina_recomendada.descripcion }}</p>
+                
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Nivel:</strong> {{ recomendacion_actual.rutina_recomendada.nivel|title }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Intensidad:</strong> {{ recomendacion_actual.rutina_recomendada.intensidad|title }}
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Días:</strong> {{ recomendacion_actual.rutina_recomendada.dias_semana }}/semana
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <strong><i class="bi bi-info-circle"></i> Explicación Médica:</strong>
+                    <p class="mb-0">{{ recomendacion_actual.explicacion_medica }}</p>
+                </div>
+                
+                {% if recomendacion_actual.precauciones %}
+                <div class="alert alert-warning">
+                    <strong><i class="bi bi-exclamation-triangle"></i> Precauciones:</strong>
+                    <p class="mb-0">{{ recomendacion_actual.precauciones }}</p>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6>Score de Confianza</h6>
+                        <h2 class="text-primary">{{ recomendacion_actual.score_confianza|floatformat:1 }}%</h2>
+                        <small class="text-muted">Fecha: {{ recomendacion_actual.fecha_recomendacion|date:"d/m/Y" }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <p class="text-muted mt-3">No tienes recomendaciones aún.</p>
+            <a href="{% url 'recommender:generar_recomendacion' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Generar Primera Recomendación
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-person-gear display-4 text-primary"></i>
+                <h5 class="card-title mt-3">Mi Perfil</h5>
+                <p class="card-text">Actualiza tu información personal y médica</p>
+                <a href="{% url 'recommender:perfil' %}" class="btn btn-primary">Ver Perfil</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-clipboard-data display-4 text-success"></i>
+                <h5 class="card-title mt-3">Registrar Seguimiento</h5>
+                <p class="card-text">Registra tu progreso y peso actual</p>
+                <a href="{% url 'recommender:seguimiento' %}" class="btn btn-success">Registrar</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-clock-history display-4 text-info"></i>
+                <h5 class="card-title mt-3">Historial</h5>
+                <p class="card-text">Ver todas tus recomendaciones anteriores</p>
+                <a href="{% url 'recommender:historial_recomendaciones' %}" class="btn btn-info">Ver Historial</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seguimientos Recientes -->
+{% if seguimientos_recientes %}
+<div class="card shadow">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Seguimientos Recientes</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Peso (kg)</th>
+                        <th>IMC</th>
+                        <th>Satisfacción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for seguimiento in seguimientos_recientes %}
+                    <tr>
+                        <td>{{ seguimiento.fecha|date:"d/m/Y" }}</td>
+                        <td>{{ seguimiento.peso_actual|floatformat:1 }}</td>
+                        <td>{{ seguimiento.imc_actual|floatformat:1 }}</td>
+                        <td>
+                            {% for i in "12345"|make_list %}
+                            <i class="bi bi-star{% if forloop.counter <= seguimiento.satisfaccion %}-fill{% endif %} text-warning"></i>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
