@@ -1,78 +1,114 @@
 {% extends 'recommender/base.html' %}
-{% load crispy_forms_tags %}
 
-{% block title %}Registrar Seguimiento - SportRoutineAI{% endblock %}
+{% block title %}Registrar Seguimiento - Rutania{% endblock %}
 
 {% block content %}
-<h1 class="mb-4"><i class="bi bi-clipboard-data"></i> Registrar Seguimiento</h1>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-4xl font-bold text-charcoal-black mb-8">Registrar Seguimiento</h1>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> Nuevo Seguimiento</h4>
-            </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ formulario|crispy }}
-                    <button type="submit" class="btn btn-success btn-lg">
-                        <i class="bi bi-check-circle"></i> Registrar Seguimiento
-                    </button>
-                    <a href="{% url 'recommender:dashboard' %}" class="btn btn-outline-secondary">
-                        Cancelar
-                    </a>
-                </form>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Formulario -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-accent-teal to-primary-emerald px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Nuevo Seguimiento</h2>
+                </div>
+                <div class="p-6">
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        {% for field in formulario %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <div class="flex space-x-4">
+                            <button type="submit" class="flex-1 bg-gradient-to-r from-accent-teal to-primary-emerald text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
+                                Registrar Seguimiento
+                            </button>
+                            <a href="{% url 'recommender:dashboard' %}" class="flex-1 bg-gray-100 hover:bg-gray-200 text-charcoal-black font-semibold py-3 px-6 rounded-lg text-center transition-all">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información</h5>
-            </div>
-            <div class="card-body">
-                <p>Registra tu progreso regularmente para:</p>
-                <ul>
-                    <li>Monitorear cambios en tu peso</li>
-                    <li>Calcular tu IMC automáticamente</li>
-                    <li>Evaluar tu satisfacción con las rutinas</li>
-                    <li>Generar reportes de progreso</li>
+        
+        <!-- Info Sidebar -->
+        <div>
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
+                <h3 class="text-lg font-bold text-charcoal-black mb-4">Información</h3>
+                <p class="text-slate-gray text-sm mb-4">Registra tu progreso regularmente para:</p>
+                <ul class="space-y-2 text-sm text-slate-gray">
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-primary-emerald mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Monitorear cambios en tu peso
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-primary-emerald mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Calcular tu IMC automáticamente
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-primary-emerald mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Evaluar tu satisfacción con las rutinas
+                    </li>
+                    <li class="flex items-start">
+                        <svg class="w-5 h-5 text-primary-emerald mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Generar reportes de progreso
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
-</div>
 
-{% if seguimientos %}
-<div class="card shadow mt-4">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Historial de Seguimientos</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+    <!-- Historial -->
+    {% if seguimientos %}
+    <div class="mt-8 bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-green-100">
+            <h3 class="text-xl font-bold text-charcoal-black">Historial de Seguimientos</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-mint-cream">
                     <tr>
-                        <th>Fecha</th>
-                        <th>Peso (kg)</th>
-                        <th>IMC</th>
-                        <th>Rutina</th>
-                        <th>Satisfacción</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Peso (kg)</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">IMC</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Rutina</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Satisfacción</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-green-100">
                     {% for seguimiento in seguimientos %}
-                    <tr>
-                        <td>{{ seguimiento.fecha|date:"d/m/Y" }}</td>
-                        <td>{{ seguimiento.peso_actual|floatformat:1 }}</td>
-                        <td>{{ seguimiento.imc_actual|floatformat:1 }}</td>
-                        <td>{% if seguimiento.rutina_realizada %}{{ seguimiento.rutina_realizada.nombre }}{% else %}-{% endif %}</td>
-                        <td>
-                            {% for i in "12345"|make_list %}
-                            <i class="bi bi-star{% if forloop.counter <= seguimiento.satisfaccion %}-fill{% endif %} text-warning"></i>
-                            {% endfor %}
+                    <tr class="hover:bg-mint-cream transition-colors">
+                        <td class="px-6 py-4 text-slate-gray">{{ seguimiento.fecha|date:"d/m/Y" }}</td>
+                        <td class="px-6 py-4 font-semibold text-charcoal-black">{{ seguimiento.peso_actual|floatformat:1 }}</td>
+                        <td class="px-6 py-4 text-charcoal-black">{{ seguimiento.imc_actual|floatformat:1 }}</td>
+                        <td class="px-6 py-4 text-slate-gray">
+                            {% if seguimiento.rutina_realizada %}{{ seguimiento.rutina_realizada.nombre }}{% else %}-{% endif %}
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-1">
+                                {% for i in "12345"|make_list %}
+                                <svg class="w-5 h-5 {% if forloop.counter <= seguimiento.satisfaccion %}text-gold-accents{% else %}text-gray-300{% endif %}" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                {% endfor %}
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -80,7 +116,6 @@
             </table>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}
-

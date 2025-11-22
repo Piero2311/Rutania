@@ -15,14 +15,14 @@ class FormularioRegistro(UserCreationForm):
     email = forms.EmailField(
         required=True,
         widget=forms.EmailInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'placeholder': 'correo@ejemplo.com'
         })
     )
     fecha_nacimiento = forms.DateField(
         required=True,
         widget=forms.DateInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'type': 'date'
         }),
         help_text="Fecha de nacimiento"
@@ -32,7 +32,7 @@ class FormularioRegistro(UserCreationForm):
         min_value=50.0,
         max_value=250.0,
         widget=forms.NumberInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'placeholder': 'Altura en cm (ej: 175)',
             'step': '0.1'
         }),
@@ -43,7 +43,7 @@ class FormularioRegistro(UserCreationForm):
         min_value=20.0,
         max_value=300.0,
         widget=forms.NumberInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'placeholder': 'Peso en kg (ej: 70)',
             'step': '0.1'
         }),
@@ -59,7 +59,7 @@ class FormularioRegistro(UserCreationForm):
             ('flexibilidad', 'Flexibilidad'),
             ('salud', 'Salud General'),
         ],
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all'}),
         help_text="Objetivo principal de entrenamiento"
     )
     nivel_experiencia = forms.ChoiceField(
@@ -69,7 +69,7 @@ class FormularioRegistro(UserCreationForm):
             ('intermedio', 'Intermedio'),
             ('avanzado', 'Avanzado'),
         ],
-        widget=forms.Select(attrs={'class': 'form-control'}),
+        widget=forms.Select(attrs={'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all'}),
         help_text="Nivel de experiencia"
     )
     dias_entrenamiento = forms.IntegerField(
@@ -77,7 +77,7 @@ class FormularioRegistro(UserCreationForm):
         min_value=1,
         max_value=7,
         widget=forms.NumberInput(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'placeholder': 'Días disponibles por semana'
         }),
         help_text="Días disponibles para entrenar por semana"
@@ -85,7 +85,7 @@ class FormularioRegistro(UserCreationForm):
     condiciones_medicas = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'rows': 3,
             'placeholder': 'Ej: Hipertensión, Diabetes, etc. (opcional)'
         }),
@@ -94,7 +94,7 @@ class FormularioRegistro(UserCreationForm):
     restricciones = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
-            'class': 'form-control',
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
             'rows': 2,
             'placeholder': 'Restricciones físicas o médicas (opcional)'
         }),
@@ -111,7 +111,7 @@ class FormularioRegistro(UserCreationForm):
         )
         widgets = {
             'username': forms.TextInput(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'placeholder': 'Nombre de usuario'
             }),
         }
@@ -159,25 +159,25 @@ class FormularioPerfilMedico(forms.ModelForm):
         ]
         widgets = {
             'presion_arterial': forms.TextInput(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'placeholder': 'Ej: 120/80'
             }),
             'frecuencia_cardiaca': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'placeholder': 'Frecuencia cardíaca en reposo (bpm)'
             }),
             'alergias': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'rows': 2,
                 'placeholder': 'Alergias conocidas'
             }),
             'medicamentos': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'rows': 2,
                 'placeholder': 'Medicamentos actuales'
             }),
             'historial_lesiones': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'rows': 3,
                 'placeholder': 'Historial de lesiones previas'
             }),
@@ -201,11 +201,11 @@ class FormularioActualizarUsuario(forms.ModelForm):
         ]
         widgets = {
             'altura': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'step': '0.1'
             }),
             'peso': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'step': '0.1'
             }),
             'objetivos': forms.Select(attrs={'class': 'form-control'}),
@@ -214,11 +214,11 @@ class FormularioActualizarUsuario(forms.ModelForm):
                 'class': 'form-control'
             }),
             'condiciones_medicas': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'rows': 3
             }),
             'restricciones': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'rows': 2
             }),
         }
@@ -238,14 +238,14 @@ class FormularioSeguimiento(forms.ModelForm):
         ]
         widgets = {
             'peso_actual': forms.NumberInput(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'step': '0.1',
                 'placeholder': 'Peso actual en kg'
             }),
             'rutina_realizada': forms.Select(attrs={'class': 'form-control'}),
             'satisfaccion': forms.Select(attrs={'class': 'form-control'}),
             'comentarios': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
                 'rows': 3,
                 'placeholder': 'Comentarios sobre tu progreso (opcional)'
             }),

@@ -32,8 +32,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
-    'crispy_bootstrap5',
     'recommender',
 ]
 
@@ -71,32 +69,21 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Configuración para Neon.tech (PostgreSQL serverless) o Render.com
-# En desarrollo local sin DATABASE_URL, usa SQLite automáticamente
+# Configuración simplificada para Render.com
+# En producción usa PostgreSQL de Render, en desarrollo SQLite
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
 if DATABASE_URL:
-    # Configuración optimizada para Neon.tech y PostgreSQL serverless
-    db_config = dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,  # Pool de conexiones (útil para serverless)
-        conn_health_checks=True,
-    )
-    
-    # Optimizaciones específicas para Neon.tech (PostgreSQL serverless)
-    # Neon recomienda usar connection pooling para mejor rendimiento
-    if 'neon.tech' in DATABASE_URL or 'neon' in DATABASE_URL.lower():
-        # Configuración adicional para Neon con timeouts apropiados
-        db_config['OPTIONS'] = {
-            'connect_timeout': 10,
-            'options': '-c statement_timeout=30000',  # 30 segundos timeout
-        }
-    
+    # PostgreSQL de Render.com
     DATABASES = {
-        'default': db_config
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
 else:
-    # SQLite para desarrollo local (fallback automático)
+    # SQLite para desarrollo local
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -164,10 +151,6 @@ STATICFILES_DIRS = [BASE_DIR / 'recommender' / 'static']
 
 # WhiteNoise Configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-# Crispy Forms Configuration
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

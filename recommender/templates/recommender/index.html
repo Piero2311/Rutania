@@ -1,129 +1,236 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Inicio - SportRoutineAI{% endblock %}
+{% block title %}Inicio - Rutania{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
-<div class="jumbotron bg-primary text-white p-5 rounded mb-4">
-    <div class="container text-center">
-        <h1 class="display-4"><i class="bi bi-heart-pulse"></i> SportRoutineAI</h1>
-        <p class="lead">Sistema avanzado de recomendación deportiva y médica personalizada</p>
-        <p class="mb-0">Integrando Paradigmas: Imperativo + Funcional + Lógico</p>
+<section class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-bold text-charcoal-black mb-6">
+                Tu camino inteligente hacia una
+                <span class="bg-gradient-to-r from-primary-emerald to-deep-forest bg-clip-text text-transparent">
+                    vida saludable
+                </span>
+            </h1>
+            <p class="text-xl text-slate-gray mb-8">
+                Sistema avanzado de recomendación deportiva y médica personalizada
+            </p>
+            <p class="text-lg text-slate-gray mb-12">
+                Integrando Paradigmas: <span class="font-semibold text-primary-emerald">Imperativo</span> + 
+                <span class="font-semibold text-primary-emerald">Funcional</span> + 
+                <span class="font-semibold text-primary-emerald">Lógico</span>
+            </p>
+        </div>
     </div>
-</div>
+</section>
 
+<!-- Error Messages -->
 {% if error %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <strong>Error:</strong> {{ error }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+            </svg>
+            <span class="text-red-800 font-medium">{{ error }}</span>
+        </div>
+    </div>
 </div>
 {% endif %}
 
 {% if errores %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    <strong>Errores encontrados:</strong>
-    <ul class="mb-0">
-    {% for error in errores %}
-        <li>{{ error }}</li>
-    {% endfor %}
-    </ul>
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+        <p class="text-red-800 font-medium mb-2">Errores encontrados:</p>
+        <ul class="list-disc list-inside text-red-700">
+            {% for error in errores %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endif %}
 
 <!-- Formulario de Recomendación -->
-<div class="card shadow mb-4">
-    <div class="card-header bg-primary text-white">
-        <h3 class="mb-0"><i class="bi bi-clipboard-data"></i> Completa tus datos</h3>
-    </div>
-    <div class="card-body">
-        <p class="text-muted">Ingresa tu información para recibir una recomendación personalizada</p>
-        
-        <form method="POST" action="{% url 'recommender:recomendar' %}">
-            {% csrf_token %}
-            
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="edad" class="form-label">Edad (años)</label>
-                    <input type="number" class="form-control" id="edad" name="edad" min="15" max="100" required>
+<section class="py-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white rounded-2xl shadow-xl border border-green-100 overflow-hidden">
+                <!-- Header del Formulario -->
+                <div class="bg-gradient-to-r from-primary-emerald to-deep-forest px-6 py-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-white">Completa tus datos</h2>
+                            <p class="text-green-100 text-sm">Recibe una recomendación personalizada en segundos</p>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="col-md-6">
-                    <label for="peso" class="form-label">Peso (kg)</label>
-                    <input type="number" class="form-control" id="peso" name="peso" min="30" max="300" step="0.1" required>
+                <!-- Formulario -->
+                <div class="p-6 md:p-8">
+                    <form method="POST" action="{% url 'recommender:recomendar' %}" class="space-y-6">
+                        {% csrf_token %}
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="edad" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                    Edad (años)
+                                </label>
+                                <input type="number" 
+                                       id="edad" 
+                                       name="edad" 
+                                       min="15" 
+                                       max="100" 
+                                       required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                            </div>
+                            
+                            <div>
+                                <label for="peso" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                    Peso (kg)
+                                </label>
+                                <input type="number" 
+                                       id="peso" 
+                                       name="peso" 
+                                       min="30" 
+                                       max="300" 
+                                       step="0.1" 
+                                       required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="altura" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                    Altura (metros)
+                                </label>
+                                <input type="number" 
+                                       id="altura" 
+                                       name="altura" 
+                                       min="1.0" 
+                                       max="2.5" 
+                                       step="0.01" 
+                                       placeholder="ej: 1.75" 
+                                       required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                            </div>
+                            
+                            <div>
+                                <label for="dias_disponibles" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                    Días disponibles por semana
+                                </label>
+                                <input type="number" 
+                                       id="dias_disponibles" 
+                                       name="dias_disponibles" 
+                                       min="1" 
+                                       max="7" 
+                                       required
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="objetivo" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                Objetivo principal
+                            </label>
+                            <select id="objetivo" 
+                                    name="objetivo" 
+                                    required
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                                <option value="">Selecciona un objetivo</option>
+                                <option value="peso">Pérdida de peso</option>
+                                <option value="musculacion">Ganancia muscular</option>
+                                <option value="mantenimiento">Mantenimiento general</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="w-full bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-4 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <span>Obtener Recomendación</span>
+                        </button>
+                    </form>
                 </div>
             </div>
-            
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="altura" class="form-label">Altura (metros)</label>
-                    <input type="number" class="form-control" id="altura" name="altura" min="1.0" max="2.5" step="0.01" placeholder="ej: 1.75" required>
-                </div>
-                
-                <div class="col-md-6">
-                    <label for="dias_disponibles" class="form-label">Días disponibles por semana</label>
-                    <input type="number" class="form-control" id="dias_disponibles" name="dias_disponibles" min="1" max="7" required>
-                </div>
-            </div>
-            
-            <div class="mb-3">
-                <label for="objetivo" class="form-label">Objetivo principal</label>
-                <select class="form-select" id="objetivo" name="objetivo" required>
-                    <option value="">Selecciona un objetivo</option>
-                    <option value="peso">Pérdida de peso</option>
-                    <option value="musculacion">Ganancia muscular</option>
-                    <option value="mantenimiento">Mantenimiento general</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="btn btn-primary btn-lg">
-                <i class="bi bi-search"></i> Obtener Recomendación
-            </button>
-        </form>
+        </div>
     </div>
-</div>
+</section>
 
 <!-- Beneficios -->
-<div class="row mb-4">
-    <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-bullseye display-4 text-primary"></i>
-                <h4 class="card-title mt-3">Recomendaciones Personalizadas</h4>
-                <p class="card-text">Rutinas adaptadas mediante reglas lógicas avanzadas basadas en tu perfil médico y deportivo.</p>
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold text-charcoal-black mb-4">
+                ¿Por qué elegir <span class="text-primary-emerald">Rutania</span>?
+            </h2>
+            <p class="text-slate-gray text-lg">Tecnología avanzada al servicio de tu salud</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="bg-gradient-to-br from-mint-cream to-white p-8 rounded-2xl border border-green-100 hover:shadow-xl transition-all transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-charcoal-black mb-3">Recomendaciones Personalizadas</h3>
+                <p class="text-slate-gray">Rutinas adaptadas mediante reglas lógicas avanzadas basadas en tu perfil médico y deportivo.</p>
+            </div>
+            
+            <!-- Card 2 -->
+            <div class="bg-gradient-to-br from-mint-cream to-white p-8 rounded-2xl border border-green-100 hover:shadow-xl transition-all transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-gradient-to-br from-accent-teal to-primary-emerald rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-charcoal-black mb-3">Análisis Médico</h3>
+                <p class="text-slate-gray">Cálculo de IMC, evaluación de seguridad y recomendaciones basadas en condiciones médicas.</p>
+            </div>
+            
+            <!-- Card 3 -->
+            <div class="bg-gradient-to-br from-mint-cream to-white p-8 rounded-2xl border border-green-100 hover:shadow-xl transition-all transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-gradient-to-br from-gold-accents to-primary-emerald rounded-xl flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-charcoal-black mb-3">Múltiples Opciones</h3>
+                <p class="text-slate-gray">Acceso a más de <span class="font-semibold text-primary-emerald">{{ total_rutinas }}</span> rutinas diferentes con alternativas personalizadas.</p>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-clipboard-pulse display-4 text-success"></i>
-                <h4 class="card-title mt-3">Análisis Médico</h4>
-                <p class="card-text">Cálculo de IMC, evaluación de seguridad y recomendaciones basadas en condiciones médicas.</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4 mb-3">
-        <div class="card h-100 shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-list-check display-4 text-info"></i>
-                <h4 class="card-title mt-3">Múltiples Opciones</h4>
-                <p class="card-text">Acceso a más de {{ total_rutinas }} rutinas diferentes con alternativas personalizadas.</p>
-            </div>
-        </div>
-    </div>
-</div>
+</section>
 
 {% if not user.is_authenticated %}
 <!-- Call to Action -->
-<div class="alert alert-info text-center">
-    <h5><i class="bi bi-info-circle"></i> ¿Quieres guardar tu progreso?</h5>
-    <p class="mb-2">Regístrate gratis para acceder a tu dashboard personalizado, historial de recomendaciones y seguimiento de progreso.</p>
-    <a href="{% url 'recommender:registro' %}" class="btn btn-primary">
-        <i class="bi bi-person-plus"></i> Crear Cuenta Gratis
-    </a>
-</div>
+<section class="py-12 bg-gradient-to-r from-primary-emerald to-deep-forest">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center">
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                <h3 class="text-2xl md:text-3xl font-bold text-white mb-4">
+                    ¿Quieres guardar tu progreso?
+                </h3>
+                <p class="text-green-50 text-lg mb-6">
+                    Regístrate gratis para acceder a tu dashboard personalizado, historial de recomendaciones y seguimiento de progreso.
+                </p>
+                <a href="{% url 'recommender:registro' %}" 
+                   class="inline-block bg-white text-primary-emerald font-semibold px-8 py-3 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all">
+                    Crear Cuenta Gratis
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
 {% endif %}
 {% endblock %}

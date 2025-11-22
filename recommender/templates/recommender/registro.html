@@ -1,34 +1,166 @@
 {% extends 'recommender/base.html' %}
-{% load crispy_forms_tags %}
 
-{% block title %}Registro - SportRoutineAI{% endblock %}
+{% block title %}Registro - Rutania{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h3 class="mb-0"><i class="bi bi-person-plus"></i> Crear Cuenta</h3>
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-2xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="card-body">
-                <p class="text-muted">Completa el formulario para crear tu cuenta y acceder a recomendaciones personalizadas.</p>
+            <h2 class="text-3xl font-bold text-charcoal-black">Crear Cuenta</h2>
+            <p class="mt-2 text-slate-gray">Únete a Rutania y comienza tu camino hacia una vida saludable</p>
+        </div>
+        
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-8">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
                 
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ formulario|crispy }}
-                    
-                    <div class="d-grid gap-2 mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-check-circle"></i> Registrarse
-                        </button>
-                        <a href="{% url 'recommender:login' %}" class="btn btn-outline-secondary">
-                            ¿Ya tienes cuenta? Inicia sesión
-                        </a>
+                {% if formulario.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                    {{ formulario.non_field_errors }}
+                </div>
+                {% endif %}
+                
+                <!-- Username -->
+                <div>
+                    <label for="{{ formulario.username.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Nombre de usuario
+                    </label>
+                    {{ formulario.username }}
+                    {% if formulario.username.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Email -->
+                <div>
+                    <label for="{{ formulario.email.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Correo electrónico
+                    </label>
+                    {{ formulario.email }}
+                    {% if formulario.email.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Password 1 -->
+                <div>
+                    <label for="{{ formulario.password1.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Contraseña
+                    </label>
+                    {{ formulario.password1 }}
+                    {% if formulario.password1.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.password1.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Password 2 -->
+                <div>
+                    <label for="{{ formulario.password2.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Confirmar contraseña
+                    </label>
+                    {{ formulario.password2 }}
+                    {% if formulario.password2.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.password2.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Fecha de nacimiento -->
+                <div>
+                    <label for="{{ formulario.fecha_nacimiento.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Fecha de nacimiento
+                    </label>
+                    {{ formulario.fecha_nacimiento }}
+                    {% if formulario.fecha_nacimiento.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.fecha_nacimiento.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Altura y Peso -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ formulario.altura.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                            Altura (cm)
+                        </label>
+                        {{ formulario.altura }}
                     </div>
-                </form>
+                    <div>
+                        <label for="{{ formulario.peso.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                            Peso (kg)
+                        </label>
+                        {{ formulario.peso }}
+                    </div>
+                </div>
+                
+                <!-- Objetivos y Nivel -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="{{ formulario.objetivos.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                            Objetivo
+                        </label>
+                        {{ formulario.objetivos }}
+                    </div>
+                    <div>
+                        <label for="{{ formulario.nivel_experiencia.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                            Nivel
+                        </label>
+                        {{ formulario.nivel_experiencia }}
+                    </div>
+                </div>
+                
+                <!-- Días de entrenamiento -->
+                <div>
+                    <label for="{{ formulario.dias_entrenamiento.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Días disponibles por semana
+                    </label>
+                    {{ formulario.dias_entrenamiento }}
+                </div>
+                
+                <!-- Condiciones médicas -->
+                <div>
+                    <label for="{{ formulario.condiciones_medicas.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Condiciones médicas (opcional)
+                    </label>
+                    {{ formulario.condiciones_medicas }}
+                </div>
+                
+                <!-- Botón Submit -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200">
+                    Crear Cuenta
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-slate-gray">
+                    ¿Ya tienes cuenta?
+                    <a href="{% url 'recommender:login' %}" class="text-primary-emerald font-semibold hover:text-deep-forest transition-colors">
+                        Inicia sesión
+                    </a>
+                </p>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
+<style>
+    /* Estilos para inputs del formulario */
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="date"],
+    input[type="number"],
+    textarea,
+    select {
+        @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all;
+    }
+</style>
+{% endblock %}

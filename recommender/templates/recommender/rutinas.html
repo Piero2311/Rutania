@@ -1,108 +1,206 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Catálogo de Rutinas{% endblock %}
+{% block title %}Catálogo de Rutinas - Rutania{% endblock %}
 
 {% block content %}
-<section class="catalogo-hero">
-    <div class="container">
-        <h1>Catálogo de Rutinas</h1>
-        <p>Explora todas las rutinas disponibles</p>
-    </div>
-</section>
-
-<section class="filtros-section">
-    <div class="container">
-        <form method="GET" class="filtros-form">
-            <div class="filtro-group">
-                <label for="nivel">Nivel:</label>
-                <select id="nivel" name="nivel">
-                    <option value="">Todos</option>
-                    <option value="principiante" {% if nivel_filtro == 'principiante' %}selected{% endif %}>Principiante</option>
-                    <option value="intermedio" {% if nivel_filtro == 'intermedio' %}selected{% endif %}>Intermedio</option>
-                    <option value="avanzado" {% if nivel_filtro == 'avanzado' %}selected{% endif %}>Avanzado</option>
-                </select>
-            </div>
-            
-            <div class="filtro-group">
-                <label for="objetivo">Objetivo:</label>
-                <select id="objetivo" name="objetivo">
-                    <option value="">Todos</option>
-                    <option value="peso" {% if objetivo_filtro == 'peso' %}selected{% endif %}>Pérdida de Peso</option>
-                    <option value="musculacion" {% if objetivo_filtro == 'musculacion' %}selected{% endif %}>Ganancia Muscular</option>
-                    <option value="mantenimiento" {% if objetivo_filtro == 'mantenimiento' %}selected{% endif %}>Mantenimiento</option>
-                </select>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Aplicar Filtros</button>
-            <a href="{% url 'recommender:rutinas' %}" class="btn btn-secondary">Limpiar</a>
-        </form>
-        
-        <div class="estadisticas">
-            <p><strong>Mostrando {{ total_rutinas }} rutinas</strong></p>
-            {% if estadisticas.total > 0 %}
-            <p>Duración promedio: {{ estadisticas.duracion_promedio }} min | Días promedio: {{ estadisticas.dias_promedio }}</p>
-            {% endif %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-3xl mx-auto">
+            <h1 class="text-4xl md:text-5xl font-bold text-charcoal-black mb-4">
+                Catálogo de <span class="bg-gradient-to-r from-primary-emerald to-deep-forest bg-clip-text text-transparent">Rutinas</span>
+            </h1>
+            <p class="text-xl text-slate-gray">Explora todas las rutinas disponibles y encuentra la perfecta para ti</p>
         </div>
     </div>
 </section>
 
-<section class="catalogo-grid-section">
-    <div class="container">
-        <div class="rutinas-grid">
-            {% for rutina in rutinas %}
-            <div class="rutina-card">
-                <div class="rutina-card-header">
-                    <h3>{{ rutina.nombre }}</h3>
-                    <div class="badges">
-                        <span class="badge badge-{{ rutina.nivel }}">{{ rutina.nivel|title }}</span>
-                        <span class="badge badge-{{ rutina.intensidad }}">{{ rutina.intensidad|title }}</span>
+<!-- Filtros y Estadísticas -->
+<section class="py-8 bg-white border-b border-green-100">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Filtros -->
+            <form method="GET" class="bg-mint-cream rounded-xl p-6 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label for="nivel" class="block text-sm font-semibold text-charcoal-black mb-2">
+                            Nivel
+                        </label>
+                        <select id="nivel" name="nivel" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                            <option value="">Todos los niveles</option>
+                            <option value="principiante" {% if nivel_filtro == 'principiante' %}selected{% endif %}>Principiante</option>
+                            <option value="intermedio" {% if nivel_filtro == 'intermedio' %}selected{% endif %}>Intermedio</option>
+                            <option value="avanzado" {% if nivel_filtro == 'avanzado' %}selected{% endif %}>Avanzado</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="objetivo" class="block text-sm font-semibold text-charcoal-black mb-2">
+                            Objetivo
+                        </label>
+                        <select id="objetivo" name="objetivo" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                            <option value="">Todos los objetivos</option>
+                            <option value="peso" {% if objetivo_filtro == 'peso' %}selected{% endif %}>Pérdida de Peso</option>
+                            <option value="musculacion" {% if objetivo_filtro == 'musculacion' %}selected{% endif %}>Ganancia Muscular</option>
+                            <option value="mantenimiento" {% if objetivo_filtro == 'mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
+                            Aplicar Filtros
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <a href="{% url 'recommender:rutinas' %}" class="block w-full bg-gray-200 hover:bg-gray-300 text-charcoal-black font-semibold py-3 px-6 rounded-lg text-center transition-all">
+                            Limpiar
+                        </a>
                     </div>
                 </div>
-                
-                <p class="rutina-card-desc">{{ rutina.descripcion|truncatewords:25 }}</p>
-                
-                <div class="rutina-card-info">
-                    <div class="info-item">
-                        <span class="info-icon">📅</span>
-                        <span>{{ rutina.dias_semana }} días/sem</span>
+            </form>
+            
+            <!-- Estadísticas -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-white rounded-xl p-4 border border-green-100">
+                <div>
+                    <p class="text-charcoal-black font-semibold">
+                        Mostrando <span class="text-primary-emerald text-xl">{{ total_rutinas }}</span> rutinas
+                    </p>
+                </div>
+                {% if estadisticas.total > 0 %}
+                <div class="flex flex-wrap gap-6 text-sm text-slate-gray">
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Duración promedio: <strong class="text-charcoal-black">{{ estadisticas.duracion_promedio }}</strong> min</span>
                     </div>
-                    <div class="info-item">
-                        <span class="info-icon">⏱️</span>
-                        <span>{{ rutina.duracion_minutos }} min</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">🎯</span>
-                        <span>{{ rutina.objetivo|title }}</span>
+                    <div class="flex items-center space-x-2">
+                        <svg class="w-5 h-5 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span>Días promedio: <strong class="text-charcoal-black">{{ estadisticas.dias_promedio }}</strong></span>
                     </div>
                 </div>
-                
-                <div class="rutina-card-ejercicios">
-                    <p><strong>Ejercicios:</strong></p>
-                    <ul>
-                        {% for ejercicio in rutina.ejercicios|slice:":3" %}
-                        <li>{{ ejercicio|truncatewords:5 }}</li>
-                        {% endfor %}
-                        {% if rutina.ejercicios|length > 3 %}
-                        <li>+ {{ rutina.ejercicios|length|add:"-3" }} más...</li>
-                        {% endif %}
-                    </ul>
-                </div>
+                {% endif %}
             </div>
-            {% empty %}
-            <div class="no-resultados">
-                <p>No se encontraron rutinas con los filtros seleccionados.</p>
-                <a href="{% url 'recommender:rutinas' %}" class="btn btn-primary">Ver todas</a>
+        </div>
+    </div>
+</section>
+
+<!-- Grid de Rutinas -->
+<section class="py-12 bg-mint-cream">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        {% if rutinas %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for rutina in rutinas %}
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden hover:shadow-xl transition-all transform hover:-translate-y-1">
+                <!-- Header de la Card -->
+                <div class="bg-gradient-to-r from-primary-emerald to-deep-forest px-6 py-4">
+                    <div class="flex items-start justify-between mb-2">
+                        <h3 class="text-xl font-bold text-white pr-2">{{ rutina.nombre }}</h3>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            {{ rutina.nivel|title }}
+                        </span>
+                        <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            {{ rutina.intensidad|title }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Contenido -->
+                <div class="p-6">
+                    <p class="text-slate-gray mb-6 line-clamp-3">{{ rutina.descripcion }}</p>
+                    
+                    <!-- Información -->
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="text-center bg-mint-cream rounded-lg p-3">
+                            <svg class="w-6 h-6 text-primary-emerald mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <p class="text-xs text-slate-gray mb-1">Días</p>
+                            <p class="font-bold text-charcoal-black">{{ rutina.dias_semana }}/sem</p>
+                        </div>
+                        
+                        <div class="text-center bg-mint-cream rounded-lg p-3">
+                            <svg class="w-6 h-6 text-primary-emerald mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-xs text-slate-gray mb-1">Duración</p>
+                            <p class="font-bold text-charcoal-black">{{ rutina.duracion_minutos }} min</p>
+                        </div>
+                        
+                        <div class="text-center bg-mint-cream rounded-lg p-3">
+                            <svg class="w-6 h-6 text-primary-emerald mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <p class="text-xs text-slate-gray mb-1">Objetivo</p>
+                            <p class="font-bold text-charcoal-black text-xs">{{ rutina.objetivo|title }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Ejercicios -->
+                    <div class="border-t border-green-100 pt-4">
+                        <p class="text-sm font-semibold text-charcoal-black mb-2">Ejercicios principales:</p>
+                        <ul class="space-y-1">
+                            {% if rutina.ejercicios %}
+                                {% for ejercicio in rutina.ejercicios|slice:":3" %}
+                                <li class="text-sm text-slate-gray flex items-start">
+                                    <svg class="w-4 h-4 text-primary-emerald mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>{{ ejercicio }}</span>
+                                </li>
+                                {% endfor %}
+                                {% if rutina.ejercicios|length > 3 %}
+                                <li class="text-sm text-primary-emerald font-semibold">
+                                    + {{ rutina.ejercicios|length|add:"-3" }} ejercicio{{ rutina.ejercicios|length|add:"-3"|pluralize }} más
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="text-sm text-slate-gray italic">Ejercicios detallados en la recomendación personalizada</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <!-- Sin resultados -->
+        <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg border border-green-100 p-12 text-center">
+            <div class="w-24 h-24 bg-mint-cream rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-12 h-12 text-slate-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-charcoal-black mb-2">No se encontraron rutinas</h3>
+            <p class="text-slate-gray mb-6">Intenta ajustar los filtros o ver todas las rutinas disponibles</p>
+            <a href="{% url 'recommender:rutinas' %}" class="inline-block bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                Ver Todas las Rutinas
+            </a>
+        </div>
+        {% endif %}
     </div>
 </section>
 
-<section class="cta-section">
-    <div class="container">
-        <h2>¿Necesitas una recomendación personalizada?</h2>
-        <p>Completa nuestro formulario y obtén la rutina perfecta para ti</p>
-        <a href="{% url 'recommender:index' %}" class="btn btn-primary btn-large">Obtener Recomendación</a>
+<!-- CTA Section -->
+<section class="py-16 bg-gradient-to-r from-primary-emerald to-deep-forest">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                ¿Necesitas una recomendación personalizada?
+            </h2>
+            <p class="text-green-50 text-lg mb-8">
+                Completa nuestro formulario y obtén la rutina perfecta para ti basada en tu perfil médico y objetivos
+            </p>
+            <a href="{% url 'recommender:index' %}" 
+               class="inline-block bg-white text-primary-emerald font-semibold px-8 py-4 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all">
+                Obtener Recomendación Personalizada
+            </a>
+        </div>
     </div>
 </section>
 {% endblock %}

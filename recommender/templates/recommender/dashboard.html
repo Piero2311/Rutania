@@ -1,177 +1,221 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Dashboard - SportRoutineAI{% endblock %}
+{% block title %}Dashboard - Rutania{% endblock %}
 
 {% block content %}
-<h1 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard Personal</h1>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-charcoal-black mb-2">
+            Dashboard Personal
+        </h1>
+        <p class="text-slate-gray">Bienvenido de vuelta, {{ usuario.username }}</p>
+    </div>
 
-<!-- Información del Usuario -->
-<div class="row mb-4">
-    <div class="col-md-4">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-                <i class="bi bi-person-circle display-4 text-primary"></i>
-                <h5 class="card-title mt-2">{{ usuario.username }}</h5>
-                <p class="text-muted">{{ usuario.email }}</p>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Usuario Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
+            <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-xl flex items-center justify-center">
+                    <span class="text-2xl font-bold text-white">{{ usuario.username|first|upper }}</span>
+                </div>
+                <div>
+                    <p class="text-slate-gray text-sm">Usuario</p>
+                    <p class="text-charcoal-black font-semibold text-lg">{{ usuario.username }}</p>
+                    <p class="text-slate-gray text-sm">{{ usuario.email }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- IMC Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-slate-gray text-sm mb-1">Índice de Masa Corporal</p>
+                    {% if perfil_medico.imc %}
+                    <p class="text-3xl font-bold text-primary-emerald">{{ perfil_medico.imc|floatformat:1 }}</p>
+                    <p class="text-slate-gray text-sm mt-1">{{ perfil_medico.clasificacion_imc|title }}</p>
+                    {% else %}
+                    <p class="text-slate-gray">No disponible</p>
+                    {% endif %}
+                </div>
+                <div class="w-12 h-12 bg-mint-cream rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progreso Card -->
+        <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-slate-gray text-sm mb-1">Progreso</p>
+                    {% if progreso.total_seguimientos > 0 %}
+                    <p class="text-3xl font-bold text-accent-teal">{{ progreso.promedio_imc|floatformat:1 }}</p>
+                    <p class="text-slate-gray text-sm mt-1">{{ progreso.total_seguimientos }} seguimientos</p>
+                    {% else %}
+                    <p class="text-slate-gray">Sin seguimientos</p>
+                    {% endif %}
+                </div>
+                <div class="w-12 h-12 bg-mint-cream rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-accent-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-4">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-                <i class="bi bi-heart-pulse display-4 text-danger"></i>
-                <h5 class="card-title mt-2">IMC</h5>
-                {% if perfil_medico.imc %}
-                <h3>{{ perfil_medico.imc|floatformat:1 }}</h3>
-                <small class="text-muted">{{ perfil_medico.clasificacion_imc|title }}</small>
-                {% else %}
-                <p class="text-muted">No disponible</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card text-center shadow-sm">
-            <div class="card-body">
-                <i class="bi bi-graph-up display-4 text-success"></i>
-                <h5 class="card-title mt-2">Progreso</h5>
-                {% if progreso.total_seguimientos > 0 %}
-                <h3>{{ progreso.promedio_imc|floatformat:1 }}</h3>
-                <small class="text-muted">{{ progreso.total_seguimientos }} seguimientos</small>
-                {% else %}
-                <p class="text-muted">Sin seguimientos</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Recomendación Actual -->
-<div class="card shadow mb-4">
-    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-        <h4 class="mb-0"><i class="bi bi-star-fill"></i> Recomendación Actual</h4>
-        <a href="{% url 'recommender:generar_recomendacion' %}" class="btn btn-light btn-sm">
-            <i class="bi bi-arrow-clockwise"></i> Generar Nueva
-        </a>
-    </div>
-    <div class="card-body">
-        {% if recomendacion_actual %}
-        <div class="row">
-            <div class="col-md-8">
-                <h5>{{ recomendacion_actual.rutina_recomendada.nombre }}</h5>
-                <p class="text-muted">{{ recomendacion_actual.rutina_recomendada.descripcion }}</p>
-                
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <strong>Nivel:</strong> {{ recomendacion_actual.rutina_recomendada.nivel|title }}
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Intensidad:</strong> {{ recomendacion_actual.rutina_recomendada.intensidad|title }}
-                    </div>
-                    <div class="col-md-4">
-                        <strong>Días:</strong> {{ recomendacion_actual.rutina_recomendada.dias_semana }}/semana
-                    </div>
-                </div>
-                
-                <div class="alert alert-info">
-                    <strong><i class="bi bi-info-circle"></i> Explicación Médica:</strong>
-                    <p class="mb-0">{{ recomendacion_actual.explicacion_medica }}</p>
-                </div>
-                
-                {% if recomendacion_actual.precauciones %}
-                <div class="alert alert-warning">
-                    <strong><i class="bi bi-exclamation-triangle"></i> Precauciones:</strong>
-                    <p class="mb-0">{{ recomendacion_actual.precauciones }}</p>
-                </div>
-                {% endif %}
-            </div>
-            <div class="col-md-4">
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <h6>Score de Confianza</h6>
-                        <h2 class="text-primary">{{ recomendacion_actual.score_confianza|floatformat:1 }}%</h2>
-                        <small class="text-muted">Fecha: {{ recomendacion_actual.fecha_recomendacion|date:"d/m/Y" }}</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="text-center py-4">
-            <i class="bi bi-inbox display-1 text-muted"></i>
-            <p class="text-muted mt-3">No tienes recomendaciones aún.</p>
-            <a href="{% url 'recommender:generar_recomendacion' %}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Generar Primera Recomendación
+    <!-- Recomendación Actual -->
+    <div class="bg-white rounded-xl shadow-lg border border-green-100 mb-8 overflow-hidden">
+        <div class="bg-gradient-to-r from-primary-emerald to-deep-forest px-6 py-4 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-white flex items-center space-x-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                </svg>
+                <span>Recomendación Actual</span>
+            </h2>
+            <a href="{% url 'recommender:generar_recomendacion' %}" 
+               class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-all flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>Generar Nueva</span>
             </a>
         </div>
-        {% endif %}
+        
+        <div class="p-6">
+            {% if recomendacion_actual %}
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2">
+                    <h3 class="text-2xl font-bold text-charcoal-black mb-3">{{ recomendacion_actual.rutina_recomendada.nombre }}</h3>
+                    <p class="text-slate-gray mb-6">{{ recomendacion_actual.rutina_recomendada.descripcion }}</p>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="bg-mint-cream rounded-lg p-4">
+                            <p class="text-slate-gray text-sm mb-1">Nivel</p>
+                            <p class="font-semibold text-charcoal-black">{{ recomendacion_actual.rutina_recomendada.nivel|title }}</p>
+                        </div>
+                        <div class="bg-mint-cream rounded-lg p-4">
+                            <p class="text-slate-gray text-sm mb-1">Intensidad</p>
+                            <p class="font-semibold text-charcoal-black">{{ recomendacion_actual.rutina_recomendada.intensidad|title }}</p>
+                        </div>
+                        <div class="bg-mint-cream rounded-lg p-4">
+                            <p class="text-slate-gray text-sm mb-1">Días</p>
+                            <p class="font-semibold text-charcoal-black">{{ recomendacion_actual.rutina_recomendada.dias_semana }}/semana</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-4">
+                        <p class="font-semibold text-blue-900 mb-2">Explicación Médica:</p>
+                        <p class="text-blue-800">{{ recomendacion_actual.explicacion_medica }}</p>
+                    </div>
+                    
+                    {% if recomendacion_actual.precauciones %}
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+                        <p class="font-semibold text-yellow-900 mb-2">Precauciones:</p>
+                        <p class="text-yellow-800">{{ recomendacion_actual.precauciones }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="lg:col-span-1">
+                    <div class="bg-gradient-to-br from-mint-cream to-white rounded-xl p-6 border border-green-100">
+                        <p class="text-slate-gray text-sm mb-2">Score de Confianza</p>
+                        <p class="text-5xl font-bold text-primary-emerald mb-4">{{ recomendacion_actual.score_confianza|floatformat:1 }}%</p>
+                        <p class="text-slate-gray text-sm">Fecha: {{ recomendacion_actual.fecha_recomendacion|date:"d/m/Y" }}</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <div class="w-24 h-24 bg-mint-cream rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-12 h-12 text-slate-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                    </svg>
+                </div>
+                <p class="text-slate-gray text-lg mb-4">No tienes recomendaciones aún</p>
+                <a href="{% url 'recommender:generar_recomendacion' %}" 
+                   class="inline-block bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+                    Generar Primera Recomendación
+                </a>
+            </div>
+            {% endif %}
+        </div>
     </div>
-</div>
 
-<!-- Acciones Rápidas -->
-<div class="row mb-4">
-    <div class="col-md-4 mb-3">
-        <div class="card shadow-sm h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-person-gear display-4 text-primary"></i>
-                <h5 class="card-title mt-3">Mi Perfil</h5>
-                <p class="card-text">Actualiza tu información personal y médica</p>
-                <a href="{% url 'recommender:perfil' %}" class="btn btn-primary">Ver Perfil</a>
+    <!-- Acciones Rápidas -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <a href="{% url 'recommender:perfil' %}" class="bg-white rounded-xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-charcoal-black mb-2">Mi Perfil</h3>
+                <p class="text-slate-gray text-sm">Actualiza tu información personal y médica</p>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4 mb-3">
-        <div class="card shadow-sm h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-clipboard-data display-4 text-success"></i>
-                <h5 class="card-title mt-3">Registrar Seguimiento</h5>
-                <p class="card-text">Registra tu progreso y peso actual</p>
-                <a href="{% url 'recommender:seguimiento' %}" class="btn btn-success">Registrar</a>
+        </a>
+        
+        <a href="{% url 'recommender:seguimiento' %}" class="bg-white rounded-xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-accent-teal to-primary-emerald rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-charcoal-black mb-2">Registrar Seguimiento</h3>
+                <p class="text-slate-gray text-sm">Registra tu progreso y peso actual</p>
             </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4 mb-3">
-        <div class="card shadow-sm h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-clock-history display-4 text-info"></i>
-                <h5 class="card-title mt-3">Historial</h5>
-                <p class="card-text">Ver todas tus recomendaciones anteriores</p>
-                <a href="{% url 'recommender:historial_recomendaciones' %}" class="btn btn-info">Ver Historial</a>
+        </a>
+        
+        <a href="{% url 'recommender:historial_recomendaciones' %}" class="bg-white rounded-xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all transform hover:-translate-y-1">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-gradient-to-br from-gold-accents to-primary-emerald rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-semibold text-charcoal-black mb-2">Historial</h3>
+                <p class="text-slate-gray text-sm">Ver todas tus recomendaciones anteriores</p>
             </div>
-        </div>
+        </a>
     </div>
-</div>
 
-<!-- Seguimientos Recientes -->
-{% if seguimientos_recientes %}
-<div class="card shadow">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Seguimientos Recientes</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
+    <!-- Seguimientos Recientes -->
+    {% if seguimientos_recientes %}
+    <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
+        <div class="px-6 py-4 border-b border-green-100">
+            <h3 class="text-xl font-bold text-charcoal-black">Seguimientos Recientes</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-mint-cream">
                     <tr>
-                        <th>Fecha</th>
-                        <th>Peso (kg)</th>
-                        <th>IMC</th>
-                        <th>Satisfacción</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Fecha</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Peso (kg)</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">IMC</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-charcoal-black uppercase">Satisfacción</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-green-100">
                     {% for seguimiento in seguimientos_recientes %}
-                    <tr>
-                        <td>{{ seguimiento.fecha|date:"d/m/Y" }}</td>
-                        <td>{{ seguimiento.peso_actual|floatformat:1 }}</td>
-                        <td>{{ seguimiento.imc_actual|floatformat:1 }}</td>
-                        <td>
-                            {% for i in "12345"|make_list %}
-                            <i class="bi bi-star{% if forloop.counter <= seguimiento.satisfaccion %}-fill{% endif %} text-warning"></i>
-                            {% endfor %}
+                    <tr class="hover:bg-mint-cream transition-colors">
+                        <td class="px-6 py-4 text-slate-gray">{{ seguimiento.fecha|date:"d/m/Y" }}</td>
+                        <td class="px-6 py-4 font-semibold text-charcoal-black">{{ seguimiento.peso_actual|floatformat:1 }}</td>
+                        <td class="px-6 py-4 text-charcoal-black">{{ seguimiento.imc_actual|floatformat:1 }}</td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-1">
+                                {% for i in "12345"|make_list %}
+                                <svg class="w-5 h-5 {% if forloop.counter <= seguimiento.satisfaccion %}text-gold-accents{% else %}text-gray-300{% endif %}" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                </svg>
+                                {% endfor %}
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
@@ -179,7 +223,6 @@
             </table>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}
-

@@ -1,64 +1,80 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Historial de Recomendaciones - SportRoutineAI{% endblock %}
+{% block title %}Historial de Recomendaciones - Rutania{% endblock %}
 
 {% block content %}
-<h1 class="mb-4"><i class="bi bi-clock-history"></i> Historial de Recomendaciones</h1>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-4xl font-bold text-charcoal-black mb-8">Historial de Recomendaciones</h1>
 
-{% if recomendaciones %}
-<div class="row">
-    {% for recomendacion in recomendaciones %}
-    <div class="col-md-6 mb-4">
-        <div class="card shadow h-100 {% if recomendacion.vigente %}border-primary{% endif %}">
-            <div class="card-header {% if recomendacion.vigente %}bg-primary text-white{% else %}bg-light{% endif %}">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">{{ recomendacion.rutina_recomendada.nombre }}</h5>
+    {% if recomendaciones %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for recomendacion in recomendaciones %}
+        <div class="bg-white rounded-xl shadow-lg border-2 {% if recomendacion.vigente %}border-primary-emerald{% else %}border-green-100{% endif %} overflow-hidden hover:shadow-xl transition-all">
+            <div class="{% if recomendacion.vigente %}bg-gradient-to-r from-primary-emerald to-deep-forest{% else %}bg-gray-100{% endif %} px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-bold {% if recomendacion.vigente %}text-white{% else %}text-charcoal-black{% endif %}">
+                        {{ recomendacion.rutina_recomendada.nombre }}
+                    </h3>
                     {% if recomendacion.vigente %}
-                    <span class="badge bg-light text-primary">Vigente</span>
+                    <span class="bg-white/20 text-white px-3 py-1 rounded-full text-sm font-semibold">Vigente</span>
                     {% endif %}
                 </div>
             </div>
-            <div class="card-body">
-                <p class="text-muted small">Fecha: {{ recomendacion.fecha_recomendacion|date:"d/m/Y H:i" }}</p>
+            
+            <div class="p-6">
+                <p class="text-slate-gray text-sm mb-4">Fecha: {{ recomendacion.fecha_recomendacion|date:"d/m/Y H:i" }}</p>
                 
-                <div class="mb-3">
-                    <strong>Nivel:</strong> {{ recomendacion.rutina_recomendada.nivel|title }}<br>
-                    <strong>Intensidad:</strong> {{ recomendacion.rutina_recomendada.intensidad|title }}<br>
-                    <strong>Días:</strong> {{ recomendacion.rutina_recomendada.dias_semana }}/semana<br>
-                    <strong>Score:</strong> {{ recomendacion.score_confianza|floatformat:1 }}%
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div class="bg-mint-cream rounded-lg p-3">
+                        <p class="text-slate-gray text-xs mb-1">Nivel</p>
+                        <p class="font-semibold text-charcoal-black">{{ recomendacion.rutina_recomendada.nivel|title }}</p>
+                    </div>
+                    <div class="bg-mint-cream rounded-lg p-3">
+                        <p class="text-slate-gray text-xs mb-1">Intensidad</p>
+                        <p class="font-semibold text-charcoal-black">{{ recomendacion.rutina_recomendada.intensidad|title }}</p>
+                    </div>
+                    <div class="bg-mint-cream rounded-lg p-3">
+                        <p class="text-slate-gray text-xs mb-1">Días</p>
+                        <p class="font-semibold text-charcoal-black">{{ recomendacion.rutina_recomendada.dias_semana }}/semana</p>
+                    </div>
+                    <div class="bg-mint-cream rounded-lg p-3">
+                        <p class="text-slate-gray text-xs mb-1">Score</p>
+                        <p class="font-semibold text-primary-emerald">{{ recomendacion.score_confianza|floatformat:1 }}%</p>
+                    </div>
                 </div>
                 
-                <div class="alert alert-info mb-3">
-                    <strong><i class="bi bi-info-circle"></i> Explicación:</strong>
-                    <p class="mb-0 small">{{ recomendacion.explicacion_medica|truncatewords:30 }}</p>
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-4">
+                    <p class="font-semibold text-blue-900 text-sm mb-1">Explicación:</p>
+                    <p class="text-blue-800 text-sm">{{ recomendacion.explicacion_medica|truncatewords:30 }}</p>
                 </div>
                 
                 {% if recomendacion.precauciones %}
-                <div class="alert alert-warning mb-3">
-                    <strong><i class="bi bi-exclamation-triangle"></i> Precauciones:</strong>
-                    <p class="mb-0 small">{{ recomendacion.precauciones|truncatewords:20 }}</p>
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg mb-4">
+                    <p class="font-semibold text-yellow-900 text-sm mb-1">Precauciones:</p>
+                    <p class="text-yellow-800 text-sm">{{ recomendacion.precauciones|truncatewords:20 }}</p>
                 </div>
                 {% endif %}
                 
-                <a href="{% url 'recommender:dashboard' %}" class="btn btn-sm btn-outline-primary">
+                <a href="{% url 'recommender:dashboard' %}" class="inline-block w-full text-center bg-mint-cream hover:bg-primary-emerald hover:text-white text-charcoal-black font-semibold py-2 px-4 rounded-lg transition-all">
                     Ver Detalles
                 </a>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<div class="card shadow">
-    <div class="card-body text-center py-5">
-        <i class="bi bi-inbox display-1 text-muted"></i>
-        <h4 class="mt-3">No hay recomendaciones aún</h4>
-        <p class="text-muted">Genera tu primera recomendación desde el dashboard.</p>
-        <a href="{% url 'recommender:dashboard' %}" class="btn btn-primary">
-            <i class="bi bi-arrow-left"></i> Volver al Dashboard
+    {% else %}
+    <div class="bg-white rounded-xl shadow-lg border border-green-100 p-12 text-center">
+        <div class="w-24 h-24 bg-mint-cream rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-12 h-12 text-slate-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            </svg>
+        </div>
+        <h3 class="text-2xl font-bold text-charcoal-black mb-2">No hay recomendaciones aún</h3>
+        <p class="text-slate-gray mb-6">Genera tu primera recomendación desde el dashboard.</p>
+        <a href="{% url 'recommender:dashboard' %}" class="inline-block bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold px-6 py-3 rounded-lg hover:shadow-lg transform hover:scale-105 transition-all">
+            Volver al Dashboard
         </a>
     </div>
+    {% endif %}
 </div>
-{% endif %}
 {% endblock %}
-

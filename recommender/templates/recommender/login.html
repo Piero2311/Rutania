@@ -1,40 +1,66 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Iniciar Sesión - SportRoutineAI{% endblock %}
+{% block title %}Iniciar Sesión - Rutania{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
-        <div class="card shadow">
-            <div class="card-header bg-primary text-white">
-                <h3 class="mb-0"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</h3>
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-emerald-50">
+    <div class="max-w-md w-full space-y-8">
+        <!-- Header -->
+        <div class="text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-2xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Nombre de usuario</label>
-                        <input type="text" class="form-control" id="username" name="username" required autofocus>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
-                        </button>
-                        <a href="{% url 'recommender:registro' %}" class="btn btn-outline-secondary">
-                            ¿No tienes cuenta? Regístrate
-                        </a>
-                    </div>
-                </form>
+            <h2 class="text-3xl font-bold text-charcoal-black">Iniciar Sesión</h2>
+            <p class="mt-2 text-slate-gray">Bienvenido de vuelta a Rutania</p>
+        </div>
+        
+        <!-- Formulario -->
+        <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-8">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label for="username" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Nombre de usuario
+                    </label>
+                    <input type="text" 
+                           id="username" 
+                           name="username" 
+                           required 
+                           autofocus
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                </div>
+                
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Contraseña
+                    </label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           required
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all">
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all duration-200">
+                    Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-slate-gray">
+                    ¿No tienes cuenta?
+                    <a href="{% url 'recommender:registro' %}" class="text-primary-emerald font-semibold hover:text-deep-forest transition-colors">
+                        Regístrate aquí
+                    </a>
+                </p>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
-

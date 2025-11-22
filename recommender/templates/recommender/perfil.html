@@ -1,71 +1,117 @@
 {% extends 'recommender/base.html' %}
-{% load crispy_forms_tags %}
 
-{% block title %}Mi Perfil - SportRoutineAI{% endblock %}
+{% block title %}Mi Perfil - Rutania{% endblock %}
 
 {% block content %}
-<h1 class="mb-4"><i class="bi bi-person-gear"></i> Mi Perfil</h1>
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-4xl font-bold text-charcoal-black mb-8">Mi Perfil</h1>
 
-<div class="row">
-    <div class="col-md-8">
-        <div class="card shadow mb-4">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-person"></i> Información Personal</h4>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Formularios -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Información Personal -->
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-emerald to-deep-forest px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Información Personal</h2>
+                </div>
+                <div class="p-6">
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        {% for field in formulario_usuario %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="w-full bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
+                            Guardar Cambios
+                        </button>
+                    </form>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ formulario_usuario|crispy }}
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-save"></i> Guardar Cambios
-                    </button>
-                </form>
+            
+            <!-- Perfil Médico -->
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-accent-teal to-primary-emerald px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Perfil Médico</h2>
+                </div>
+                <div class="p-6">
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        {% for field in formulario_medico %}
+                        <div>
+                            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ field.label }}
+                            </label>
+                            {{ field }}
+                            {% if field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        <button type="submit" class="w-full bg-gradient-to-r from-accent-teal to-primary-emerald text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
+                            Guardar Cambios Médicos
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
         
-        <div class="card shadow">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0"><i class="bi bi-heart-pulse"></i> Perfil Médico</h4>
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Resumen -->
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
+                <h3 class="text-lg font-bold text-charcoal-black mb-4">Resumen</h3>
+                <div class="space-y-3 text-sm">
+                    <div>
+                        <p class="text-slate-gray">Usuario</p>
+                        <p class="font-semibold text-charcoal-black">{{ usuario.username }}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-gray">Email</p>
+                        <p class="font-semibold text-charcoal-black">{{ usuario.email }}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-gray">Edad</p>
+                        <p class="font-semibold text-charcoal-black">
+                            {% if usuario.fecha_nacimiento %}{{ usuario.calcular_edad }} años{% else %}No especificada{% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-slate-gray">Altura</p>
+                        <p class="font-semibold text-charcoal-black">
+                            {% if usuario.altura %}{{ usuario.altura }} cm{% else %}No especificada{% endif %}
+                        </p>
+                    </div>
+                    <div>
+                        <p class="text-slate-gray">Peso</p>
+                        <p class="font-semibold text-charcoal-black">
+                            {% if usuario.peso %}{{ usuario.peso }} kg{% else %}No especificado{% endif %}
+                        </p>
+                    </div>
+                    {% if perfil_medico.imc %}
+                    <hr class="border-green-100">
+                    <div>
+                        <p class="text-slate-gray">IMC</p>
+                        <p class="font-semibold text-primary-emerald text-lg">{{ perfil_medico.imc|floatformat:1 }}</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-gray">Clasificación</p>
+                        <p class="font-semibold text-charcoal-black">{{ perfil_medico.clasificacion_imc|title }}</p>
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="card-body">
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ formulario_medico|crispy }}
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-save"></i> Guardar Cambios Médicos
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Resumen</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>Usuario:</strong> {{ usuario.username }}</p>
-                <p><strong>Email:</strong> {{ usuario.email }}</p>
-                <p><strong>Edad:</strong> {% if usuario.fecha_nacimiento %}{{ usuario.calcular_edad }} años{% else %}No especificada{% endif %}</p>
-                <p><strong>Altura:</strong> {% if usuario.altura %}{{ usuario.altura }} cm{% else %}No especificada{% endif %}</p>
-                <p><strong>Peso:</strong> {% if usuario.peso %}{{ usuario.peso }} kg{% else %}No especificado{% endif %}</p>
-                {% if perfil_medico.imc %}
-                <hr>
-                <p><strong>IMC:</strong> {{ perfil_medico.imc|floatformat:1 }}</p>
-                <p><strong>Clasificación:</strong> {{ perfil_medico.clasificacion_imc|title }}</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="card shadow mt-3">
-            <div class="card-body">
-                <a href="{% url 'recommender:dashboard' %}" class="btn btn-outline-primary w-100">
-                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
-                </a>
-            </div>
+            
+            <a href="{% url 'recommender:dashboard' %}" class="block w-full bg-mint-cream hover:bg-primary-emerald hover:text-white text-center font-semibold py-3 px-6 rounded-lg transition-all">
+                Volver al Dashboard
+            </a>
         </div>
     </div>
 </div>
 {% endblock %}
-

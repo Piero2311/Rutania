@@ -13,7 +13,8 @@ try:
     PROLOG_AVAILABLE = True
 except ImportError:
     PROLOG_AVAILABLE = False
-    logger.warning("pyswip no disponible. Usando motor lógico alternativo.")
+    # Nota: pyswip requiere SWI-Prolog instalado. El motor alternativo funciona perfectamente.
+    logger.info("Motor Prolog: Usando implementación Python pura (pyswip no disponible).")
 
 
 class MotorProlog:

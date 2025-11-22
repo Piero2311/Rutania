@@ -234,7 +234,7 @@ def registro(request: HttpRequest) -> HttpResponse:
             with transaction.atomic():
                 usuario = formulario.save()
                 # El formulario ya crea el perfil médico
-                messages.success(request, '¡Registro exitoso! Bienvenido a SportRoutineAI.')
+                messages.success(request, '¡Registro exitoso! Bienvenido a Rutania.')
                 login(request, usuario)
                 return redirect('dashboard')
         else:

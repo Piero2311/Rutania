@@ -1,173 +1,299 @@
 {% extends 'recommender/base.html' %}
 
-{% block title %}Acerca del Proyecto{% endblock %}
+{% block title %}Acerca de - Rutania{% endblock %}
 
 {% block content %}
-<section class="acerca-hero">
-    <div class="container">
-        <h1>Acerca del Proyecto</h1>
-        <p>Sistema de Recomendación Multiparadigma</p>
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-20">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-bold text-charcoal-black mb-6">
+                Acerca de <span class="bg-gradient-to-r from-primary-emerald to-deep-forest bg-clip-text text-transparent">Rutania</span>
+            </h1>
+            <p class="text-xl text-slate-gray">
+                Sistema de Recomendación Multiparadigma
+            </p>
+        </div>
     </div>
 </section>
 
-<section class="acerca-contenido">
-    <div class="container">
-        <div class="acerca-card">
-            <h2>¿Qué es FitRecommender?</h2>
-            <p>FitRecommender es un sistema inteligente de recomendación de rutinas deportivas que utiliza tres paradigmas de programación diferentes para proporcionar recomendaciones personalizadas, seguras y efectivas.</p>
-            <p>El sistema analiza tus características físicas (edad, peso, altura, IMC) junto con tus preferencias (días disponibles, objetivos) para encontrar la rutina deportiva más adecuada entre más de 10 opciones diferentes.</p>
+<!-- Contenido Principal -->
+<section class="py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Qué es Rutania -->
+        <div class="max-w-4xl mx-auto mb-16">
+            <div class="bg-white rounded-2xl shadow-lg border border-green-100 p-8 md:p-12">
+                <h2 class="text-3xl font-bold text-charcoal-black mb-6">¿Qué es Rutania?</h2>
+                <p class="text-slate-gray text-lg mb-4">
+                    <strong class="text-primary-emerald">Rutania</strong> es un sistema inteligente de recomendación de rutinas deportivas que utiliza tres paradigmas de programación diferentes para proporcionar recomendaciones personalizadas, seguras y efectivas.
+                </p>
+                <p class="text-slate-gray text-lg">
+                    El sistema analiza tus características físicas (edad, peso, altura, IMC) junto con tus preferencias (días disponibles, objetivos) para encontrar la rutina deportiva más adecuada entre múltiples opciones diferentes.
+                </p>
+            </div>
         </div>
 
-        <div class="paradigmas-section">
-            <h2>Implementación Multiparadigma</h2>
-            <p>Este proyecto demuestra la integración de tres paradigmas de programación diferentes trabajando en conjunto:</p>
+        <!-- Paradigmas -->
+        <div class="max-w-6xl mx-auto mb-16">
+            <h2 class="text-3xl font-bold text-charcoal-black text-center mb-12">Implementación Multiparadigma</h2>
             
-            <div class="paradigma-card">
-                <h3>1. Paradigma Imperativo 🎮</h3>
-                <div class="paradigma-detalle">
-                    <p><strong>Implementado en:</strong> <code>views.py</code></p>
-                    <p><strong>Función:</strong> Control de flujo y coordinación del sistema</p>
-                    <p><strong>Características:</strong></p>
-                    <ul>
-                        <li>Flujo de control secuencial y estructurado</li>
-                        <li>Gestión de requests HTTP y responses</li>
-                        <li>Validación imperativa de datos del formulario</li>
-                        <li>Coordinación entre los diferentes módulos</li>
-                        <li>Manejo de estado y excepciones</li>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Paradigma Imperativo -->
+                <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-charcoal-black mb-3">Paradigma Imperativo</h3>
+                    <p class="text-slate-gray text-sm mb-4"><strong>Implementado en:</strong> <code class="bg-mint-cream px-2 py-1 rounded">views.py</code></p>
+                    <p class="text-slate-gray mb-4">Control de flujo y coordinación del sistema</p>
+                    <ul class="space-y-2 text-sm text-slate-gray">
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Flujo de control secuencial
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Gestión de requests HTTP
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Validación de datos
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Coordinación entre módulos
+                        </li>
                     </ul>
-                    <p class="codigo-ejemplo"><strong>Ejemplo de flujo imperativo:</strong></p>
-                    <pre>1. Recibir datos del formulario
-2. Validar entrada (edad, peso, altura, etc.)
-3. Llamar al procesador funcional
-4. Ejecutar motor de reglas lógicas
-5. Seleccionar mejor resultado
-6. Renderizar respuesta</pre>
+                </div>
+
+                <!-- Paradigma Funcional -->
+                <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all">
+                    <div class="w-16 h-16 bg-gradient-to-br from-accent-teal to-primary-emerald rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-charcoal-black mb-3">Paradigma Funcional</h3>
+                    <p class="text-slate-gray text-sm mb-4"><strong>Implementado en:</strong> <code class="bg-mint-cream px-2 py-1 rounded">processor.py</code></p>
+                    <p class="text-slate-gray mb-4">Procesamiento de datos y transformaciones</p>
+                    <ul class="space-y-2 text-sm text-slate-gray">
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Funciones puras
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            filter(), map(), sorted()
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            reduce() para estadísticas
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Inmutabilidad de datos
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Paradigma Lógico -->
+                <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6 hover:shadow-xl transition-all">
+                    <div class="w-16 h-16 bg-gradient-to-br from-gold-accents to-primary-emerald rounded-xl flex items-center justify-center mb-4">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-charcoal-black mb-3">Paradigma Lógico</h3>
+                    <p class="text-slate-gray text-sm mb-4"><strong>Implementado en:</strong> <code class="bg-mint-cream px-2 py-1 rounded">prolog_engine.py</code></p>
+                    <p class="text-slate-gray mb-4">Motor de reglas e inferencia lógica</p>
+                    <ul class="space-y-2 text-sm text-slate-gray">
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Motor de reglas Prolog
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Base de hechos
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Reglas de inferencia
+                        </li>
+                        <li class="flex items-start">
+                            <svg class="w-4 h-4 text-primary-emerald mr-2 mt-1 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            Validación de seguridad
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <div class="paradigma-card">
-                <h3>2. Paradigma Funcional 🔄</h3>
-                <div class="paradigma-detalle">
-                    <p><strong>Implementado en:</strong> <code>processor.py</code></p>
-                    <p><strong>Función:</strong> Procesamiento de datos y transformaciones</p>
-                    <p><strong>Características:</strong></p>
-                    <ul>
-                        <li><strong>Funciones puras:</strong> calcular_imc(), clasificar_imc(), calcular_compatibilidad()</li>
-                        <li><strong>filter():</strong> Filtrar rutinas por nivel, objetivo, días disponibles</li>
-                        <li><strong>map():</strong> Transformar datos del usuario, calcular puntuaciones</li>
-                        <li><strong>sorted():</strong> Ordenar rutinas por compatibilidad</li>
-                        <li><strong>reduce():</strong> Generar estadísticas agregadas</li>
-                        <li><strong>Lambdas:</strong> Operaciones de transformación inline</li>
-                    </ul>
-                    <p class="codigo-ejemplo"><strong>Ejemplo de operaciones funcionales:</strong></p>
-                    <pre>rutinas_filtradas = filter(lambda r: r['nivel'] == nivel, rutinas)
-puntuaciones = map(lambda r: calcular_compatibilidad(r, usuario), rutinas)
-ordenadas = sorted(rutinas_puntuadas, key=lambda x: x[1], reverse=True)</pre>
-                </div>
-            </div>
-
-            <div class="paradigma-card">
-                <h3>3. Paradigma Lógico 🧠</h3>
-                <div class="paradigma-detalle">
-                    <p><strong>Implementado en:</strong> <code>logic_rules.py</code></p>
-                    <p><strong>Función:</strong> Motor de reglas e inferencia lógica</p>
-                    <p><strong>Características:</strong></p>
-                    <ul>
-                        <li><strong>Motor de reglas personalizado</strong> (compatible con Python 3.11)</li>
-                        <li><strong>Base de hechos:</strong> Almacena información conocida del usuario</li>
-                        <li><strong>Reglas de inferencia:</strong> Determinan conclusiones basadas en condiciones</li>
-                        <li><strong>Validación de seguridad:</strong> Evalúa si una rutina es apropiada</li>
-                    </ul>
-                    <p class="codigo-ejemplo"><strong>Ejemplos de reglas lógicas:</strong></p>
-                    <pre>REGLA: Si edad > 50 → intensidad_baja
-REGLA: Si IMC > 25 → objetivo_peso
-REGLA: Si días < 3 → nivel_principiante
-REGLA: Si edad > 60 Y intensidad_alta → NO_SEGURO</pre>
+        <!-- Flujo de Integración -->
+        <div class="max-w-4xl mx-auto mb-16">
+            <div class="bg-white rounded-2xl shadow-lg border border-green-100 p-8 md:p-12">
+                <h2 class="text-3xl font-bold text-charcoal-black mb-8 text-center">Flujo de Integración de Paradigmas</h2>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-full flex items-center justify-center text-white font-bold">
+                            1
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-charcoal-black mb-2">Imperativo: Recepción</h4>
+                            <p class="text-slate-gray">El controlador recibe y valida los datos del formulario</p>
+                        </div>
+                    </div>
                     
-                    <p><strong>Funciones lógicas implementadas:</strong></p>
-                    <ul>
-                        <li><code>determinar_nivel_usuario()</code> - Infiere el nivel apropiado</li>
-                        <li><code>determinar_objetivo_recomendado()</code> - Ajusta objetivo según IMC</li>
-                        <li><code>determinar_intensidad_segura()</code> - Calcula intensidad apropiada</li>
-                        <li><code>validar_seguridad_rutina()</code> - Verifica si es seguro</li>
-                        <li><code>generar_explicacion_recomendacion()</code> - Explica el razonamiento</li>
-                    </ul>
+                    <div class="flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-accent-teal to-primary-emerald rounded-full flex items-center justify-center text-white font-bold">
+                            2
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-charcoal-black mb-2">Funcional: Transformación</h4>
+                            <p class="text-slate-gray">Funciones puras calculan IMC, transforman datos, filtran rutinas</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gold-accents to-primary-emerald rounded-full flex items-center justify-center text-white font-bold">
+                            3
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-charcoal-black mb-2">Lógico: Inferencia</h4>
+                            <p class="text-slate-gray">Motor de reglas determina nivel, objetivo e intensidad seguros</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-accent-teal to-primary-emerald rounded-full flex items-center justify-center text-white font-bold">
+                            4
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-charcoal-black mb-2">Funcional: Ranking</h4>
+                            <p class="text-slate-gray">Funciones map/sorted calculan compatibilidad y ordenan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-center">
+                        <svg class="w-6 h-6 text-primary-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </div>
+                    
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-full flex items-center justify-center text-white font-bold">
+                            5
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-charcoal-black mb-2">Imperativo: Respuesta</h4>
+                            <p class="text-slate-gray">El controlador prepara y renderiza el resultado final</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="flujo-integracion">
-            <h2>Flujo de Integración de Paradigmas</h2>
-            <div class="flujo-diagrama">
-                <div class="flujo-paso">
-                    <span class="paso-numero">1</span>
-                    <div class="paso-contenido">
-                        <h4>Imperativo: Recepción</h4>
-                        <p>El controlador recibe y valida los datos del formulario</p>
+        <!-- Tecnologías -->
+        <div class="max-w-4xl mx-auto mb-16">
+            <div class="bg-white rounded-2xl shadow-lg border border-green-100 p-8 md:p-12">
+                <h2 class="text-3xl font-bold text-charcoal-black mb-6">Tecnologías Utilizadas</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-mint-cream rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🐍</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-charcoal-black">Django 4.2.7</p>
+                            <p class="text-sm text-slate-gray">Framework web Python</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flujo-flecha">↓</div>
-                <div class="flujo-paso">
-                    <span class="paso-numero">2</span>
-                    <div class="paso-contenido">
-                        <h4>Funcional: Transformación</h4>
-                        <p>Funciones puras calculan IMC, transforman datos, filtran rutinas</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-mint-cream rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🗄️</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-charcoal-black">PostgreSQL</p>
+                            <p class="text-sm text-slate-gray">Base de datos</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flujo-flecha">↓</div>
-                <div class="flujo-paso">
-                    <span class="paso-numero">3</span>
-                    <div class="paso-contenido">
-                        <h4>Lógico: Inferencia</h4>
-                        <p>Motor de reglas determina nivel, objetivo e intensidad seguros</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-mint-cream rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🎨</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-charcoal-black">Tailwind CSS</p>
+                            <p class="text-sm text-slate-gray">Framework CSS utility-first</p>
+                        </div>
                     </div>
-                </div>
-                <div class="flujo-flecha">↓</div>
-                <div class="flujo-paso">
-                    <span class="paso-numero">4</span>
-                    <div class="paso-contenido">
-                        <h4>Funcional: Ranking</h4>
-                        <p>Funciones map/sorted calculan compatibilidad y ordenan</p>
-                    </div>
-                </div>
-                <div class="flujo-flecha">↓</div>
-                <div class="flujo-paso">
-                    <span class="paso-numero">5</span>
-                    <div class="paso-contenido">
-                        <h4>Imperativo: Respuesta</h4>
-                        <p>El controlador prepara y renderiza el resultado final</p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-mint-cream rounded-lg flex items-center justify-center">
+                            <span class="text-2xl">🧠</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-charcoal-black">Prolog</p>
+                            <p class="text-sm text-sm text-slate-gray">Motor lógico</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="tecnologias">
-            <h2>Tecnologías Utilizadas</h2>
-            <ul class="tech-list">
-                <li><strong>Django 4.2.7</strong> - Framework web Python</li>
-                <li><strong>Python 3.11</strong> - Lenguaje de programación</li>
-                <li><strong>HTML5/CSS3</strong> - Interfaz web moderna</li>
-                <li><strong>JavaScript</strong> - Interactividad del cliente</li>
-                <li><strong>Motor de reglas personalizado</strong> - Paradigma lógico</li>
-            </ul>
-        </div>
-
-        <div class="base-conocimiento">
-            <h2>Base de Conocimiento</h2>
-            <p>El sistema incluye más de 10 rutinas deportivas profesionales que cubren:</p>
-            <ul>
-                <li>3 niveles de dificultad: Principiante, Intermedio, Avanzado</li>
-                <li>3 objetivos principales: Pérdida de peso, Ganancia muscular, Mantenimiento</li>
-                <li>3 niveles de intensidad: Baja, Media, Alta</li>
-                <li>Frecuencias de 3 a 6 días por semana</li>
-                <li>Duraciones de 30 a 60 minutos por sesión</li>
-            </ul>
-        </div>
-
-        <div class="cta-final">
-            <h2>Prueba el Sistema</h2>
-            <p>Experimenta cómo los tres paradigmas trabajan juntos para darte la mejor recomendación</p>
-            <a href="{% url 'recommender:index' %}" class="btn btn-primary btn-large">Probar Ahora</a>
+        <!-- CTA Final -->
+        <div class="max-w-2xl mx-auto text-center">
+            <div class="bg-gradient-to-r from-primary-emerald to-deep-forest rounded-2xl p-12 text-white">
+                <h2 class="text-3xl font-bold mb-4">Prueba el Sistema</h2>
+                <p class="text-green-50 text-lg mb-8">
+                    Experimenta cómo los tres paradigmas trabajan juntos para darte la mejor recomendación
+                </p>
+                <a href="{% url 'recommender:index' %}" 
+                   class="inline-block bg-white text-primary-emerald font-semibold px-8 py-4 rounded-lg hover:shadow-xl transform hover:scale-105 transition-all">
+                    Probar Ahora
+                </a>
+            </div>
         </div>
     </div>
 </section>

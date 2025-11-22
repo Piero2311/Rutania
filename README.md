@@ -1,4 +1,4 @@
-# 🏋️ SportRoutineAI - Sistema Avanzado de Recomendación Deportiva y Médica
+# 🏋️ Rutania - Tu camino inteligente hacia una vida saludable
 
 Sistema completo de recomendación deportiva y médica personalizada implementado en Django 4.2.7 que integra **tres paradigmas de programación**: Imperativo, Funcional y Lógico, con base de datos PostgreSQL y despliegue en Render.com.
 
@@ -9,10 +9,8 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 - ✅ **Motor de Recomendación Híbrido**: Integra los tres paradigmas para generar recomendaciones personalizadas
 - ✅ **Integración con Prolog**: Motor lógico para inferencia médica (con fallback a Python puro)
 - ✅ **Dashboard Personalizado**: Seguimiento de progreso, historial de recomendaciones
-- ✅ **Base de Datos PostgreSQL**: Configurado para Neon.tech (serverless) o Render.com
-- ✅ **SQLite para Desarrollo**: Fallback automático si no hay DATABASE_URL
-- ✅ **Despliegue en Render.com**: Configuración completa incluida
-- ✅ **Interfaz Bootstrap 5**: Diseño moderno y responsive
+- ✅ **Base de Datos PostgreSQL**: Configurado para Render.com
+- ✅ **Interfaz Tailwind CSS**: Diseño moderno y responsive con paleta de colores premium
 
 ## 📐 Arquitectura Multiparadigma
 
@@ -42,7 +40,7 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 
 ### Requisitos
 - Python 3.11+
-- PostgreSQL (Neon.tech recomendado) o SQLite (desarrollo)
+- PostgreSQL (Render.com) o SQLite (desarrollo)
 - pip
 
 ### Instalación Local
@@ -50,7 +48,7 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 1. **Clonar el repositorio**:
 ```bash
 git clone <repository-url>
-cd SportRoutineAI
+cd Rutania
 ```
 
 2. **Crear entorno virtual**:
@@ -66,17 +64,7 @@ pip install -r requirements.txt
 
 4. **Configurar base de datos**:
 
-   **Opción A: Neon.tech (Recomendado - PostgreSQL serverless gratuito)**
-   ```bash
-   # Ver guía completa en NEON_SETUP.md
-   # 1. Crear cuenta en https://neon.tech
-   # 2. Crear proyecto y copiar connection string
-   # 3. Configurar en .env:
-   cp env.example .env
-   # Editar .env y agregar: DATABASE_URL=postgresql://...
-   ```
-
-   **Opción B: SQLite (Desarrollo local)**
+   **Opción A: SQLite (Desarrollo local)**
    ```bash
    # No necesitas configurar nada, se usa SQLite automáticamente
    # si DATABASE_URL está vacío
@@ -113,36 +101,36 @@ http://localhost:8000
 ## 📁 Estructura del Proyecto
 
 ```
-SportRoutineAI/
+Rutania/
 ├── README.md
 ├── requirements.txt
 ├── render.yaml              # Configuración Render.com
-├── build.sh                # Script de build para producción
+├── build.sh                  # Script de build para producción
 ├── manage.py
 │
-├── django_project/         # Configuración Django
-│   ├── settings.py         # Config con PostgreSQL, seguridad, etc.
+├── django_project/           # Configuración Django
+│   ├── settings.py           # Config con PostgreSQL, seguridad, etc.
 │   ├── urls.py
 │   └── wsgi.py
 │
-└── recommender/            # App principal
-    ├── models.py           # UsuarioPersonalizado, PerfilMedico, Rutina, etc.
-    ├── views.py            # ✅ PARADIGMA IMPERATIVO
-    ├── processor.py        # ✅ PARADIGMA FUNCIONAL
-    ├── prolog_engine.py    # ✅ PARADIGMA LÓGICO (Prolog)
-    ├── logic_rules.py      # ✅ PARADIGMA LÓGICO (Python)
+└── recommender/              # App principal
+    ├── models.py             # UsuarioPersonalizado, PerfilMedico, Rutina, etc.
+    ├── views.py              # ✅ PARADIGMA IMPERATIVO
+    ├── processor.py          # ✅ PARADIGMA FUNCIONAL
+    ├── prolog_engine.py      # ✅ PARADIGMA LÓGICO (Prolog)
+    ├── logic_rules.py        # ✅ PARADIGMA LÓGICO (Python)
     ├── motor_recomendacion.py  # Motor híbrido multiparadigma
-    ├── forms.py            # Formularios Django
-    ├── admin.py            # Configuración admin
+    ├── forms.py              # Formularios Django
+    ├── admin.py              # Configuración admin
     │
     ├── templates/recommender/
-    │   ├── base.html       # Template base con Bootstrap 5
-    │   ├── index.html      # Página principal
-    │   ├── registro.html    # Registro de usuarios
-    │   ├── login.html       # Login
-    │   ├── dashboard.html   # Dashboard personalizado
-    │   ├── perfil.html      # Perfil del usuario
-    │   ├── seguimiento.html # Registro de seguimiento
+    │   ├── base.html         # Template base con Tailwind CSS
+    │   ├── index.html         # Página principal
+    │   ├── registro.html      # Registro de usuarios
+    │   ├── login.html         # Login
+    │   ├── dashboard.html    # Dashboard personalizado
+    │   ├── perfil.html        # Perfil del usuario
+    │   ├── seguimiento.html   # Registro de seguimiento
     │   └── historial_recomendaciones.html
     │
     └── static/
@@ -172,13 +160,35 @@ SportRoutineAI/
 - Historial de progreso del usuario
 - Campos: fecha, peso_actual, IMC_actual, rutina_realizada, satisfacción, comentarios
 
+## 🎨 Diseño con Tailwind CSS
+
+### Paleta de Colores Premium
+
+```css
+--primary-emerald: #10B981    /* Acciones principales */
+--deep-forest: #047857        /* Hover y elementos activos */
+--mint-cream: #ECFDF5         /* Fondos claros */
+--charcoal-black: #1F2937     /* Textos y headers */
+--slate-gray: #374151         /* Elementos secundarios */
+--accent-teal: #0D9488        /* Acentos especiales */
+--gold-accents: #F59E0B       /* Elementos premium */
+```
+
+### Características de Diseño
+
+- ✅ **Mobile-first**: Diseño responsive desde móvil
+- ✅ **Componentes modernos**: Cards, formularios, navegación
+- ✅ **Gradientes elegantes**: Efectos visuales premium
+- ✅ **Iconos Heroicons**: Sistema de iconos consistente
+- ✅ **Tipografía Inter**: Fuente moderna y legible
+
 ## 🔐 Seguridad
 
 - Autenticación segura con validadores de contraseña
 - Sesiones seguras (SESSION_COOKIE_SECURE, CSRF_COOKIE_SECURE)
 - Protección XSS y CSRF
 - HSTS en producción
-- Rate limiting (configurable con django-axes)
+- Rate limiting configurable
 
 ## 🌐 Vistas Disponibles
 
@@ -246,14 +256,14 @@ def dashboard(request):
 ## 🛠️ Tecnologías
 
 - **Django 4.2.7** - Framework web
-- **PostgreSQL** - Base de datos (producción)
+- **PostgreSQL** - Base de datos (producción en Render)
 - **SQLite** - Base de datos (desarrollo)
 - **Prolog (pyswip)** - Motor lógico
-- **Bootstrap 5** - Frontend framework
+- **Tailwind CSS** - Framework CSS utility-first
+- **Alpine.js** - Framework JavaScript ligero
 - **Whitenoise** - Servir archivos estáticos
 - **Gunicorn** - Servidor WSGI
 - **dj-database-url** - Configuración de BD
-- **django-crispy-forms** - Formularios Bootstrap
 
 ## 📊 Motor de Recomendación
 
@@ -266,48 +276,17 @@ El `MotorRecomendacion` integra los tres paradigmas:
 
 ## 🚀 Despliegue
 
-### 📖 Guía Completa de Despliegue
+### Render.com
+- Configuración automática con `render.yaml`
+- Base de datos PostgreSQL incluida
+- Build automático con `build.sh`
+- Variables de entorno configuradas
 
-**Consulta la guía completa en [`DEPLOYMENT.md`](DEPLOYMENT.md)** que incluye:
-- ✅ Render.com (con base de datos propia o Neon.tech)
-- ✅ Railway
-- ✅ Heroku
-- ✅ Vercel
-- ✅ Despliegue manual en VPS
-- ✅ Troubleshooting completo
-
-### Opciones Rápidas
-
-#### 🟢 Render.com (Más Fácil)
-1. Conecta tu repositorio a Render
-2. Usa el archivo `render.yaml` (despliegue automático)
-3. O crea servicio manual y configura variables de entorno
-
-#### 🟡 Render.com + Neon.tech (Recomendado)
-1. Configura Neon.tech (ver `NEON_SETUP.md`)
-2. Crea servicio en Render
-3. Agrega `DATABASE_URL` de Neon como variable de entorno
-4. Despliega
-
-#### 🔵 Railway
-1. Conecta repositorio
-2. Configura variables de entorno
-3. Despliega automáticamente
-
-### Variables de Entorno Necesarias
-
-```env
-DATABASE_URL=postgresql://user:pass@host/db?sslmode=require
-SECRET_KEY=tu-clave-secreta-muy-larga
-DEBUG=False
-ALLOWED_HOSTS=tu-dominio.com
-CSRF_TRUSTED_ORIGINS=https://tu-dominio.com
-```
-
-### Guías Específicas
-
-- 📘 **Despliegue completo**: [`DEPLOYMENT.md`](DEPLOYMENT.md)
-- 🗄️ **Configuración Neon.tech**: [`NEON_SETUP.md`](NEON_SETUP.md)
+### Variables de Entorno
+- `SECRET_KEY` - Clave secreta Django
+- `DEBUG` - Modo debug (False en producción)
+- `DATABASE_URL` - URL de conexión PostgreSQL (Render)
+- `ALLOWED_HOSTS` - Hosts permitidos
 
 ## 📝 Licencia
 
@@ -316,3 +295,5 @@ Proyecto académico - 2025
 ## 👨‍💻 Autor
 
 Sistema desarrollado para demostrar la integración de paradigmas de programación en Django con características profesionales y desplegable en producción.
+
+**Rutania** - Tu camino inteligente hacia una vida saludable
