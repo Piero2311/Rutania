@@ -7,6 +7,8 @@ services:
     buildCommand: "./build.sh"
     startCommand: "gunicorn django_project.wsgi:application --bind 0.0.0.0:$PORT"
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.11"
       - key: DATABASE_URL
         fromDatabase:
           name: rutania-db
