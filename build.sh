@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -o errexit
 
+echo "Actualizando pip..."
+pip install --upgrade pip
+
 echo "Instalando dependencias Python..."
 pip install -r requirements.txt
 
