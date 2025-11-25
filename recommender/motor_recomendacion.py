@@ -61,6 +61,26 @@ class MotorRecomendacion:
         
         # 5. Filtrado funcional de rutinas seguras
         todas_rutinas = Rutina.objects.filter(activa=True)
+        
+        # Si no hay rutinas, intentar cargarlas automáticamente
+        if todas_rutinas.count() == 0:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning("No hay rutinas en BD, intentando cargar desde datos.py")
+            try:
+                from django.core.management import call_command
+                call_command('cargar_rutinas', verbosity=0)
+                todas_rutinas = Rutina.objects.filter(activa=True)
+                logger.info(f"Rutinas cargadas: {todas_rutinas.count()}")
+            except Exception as e:
+                logger.error(f"Error cargando rutinas: {str(e)}")
+        
+        if todas_rutinas.count() == 0:
+            return {
+                'error': 'No hay rutinas disponibles en el sistema. Por favor, contacta al administrador.',
+                'precauciones': evaluacion_medica.get('precauciones', [])
+            }
+        
         rutinas_seguras = self._filtrar_rutinas_seguras(
             todas_rutinas,
             usuario,
@@ -69,7 +89,7 @@ class MotorRecomendacion:
         
         if not rutinas_seguras:
             return {
-                'error': 'No se encontraron rutinas seguras para tu perfil',
+                'error': 'No se encontraron rutinas seguras para tu perfil. Por favor, actualiza tu perfil médico.',
                 'precauciones': evaluacion_medica.get('precauciones', [])
             }
         

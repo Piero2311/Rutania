@@ -363,12 +363,30 @@ def generar_recomendacion(request: HttpRequest) -> HttpResponse:
     """
     usuario = request.user
     
+    # Validar que el usuario tenga datos necesarios
+    if not usuario.altura or not usuario.peso:
+        messages.error(request, 'Por favor completa tu altura y peso en tu perfil antes de generar una recomendación.')
+        return redirect('recommender:perfil')
+    
     try:
+        # Verificar que haya rutinas disponibles
+        rutinas_disponibles = Rutina.objects.filter(activa=True).count()
+        if rutinas_disponibles == 0:
+            messages.error(request, 'No hay rutinas disponibles en el sistema. Por favor, contacta al administrador.')
+            return redirect('recommender:dashboard')
+        
         resultado = motor_recomendacion.generar_recomendacion_completa(usuario)
         
         if 'error' in resultado:
             messages.error(request, resultado['error'])
-            return redirect('dashboard')
+            if 'precauciones' in resultado and resultado['precauciones']:
+                messages.warning(request, 'Precauciones: ' + ' | '.join(resultado['precauciones']))
+            return redirect('recommender:dashboard')
+        
+        # Verificar que se generó la recomendación
+        if 'recomendacion' not in resultado:
+            messages.error(request, 'No se pudo generar la recomendación. Por favor, intenta de nuevo.')
+            return redirect('recommender:dashboard')
         
         # Marcar recomendaciones anteriores como no vigentes
         usuario.recomendaciones.filter(vigente=True).update(vigente=False)
@@ -378,11 +396,19 @@ def generar_recomendacion(request: HttpRequest) -> HttpResponse:
         resultado['recomendacion'].save()
         
         messages.success(request, '¡Nueva recomendación generada exitosamente!')
-        return redirect('dashboard')
+        return redirect('recommender:dashboard')
         
+    except ValueError as e:
+        # Error de validación
+        messages.error(request, f'Error de validación: {str(e)}')
+        return redirect('recommender:perfil')
     except Exception as e:
-        messages.error(request, f'Error al generar recomendación: {str(e)}')
-        return redirect('dashboard')
+        # Error general - loguear para debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error al generar recomendación para usuario {usuario.id}: {str(e)}", exc_info=True)
+        messages.error(request, f'Error al generar recomendación: {str(e)}. Por favor, verifica que todos tus datos estén completos.')
+        return redirect('recommender:dashboard')
 
 
 @login_required
