@@ -15,6 +15,7 @@ from .processor import (
     calcular_calorias_estimadas
 )
 from .prolog_engine import motor_prolog
+from . import logic_rules
 
 
 class MotorRecomendacion:
@@ -249,18 +250,52 @@ class MotorRecomendacion:
         
         edad = usuario.calcular_edad() if usuario.fecha_nacimiento else 30
         
+        # Calcular IMC y clasificación si no están en el perfil
+        if perfil and perfil.imc:
+            imc = perfil.imc
+            imc_clasificacion = perfil.clasificacion_imc or 'normal'
+        else:
+            if usuario.altura and usuario.peso:
+                altura_metros = usuario.altura / 100
+                imc = calcular_imc(usuario.peso, altura_metros)
+                imc_clasificacion = clasificar_imc(imc)
+            else:
+                imc = 25.0
+                imc_clasificacion = 'normal'
+        
+        # Calcular nivel, objetivo e intensidad recomendados usando logic_rules
+        nivel_recomendado = logic_rules.determinar_nivel_usuario(
+            edad,
+            usuario.dias_entrenamiento or 3,
+            imc_clasificacion
+        )
+        
+        objetivo_recomendado = logic_rules.determinar_objetivo_recomendado(
+            usuario.objetivos or 'salud',
+            imc_clasificacion
+        )
+        
+        intensidad_recomendada = logic_rules.determinar_intensidad_segura(
+            edad,
+            imc_clasificacion,
+            nivel_recomendado
+        )
+        
         return {
             'id': usuario.id,
             'edad': edad,
             'peso': usuario.peso or 70.0,
             'altura': (usuario.altura or 170.0) / 100,  # Convertir a metros
-            'imc': perfil.imc if perfil and perfil.imc else 25.0,
-            'imc_clasificacion': perfil.clasificacion_imc if perfil else 'normal',
-            'nivel_experiencia': usuario.nivel_experiencia,
-            'objetivos': usuario.objetivos,
-            'dias_disponibles': usuario.dias_entrenamiento,
-            'condiciones_medicas': usuario.condiciones_medicas,
-            'restricciones': usuario.restricciones
+            'imc': imc,
+            'imc_clasificacion': imc_clasificacion,
+            'nivel_experiencia': usuario.nivel_experiencia or 'principiante',
+            'nivel_recomendado': nivel_recomendado,
+            'objetivos': usuario.objetivos or 'salud',
+            'objetivo_recomendado': objetivo_recomendado,
+            'intensidad_recomendada': intensidad_recomendada,
+            'dias_disponibles': usuario.dias_entrenamiento or 3,
+            'condiciones_medicas': usuario.condiciones_medicas or '',
+            'restricciones': usuario.restricciones or ''
         }
     
     def _rutina_a_dict(self, rutina: Rutina) -> Dict:

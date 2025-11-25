@@ -49,18 +49,26 @@ def calcular_compatibilidad(rutina: Dict, usuario_data: Dict) -> float:
     """
     puntuacion = 0
     
-    if rutina['nivel'] == usuario_data['nivel_recomendado']:
+    # Usar nivel_recomendado si está disponible, sino nivel_experiencia
+    nivel_usuario = usuario_data.get('nivel_recomendado') or usuario_data.get('nivel_experiencia', 'principiante')
+    if rutina.get('nivel') == nivel_usuario:
         puntuacion += 40
     
-    if rutina['objetivo'] == usuario_data['objetivo_recomendado']:
+    # Usar objetivo_recomendado si está disponible, sino objetivos
+    objetivo_usuario = usuario_data.get('objetivo_recomendado') or usuario_data.get('objetivos', 'salud')
+    if rutina.get('objetivo') == objetivo_usuario:
         puntuacion += 30
     
-    if rutina['dias_semana'] <= usuario_data['dias_disponibles']:
+    dias_disponibles = usuario_data.get('dias_disponibles', 3)
+    dias_rutina = rutina.get('dias_semana', 3)
+    if dias_rutina <= dias_disponibles:
         puntuacion += 20
     else:
-        puntuacion += max(0, 20 - (rutina['dias_semana'] - usuario_data['dias_disponibles']) * 5)
+        puntuacion += max(0, 20 - (dias_rutina - dias_disponibles) * 5)
     
-    if rutina['intensidad'] == usuario_data['intensidad_recomendada']:
+    # Usar intensidad_recomendada si está disponible
+    intensidad_usuario = usuario_data.get('intensidad_recomendada', 'media')
+    if rutina.get('intensidad') == intensidad_usuario:
         puntuacion += 10
     
     return min(100, puntuacion)

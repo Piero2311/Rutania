@@ -356,15 +356,20 @@
                         
                         const data = await response.json();
                         
-                        if (data.success && data.response) {
+                        if (data.response) {
                             this.messages.push({
                                 type: 'bot',
                                 text: data.response
                             });
+                        } else if (data.error) {
+                            this.messages.push({
+                                type: 'bot',
+                                text: data.error || 'Lo siento, hubo un error al procesar tu mensaje.'
+                            });
                         } else {
                             this.messages.push({
                                 type: 'bot',
-                                text: data.response || 'Lo siento, hubo un error al procesar tu mensaje.'
+                                text: 'Lo siento, hubo un error al procesar tu mensaje.'
                             });
                         }
                     } catch (error) {

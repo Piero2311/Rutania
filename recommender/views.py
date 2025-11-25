@@ -13,7 +13,7 @@ from .forms import (
     FormularioActualizarUsuario,
     FormularioSeguimiento
 )
-from .models import UsuarioPersonalizado, PerfilMedico, RecomendacionMedica, SeguimientoUsuario
+from .models import UsuarioPersonalizado, PerfilMedico, RecomendacionMedica, SeguimientoUsuario, Rutina
 from .motor_recomendacion import motor_recomendacion
 from .chatbot import chatbot
 from django.http import JsonResponse
@@ -515,8 +515,9 @@ def chatbot_api(request: HttpRequest) -> HttpResponse:
         
         # Obtener contexto del usuario
         usuario = request.user
+        edad = usuario.calcular_edad() if usuario.fecha_nacimiento else None
         user_context = {
-            'edad': usuario.edad if hasattr(usuario, 'edad') else None,
+            'edad': edad,
             'nivel_experiencia': usuario.nivel_experiencia if hasattr(usuario, 'nivel_experiencia') else None,
             'objetivo': usuario.objetivos if hasattr(usuario, 'objetivos') else None,
         }
@@ -532,6 +533,10 @@ def chatbot_api(request: HttpRequest) -> HttpResponse:
         # Obtener respuesta del chatbot
         user_id = str(usuario.id)
         response = chatbot.get_response(user_message, user_id=user_id, user_context=user_context)
+        
+        # Asegurar que siempre haya un campo 'success'
+        if 'success' not in response:
+            response['success'] = 'error' not in response
         
         return JsonResponse(response)
         

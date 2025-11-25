@@ -75,8 +75,9 @@ Si no estás seguro de algo, admítelo y sugiere consultar con un profesional.""
         """
         if not self.is_available():
             return {
-                'response': 'Lo siento, el chatbot no está disponible en este momento. Por favor, contacta con soporte.',
-                'error': 'Chatbot no configurado'
+                'response': 'Lo siento, el chatbot no está configurado en este momento. Puedes hacer tus preguntas directamente en el formulario de recomendación o contactar con soporte si necesitas ayuda adicional.',
+                'error': 'Chatbot no configurado',
+                'success': False
             }
         
         try:
