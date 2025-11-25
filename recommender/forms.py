@@ -135,10 +135,13 @@ class FormularioRegistro(UserCreationForm):
         user.restricciones = self.cleaned_data.get('restricciones', '')
         
         if commit:
-            user.save()
-            # Crear perfil médico automáticamente
             try:
-                perfil, _ = PerfilMedico.objects.get_or_create(usuario=user)
+                # Guardar usuario
+                user.save()
+                
+                # Crear perfil médico automáticamente
+                perfil, created = PerfilMedico.objects.get_or_create(usuario=user)
+                
                 # Actualizar perfil médico con datos básicos
                 from .processor import calcular_imc, clasificar_imc
                 if user.altura and user.peso:
@@ -146,12 +149,16 @@ class FormularioRegistro(UserCreationForm):
                     imc = calcular_imc(user.peso, altura_metros)
                     imc_clasificacion = clasificar_imc(imc)
                     perfil.imc = imc
+                    perfil.clasificacion_imc = imc_clasificacion
                     perfil.save()
+                    
             except Exception as e:
-                # Si hay error, no fallar el registro, solo loguear
+                # Si hay error, no fallar silenciosamente
                 import logging
                 logger = logging.getLogger(__name__)
-                logger.warning(f"Error al crear perfil médico: {str(e)}")
+                logger.error(f"Error al guardar usuario o perfil médico: {str(e)}", exc_info=True)
+                # Re-lanzar la excepción para que se muestre al usuario
+                raise
         
         return user
 

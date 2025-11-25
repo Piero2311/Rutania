@@ -20,12 +20,31 @@
         
         <!-- Formulario -->
         <div class="bg-white rounded-2xl shadow-xl border border-green-100 p-8">
+            <!-- Mensajes de error/success -->
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}
+                    <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                        <p class="text-red-700 font-medium">{{ message }}</p>
+                    </div>
+                    {% elif message.tags == 'success' %}
+                    <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                        <p class="text-green-700 font-medium">{{ message }}</p>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
             <form method="POST" class="space-y-6">
                 {% csrf_token %}
                 
                 {% if formulario.non_field_errors %}
                 <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
-                    {{ formulario.non_field_errors }}
+                    <ul class="list-disc list-inside text-red-700">
+                        {% for error in formulario.non_field_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
                 </div>
                 {% endif %}
                 
@@ -130,6 +149,20 @@
                         Condiciones médicas (opcional)
                     </label>
                     {{ formulario.condiciones_medicas }}
+                    {% if formulario.condiciones_medicas.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.condiciones_medicas.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Restricciones -->
+                <div>
+                    <label for="{{ formulario.restricciones.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                        Restricciones físicas o médicas (opcional)
+                    </label>
+                    {{ formulario.restricciones }}
+                    {% if formulario.restricciones.errors %}
+                    <p class="mt-1 text-sm text-red-600">{{ formulario.restricciones.errors.0 }}</p>
+                    {% endif %}
                 </div>
                 
                 <!-- Botón Submit -->

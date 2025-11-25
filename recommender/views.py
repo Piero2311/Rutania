@@ -229,19 +229,34 @@ def registro(request: HttpRequest) -> HttpResponse:
     4. Autenticar y redirigir
     """
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('recommender:dashboard')
     
     if request.method == 'POST':
         formulario = FormularioRegistro(request.POST)
         if formulario.is_valid():
-            with transaction.atomic():
-                usuario = formulario.save()
-                # El formulario ya crea el perfil médico
-                messages.success(request, '¡Registro exitoso! Bienvenido a Rutania.')
-                login(request, usuario)
-                return redirect('dashboard')
+            try:
+                with transaction.atomic():
+                    usuario = formulario.save(commit=True)
+                    # El formulario ya crea el perfil médico
+                    messages.success(request, f'¡Registro exitoso! Bienvenido a Rutania, {usuario.username}.')
+                    login(request, usuario)
+                    return redirect('recommender:dashboard')
+            except Exception as e:
+                # Mostrar error específico al usuario
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f"Error en registro: {str(e)}", exc_info=True)
+                messages.error(request, f'Error al crear la cuenta: {str(e)}. Por favor, intenta de nuevo.')
         else:
-            messages.error(request, 'Por favor corrige los errores en el formulario.')
+            # Mostrar errores específicos del formulario
+            error_messages = []
+            for field, errors in formulario.errors.items():
+                for error in errors:
+                    error_messages.append(f"{field}: {error}")
+            if error_messages:
+                messages.error(request, 'Por favor corrige los siguientes errores: ' + ' | '.join(error_messages))
+            else:
+                messages.error(request, 'Por favor corrige los errores en el formulario.')
     else:
         formulario = FormularioRegistro()
     
@@ -264,7 +279,7 @@ def login_usuario(request: HttpRequest) -> HttpResponse:
             if usuario is not None:
                 login(request, usuario)
                 messages.success(request, f'¡Bienvenido de nuevo, {usuario.username}!')
-                next_url = request.GET.get('next', 'dashboard')
+                next_url = request.GET.get('next', 'recommender:dashboard')
                 return redirect(next_url)
             else:
                 messages.error(request, 'Usuario o contraseña incorrectos.')
@@ -282,7 +297,7 @@ def logout_usuario(request: HttpRequest) -> HttpResponse:
     from django.contrib.auth import logout
     logout(request)
     messages.success(request, 'Has cerrado sesión correctamente.')
-    return redirect('index')
+    return redirect('recommender:index')
 
 
 # ==================== VISTAS DE DASHBOARD Y PERFIL ====================
