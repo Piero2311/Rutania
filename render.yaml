@@ -21,6 +21,8 @@ services:
         value: ".onrender.com"
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://*.onrender.com"
+      - key: GEMINI_API_KEY
+        sync: false  # Opcional - configurar manualmente si se desea usar el chatbot
 
 databases:
   - name: rutania-db

@@ -137,9 +137,21 @@ class FormularioRegistro(UserCreationForm):
         if commit:
             user.save()
             # Crear perfil médico automáticamente
-            from .motor_recomendacion import motor_recomendacion
-            perfil, _ = PerfilMedico.objects.get_or_create(usuario=user)
-            motor_recomendacion._actualizar_perfil_medico(user, perfil)
+            try:
+                perfil, _ = PerfilMedico.objects.get_or_create(usuario=user)
+                # Actualizar perfil médico con datos básicos
+                from .processor import calcular_imc, clasificar_imc
+                if user.altura and user.peso:
+                    altura_metros = user.altura / 100
+                    imc = calcular_imc(user.peso, altura_metros)
+                    imc_clasificacion = clasificar_imc(imc)
+                    perfil.imc = imc
+                    perfil.save()
+            except Exception as e:
+                # Si hay error, no fallar el registro, solo loguear
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(f"Error al crear perfil médico: {str(e)}")
         
         return user
 

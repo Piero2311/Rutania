@@ -1,6 +1,6 @@
-# 🚀 Guía Completa de Despliegue - SportRoutineAI
+# 🚀 Guía Completa de Despliegue - Rutania
 
-Esta guía te ayudará a desplegar SportRoutineAI en diferentes plataformas de hosting.
+Esta guía te ayudará a desplegar Rutania en diferentes plataformas de hosting.
 
 ## 📋 Tabla de Contenidos
 

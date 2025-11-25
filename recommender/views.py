@@ -15,6 +15,9 @@ from .forms import (
 )
 from .models import UsuarioPersonalizado, PerfilMedico, RecomendacionMedica, SeguimientoUsuario
 from .motor_recomendacion import motor_recomendacion
+from .chatbot import chatbot
+from django.http import JsonResponse
+import json
 
 
 def index(request: HttpRequest) -> HttpResponse:
@@ -452,3 +455,46 @@ def historial_recomendaciones(request: HttpRequest) -> HttpResponse:
     }
     
     return render(request, 'recommender/historial_recomendaciones.html', context)
+
+
+@login_required
+def chatbot_api(request: HttpRequest) -> HttpResponse:
+    """
+    API endpoint para el chatbot - PARADIGMA IMPERATIVO.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return JsonResponse({'error': 'Mensaje vacío'}, status=400)
+        
+        # Obtener contexto del usuario
+        usuario = request.user
+        user_context = {
+            'edad': usuario.edad if hasattr(usuario, 'edad') else None,
+            'nivel_experiencia': usuario.nivel_experiencia if hasattr(usuario, 'nivel_experiencia') else None,
+            'objetivo': usuario.objetivos if hasattr(usuario, 'objetivos') else None,
+        }
+        
+        # Obtener rutina actual si existe
+        try:
+            recomendacion_actual = usuario.recomendaciones.filter(vigente=True).latest('fecha_recomendacion')
+            if recomendacion_actual and recomendacion_actual.rutina_recomendada:
+                user_context['rutina_actual'] = recomendacion_actual.rutina_recomendada.nombre
+        except:
+            pass
+        
+        # Obtener respuesta del chatbot
+        user_id = str(usuario.id)
+        response = chatbot.get_response(user_message, user_id=user_id, user_context=user_context)
+        
+        return JsonResponse(response)
+        
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'JSON inválido'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': f'Error interno: {str(e)}'}, status=500)

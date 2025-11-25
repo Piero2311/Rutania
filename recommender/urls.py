@@ -21,4 +21,7 @@ urlpatterns = [
     path('generar-recomendacion/', views.generar_recomendacion, name='generar_recomendacion'),
     path('seguimiento/', views.seguimiento, name='seguimiento'),
     path('historial-recomendaciones/', views.historial_recomendaciones, name='historial_recomendaciones'),
+    
+    # Chatbot API
+    path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
 ]

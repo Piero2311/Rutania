@@ -3,134 +3,182 @@
 {% block title %}Resultado - Tu Rutina Recomendada{% endblock %}
 
 {% block content %}
-<section class="resultado-hero">
-    <div class="container">
-        <h1>Tu Rutina Recomendada</h1>
-        <p>Basada en tu perfil y objetivos personales</p>
+<!-- Hero Section -->
+<section class="bg-gradient-to-br from-primary-emerald to-deep-forest text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Tu Rutina Recomendada</h1>
+            <p class="text-xl text-mint-cream">Basada en tu perfil y objetivos personales</p>
+        </div>
     </div>
 </section>
 
-<section class="resultado-principal">
-    <div class="container">
-        <div class="perfil-usuario">
-            <h2>Tu Perfil</h2>
-            <div class="perfil-grid">
-                <div class="perfil-item">
-                    <span class="perfil-label">Edad:</span>
-                    <span class="perfil-valor">{{ usuario.edad }} años</span>
+<!-- Perfil Usuario -->
+<section class="py-8 bg-mint-cream">
+    <div class="container mx-auto px-4">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-charcoal-black mb-6">Tu Perfil</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-gradient-to-br from-primary-emerald/10 to-accent-teal/10 rounded-lg p-4 border border-primary-emerald/20">
+                    <span class="text-sm text-slate-gray font-medium block mb-1">Edad</span>
+                    <span class="text-2xl font-bold text-primary-emerald">{{ usuario.edad }} años</span>
                 </div>
-                <div class="perfil-item">
-                    <span class="perfil-label">IMC:</span>
-                    <span class="perfil-valor">{{ imc_texto }} ({{ imc_clasificacion_texto }})</span>
+                <div class="bg-gradient-to-br from-primary-emerald/10 to-accent-teal/10 rounded-lg p-4 border border-primary-emerald/20">
+                    <span class="text-sm text-slate-gray font-medium block mb-1">IMC</span>
+                    <span class="text-2xl font-bold text-primary-emerald">{{ imc_texto }} <span class="text-base text-slate-gray">({{ imc_clasificacion_texto }})</span></span>
                 </div>
-                <div class="perfil-item">
-                    <span class="perfil-label">Nivel:</span>
-                    <span class="perfil-valor">{{ usuario.nivel_recomendado|title }}</span>
+                <div class="bg-gradient-to-br from-primary-emerald/10 to-accent-teal/10 rounded-lg p-4 border border-primary-emerald/20">
+                    <span class="text-sm text-slate-gray font-medium block mb-1">Nivel</span>
+                    <span class="text-2xl font-bold text-primary-emerald">{{ usuario.nivel_recomendado|title }}</span>
                 </div>
-                <div class="perfil-item">
-                    <span class="perfil-label">Objetivo:</span>
-                    <span class="perfil-valor">{{ usuario.objetivo_recomendado|title }}</span>
+                <div class="bg-gradient-to-br from-primary-emerald/10 to-accent-teal/10 rounded-lg p-4 border border-primary-emerald/20">
+                    <span class="text-sm text-slate-gray font-medium block mb-1">Objetivo</span>
+                    <span class="text-2xl font-bold text-primary-emerald">{{ usuario.objetivo_recomendado|title }}</span>
                 </div>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="rutina-principal-card">
-            <div class="rutina-header">
-                <h2>{{ rutina.nombre }}</h2>
-                <div class="rutina-badge">Compatibilidad: {{ puntuacion }}%</div>
+<!-- Rutina Principal -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="bg-gradient-to-br from-white to-mint-cream rounded-2xl shadow-xl p-8 border border-primary-emerald/20">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+                <h2 class="text-3xl font-bold text-charcoal-black mb-4 md:mb-0">{{ rutina.nombre }}</h2>
+                <div class="inline-flex items-center px-4 py-2 bg-primary-emerald text-white rounded-full font-semibold">
+                    Compatibilidad: {{ puntuacion }}%
+                </div>
             </div>
             
-            <p class="rutina-descripcion">{{ rutina.descripcion }}</p>
+            <p class="text-lg text-slate-gray mb-8 leading-relaxed">{{ rutina.descripcion }}</p>
             
-            <div class="rutina-detalles">
-                <div class="detalle-item">
-                    <span class="detalle-icon">📅</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="flex items-start space-x-3 bg-white rounded-lg p-4 shadow-sm">
+                    <span class="text-3xl">📅</span>
                     <div>
-                        <strong>Frecuencia</strong>
-                        <p>{{ rutina.dias_semana }} días/semana</p>
+                        <strong class="text-charcoal-black block mb-1">Frecuencia</strong>
+                        <p class="text-slate-gray">{{ rutina.dias_semana }} días/semana</p>
                     </div>
                 </div>
-                <div class="detalle-item">
-                    <span class="detalle-icon">⏱️</span>
+                <div class="flex items-start space-x-3 bg-white rounded-lg p-4 shadow-sm">
+                    <span class="text-3xl">⏱️</span>
                     <div>
-                        <strong>Duración</strong>
-                        <p>{{ rutina.duracion_minutos }} minutos</p>
+                        <strong class="text-charcoal-black block mb-1">Duración</strong>
+                        <p class="text-slate-gray">{{ rutina.duracion_minutos }} minutos</p>
                     </div>
                 </div>
-                <div class="detalle-item">
-                    <span class="detalle-icon">💪</span>
+                <div class="flex items-start space-x-3 bg-white rounded-lg p-4 shadow-sm">
+                    <span class="text-3xl">💪</span>
                     <div>
-                        <strong>Nivel</strong>
-                        <p>{{ rutina.nivel|title }}</p>
+                        <strong class="text-charcoal-black block mb-1">Nivel</strong>
+                        <p class="text-slate-gray">{{ rutina.nivel|title }}</p>
                     </div>
                 </div>
-                <div class="detalle-item">
-                    <span class="detalle-icon">🔥</span>
+                <div class="flex items-start space-x-3 bg-white rounded-lg p-4 shadow-sm">
+                    <span class="text-3xl">🔥</span>
                     <div>
-                        <strong>Calorías</strong>
-                        <p>~{{ calorias_estimadas }} kcal/sesión</p>
+                        <strong class="text-charcoal-black block mb-1">Calorías</strong>
+                        <p class="text-slate-gray">~{{ calorias_estimadas }} kcal/sesión</p>
                     </div>
                 </div>
             </div>
 
             {% if not es_seguro %}
-            <div class="alert alert-warning">
-                <strong>⚠️ Advertencia:</strong> {{ razon_seguridad }}
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg mb-6">
+                <div class="flex items-start">
+                    <span class="text-2xl mr-3">⚠️</span>
+                    <div>
+                        <strong class="text-yellow-800 block mb-1">Advertencia</strong>
+                        <p class="text-yellow-700">{{ razon_seguridad }}</p>
+                    </div>
+                </div>
             </div>
             {% else %}
-            <div class="alert alert-success">
-                <strong>✓ Rutina segura:</strong> {{ razon_seguridad }}
+            <div class="bg-green-50 border-l-4 border-primary-emerald p-4 rounded-lg mb-6">
+                <div class="flex items-start">
+                    <span class="text-2xl mr-3">✓</span>
+                    <div>
+                        <strong class="text-green-800 block mb-1">Rutina segura</strong>
+                        <p class="text-green-700">{{ razon_seguridad }}</p>
+                    </div>
+                </div>
             </div>
             {% endif %}
         </div>
+    </div>
+</section>
 
-        <div class="explicacion-logica">
-            <h3>¿Por qué esta rutina?</h3>
-            <div class="explicacion-contenido">
-                <p><strong>Análisis basado en reglas lógicas:</strong></p>
-                <pre>{{ explicacion }}</pre>
+<!-- Explicación Lógica -->
+<section class="py-12 bg-mint-cream">
+    <div class="container mx-auto px-4">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-bold text-charcoal-black mb-4">¿Por qué esta rutina?</h3>
+            <div class="bg-slate-50 rounded-lg p-6 border border-slate-200">
+                <p class="font-semibold text-charcoal-black mb-3">Análisis basado en reglas lógicas:</p>
+                <pre class="whitespace-pre-wrap text-slate-gray font-mono text-sm leading-relaxed">{{ explicacion }}</pre>
             </div>
         </div>
+    </div>
+</section>
 
-        <div class="plan-semanal">
-            <h3>Plan Semanal</h3>
-            <div class="semana-grid">
-                {% for dia, actividad in rutina.plan_semanal.items %}
-                <div class="dia-card">
-                    <h4>{{ dia }}</h4>
-                    <p>{{ actividad }}</p>
-                </div>
-                {% endfor %}
+<!-- Plan Semanal -->
+{% if rutina.plan_semanal %}
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h3 class="text-2xl font-bold text-charcoal-black mb-6">Plan Semanal</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-4">
+            {% for dia, actividad in rutina.plan_semanal.items %}
+            <div class="bg-gradient-to-br from-primary-emerald/10 to-accent-teal/10 rounded-lg p-4 border border-primary-emerald/20 hover:shadow-lg transition-shadow">
+                <h4 class="font-bold text-primary-emerald mb-2">{{ dia }}</h4>
+                <p class="text-slate-gray text-sm">{{ actividad }}</p>
             </div>
+            {% endfor %}
         </div>
+    </div>
+</section>
+{% endif %}
 
-        <div class="ejercicios-lista">
-            <h3>Ejercicios Principales</h3>
-            <ul class="ejercicios">
+<!-- Ejercicios Principales -->
+{% if rutina.ejercicios %}
+<section class="py-12 bg-mint-cream">
+    <div class="container mx-auto px-4">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-bold text-charcoal-black mb-6">Ejercicios Principales</h3>
+            <ul class="space-y-3">
                 {% for ejercicio in rutina.ejercicios %}
-                <li>{{ ejercicio }}</li>
+                <li class="flex items-start space-x-3">
+                    <span class="text-primary-emerald font-bold mt-1">•</span>
+                    <span class="text-slate-gray flex-1">{{ ejercicio }}</span>
+                </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
 </section>
+{% endif %}
 
+<!-- Rutinas Alternativas -->
 {% if alternativas %}
-<section class="alternativas-section">
-    <div class="container">
-        <h2>Rutinas Alternativas</h2>
-        <p>Otras opciones compatibles con tu perfil</p>
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-charcoal-black mb-4">Rutinas Alternativas</h2>
+        <p class="text-slate-gray mb-8">Otras opciones compatibles con tu perfil</p>
         
-        <div class="alternativas-grid">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for rutina_alt, puntuacion_alt in alternativas %}
-            <div class="alternativa-card">
-                <h3>{{ rutina_alt.nombre }}</h3>
-                <div class="alt-badge">{{ puntuacion_alt|floatformat:1 }}% compatible</div>
-                <p>{{ rutina_alt.descripcion|truncatewords:20 }}</p>
-                <div class="alt-detalles">
-                    <span>{{ rutina_alt.dias_semana }} días/sem</span>
-                    <span>{{ rutina_alt.duracion_minutos }} min</span>
-                    <span>{{ rutina_alt.nivel|title }}</span>
+            <div class="bg-white rounded-xl shadow-lg p-6 border border-slate-200 hover:shadow-xl transition-shadow">
+                <div class="flex items-start justify-between mb-4">
+                    <h3 class="text-xl font-bold text-charcoal-black">{{ rutina_alt.nombre }}</h3>
+                    <span class="px-3 py-1 bg-primary-emerald text-white rounded-full text-sm font-semibold">
+                        {{ puntuacion_alt|floatformat:1 }}%
+                    </span>
+                </div>
+                <p class="text-slate-gray mb-4 line-clamp-3">{{ rutina_alt.descripcion|truncatewords:20 }}</p>
+                <div class="flex flex-wrap gap-2 text-sm text-slate-gray">
+                    <span class="px-2 py-1 bg-slate-100 rounded">{{ rutina_alt.dias_semana }} días/sem</span>
+                    <span class="px-2 py-1 bg-slate-100 rounded">{{ rutina_alt.duracion_minutos }} min</span>
+                    <span class="px-2 py-1 bg-slate-100 rounded">{{ rutina_alt.nivel|title }}</span>
                 </div>
             </div>
             {% endfor %}
@@ -139,10 +187,17 @@
 </section>
 {% endif %}
 
-<section class="acciones-section">
-    <div class="container">
-        <a href="{% url 'recommender:index' %}" class="btn btn-secondary">Nueva Consulta</a>
-        <a href="{% url 'recommender:rutinas' %}" class="btn btn-primary">Ver Catálogo Completo</a>
+<!-- Acciones -->
+<section class="py-12 bg-mint-cream">
+    <div class="container mx-auto px-4">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="{% url 'recommender:index' %}" class="px-6 py-3 bg-slate-gray text-white rounded-lg font-semibold hover:bg-charcoal-black transition-colors text-center">
+                Nueva Consulta
+            </a>
+            <a href="{% url 'recommender:rutinas' %}" class="px-6 py-3 bg-primary-emerald text-white rounded-lg font-semibold hover:bg-deep-forest transition-colors text-center">
+                Ver Catálogo Completo
+            </a>
+        </div>
     </div>
 </section>
 {% endblock %}
