@@ -305,8 +305,8 @@ Si no estás seguro de algo, admítelo y sugiere consultar con un profesional.""
                 'success': False
             }
     
-    def _build_prompt(self, user_message: str, user_context: Optional[Dict] = None) -> str:
-        """Construye el prompt completo con contexto del usuario."""
+        def _build_prompt(self, user_message: str, user_context: Optional[Dict] = None) -> str:
+            """Construye el prompt completo con contexto del usuario."""
         prompt = self.get_system_prompt()
         
         if user_context:
@@ -332,6 +332,7 @@ Si no estás seguro de algo, admítelo y sugiere consultar con un profesional.""
             prompt = prompt[:max_length] + "..."
         
         return prompt
+
     
     def clear_history(self, user_id: str):
         """Limpia el historial de conversación de un usuario."""
