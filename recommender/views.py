@@ -268,7 +268,7 @@ def login_usuario(request: HttpRequest) -> HttpResponse:
     Vista de login - PARADIGMA IMPERATIVO con validación de seguridad.
     """
     if request.user.is_authenticated:
-        return redirect('dashboard')
+        return redirect('recommender:dashboard')
     
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -436,7 +436,7 @@ def perfil(request: HttpRequest) -> HttpResponse:
             motor_recomendacion._actualizar_perfil_medico(usuario, perfil_medico)
             
             messages.success(request, 'Perfil actualizado correctamente.')
-            return redirect('perfil')
+            return redirect('recommender:perfil')
         else:
             messages.error(request, 'Por favor corrige los errores en el formulario.')
     else:
@@ -466,7 +466,7 @@ def seguimiento(request: HttpRequest) -> HttpResponse:
             seguimiento = formulario.save(commit=False, usuario=usuario)
             seguimiento.save()
             messages.success(request, 'Seguimiento registrado correctamente.')
-            return redirect('dashboard')
+            return redirect('recommender:dashboard')
         else:
             messages.error(request, 'Por favor corrige los errores en el formulario.')
     else:

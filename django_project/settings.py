@@ -189,3 +189,7 @@ LOGGING = {
         },
     },
 }
+LOGIN_URL = 'recommender:login'
+LOGIN_REDIRECT_URL = 'recommender:dashboard'
+LOGOUT_REDIRECT_URL = 'recommender:index'
+
