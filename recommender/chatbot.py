@@ -7,6 +7,9 @@ from typing import Dict, List, Optional
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
+# Modelo por defecto de Gemini (se puede sobrescribir con GEMINI_MODEL_NAME)
+DEFAULT_GEMINI_MODEL = os.environ.get("GEMINI_MODEL_NAME", "models/gemini-1.5-flash")
+
 
 try:
     import google.generativeai as genai
@@ -24,44 +27,69 @@ class ChatbotRutania:
     
     def __init__(self):
         self.api_key = os.environ.get('GEMINI_API_KEY', '')
+        # Nombre del modelo que queremos usar (de env o por defecto)
+        self.model_name = os.environ.get('GEMINI_MODEL_NAME', DEFAULT_GEMINI_MODEL)
         self.model = None
         self.conversation_history = {}
         
         # Logging para diagnóstico
         logger.info(f"GEMINI_AVAILABLE: {GEMINI_AVAILABLE}")
         logger.info(f"GEMINI_API_KEY configurada: {bool(self.api_key)}")
+        logger.info(f"GEMINI_MODEL_NAME: {self.model_name}")
         
         if GEMINI_AVAILABLE and self.api_key:
             try:
                 genai.configure(api_key=self.api_key)
                 
                 # Lista de modelos a probar (ordenados por compatibilidad)
-                # Empezar con modelos más básicos y compatibles
-                modelos_a_probar = [
-                    'gemini-pro',           # Modelo más compatible y estable
-                    'models/gemini-pro',    # Formato completo
-                    'gemini-1.5-pro',      # Modelo más reciente
-                    'models/gemini-1.5-pro', # Formato completo
-                    'gemini-1.5-flash',     # Modelo rápido (puede no estar disponible)
-                    'models/gemini-1.5-flash', # Formato completo
-                ]
+                modelos_a_probar: List[str] = []
                 
+                # 1) Modelo definido en variable de entorno, si existe
+                if self.model_name:
+                    modelos_a_probar.append(self.model_name)
+                
+                # 2) Otros modelos típicos a probar (por si el de env falla)
+                modelos_a_probar.extend([
+                    "models/gemini-1.5-flash",
+                    "models/gemini-1.5-pro",
+                    "gemini-1.5-flash",
+                    "gemini-1.5-pro",
+                    "models/gemini-pro",
+                    "gemini-pro",
+                    "models/gemini-2.0-flash",
+                    "gemini-2.0-flash",
+                ])
+                
+                # Quitar duplicados manteniendo el orden
+                modelos_unicos: List[str] = []
+                for m in modelos_a_probar:
+                    if m not in modelos_unicos:
+                        modelos_unicos.append(m)
+                modelos_a_probar = modelos_unicos
+                
+                # Intentar inicializar con cada modelo
                 for modelo_nombre in modelos_a_probar:
                     try:
+                        logger.info(f"Intentando inicializar modelo Gemini: {modelo_nombre}")
                         self.model = genai.GenerativeModel(modelo_nombre)
-                        # Probar que el modelo funciona haciendo una prueba simple
-                        test_response = self.model.generate_content("test", max_output_tokens=1)
+                        # Prueba rápida
+                        test_response = self.model.generate_content(
+                            "Prueba corta de Rutania.",
+                            generation_config={
+                                "max_output_tokens": 8,
+                            },
+                        )
                         logger.info(f"Modelo Gemini '{modelo_nombre}' inicializado y verificado correctamente")
+                        self.model_name = modelo_nombre
                         break
                     except Exception as e:
                         error_msg = str(e)
-                        # Si es error 404, continuar con el siguiente modelo
-                        if '404' in error_msg or 'not found' in error_msg.lower():
-                            logger.warning(f"Modelo '{modelo_nombre}' no disponible: {error_msg}")
+                        logger.warning(f"Falló modelo '{modelo_nombre}': {error_msg}")
+                        # Si es error 404 / model not found, probamos el siguiente
+                        if "404" in error_msg or "not found" in error_msg.lower() or "model" in error_msg.lower():
                             continue
                         else:
-                            # Otro tipo de error, loguear pero continuar
-                            logger.warning(f"Error con modelo '{modelo_nombre}': {error_msg}")
+                            # Incluso si es otro error, probamos con el siguiente
                             continue
                 
                 if self.model is None:
@@ -69,19 +97,28 @@ class ChatbotRutania:
                     # Intentar listar modelos disponibles para debugging
                     try:
                         models = genai.list_models()
-                        available = [m.name for m in models if 'generateContent' in m.supported_generation_methods]
-                        logger.info(f"Modelos disponibles con generateContent: {available}")
-                    except:
-                        pass
+                        disponibles = [
+                            m.name
+                            for m in models
+                            if hasattr(m, "supported_generation_methods")
+                            and "generateContent" in m.supported_generation_methods
+                        ]
+                        logger.info(f"Modelos disponibles con generateContent: {disponibles}")
+                    except Exception as e_list:
+                        logger.warning(f"No se pudieron listar modelos: {e_list}")
             except Exception as e:
                 logger.error(f"Error configurando Gemini: {str(e)}", exc_info=True)
                 self.model = None
         else:
             if not GEMINI_AVAILABLE:
-                logger.warning("google-generativeai no está disponible. Instala: pip install google-generativeai")
+                logger.warning(
+                    "google-generativeai no está disponible. Instala: pip install google-generativeai"
+                )
             if not self.api_key:
-                logger.warning("GEMINI_API_KEY no está configurada. Configúrala en las variables de entorno.")
-    
+                logger.warning(
+                    "GEMINI_API_KEY no está configurada. Configúrala en las variables de entorno."
+                )
+                
     def is_available(self) -> bool:
         """Verifica si el chatbot está disponible."""
         return GEMINI_AVAILABLE and self.model is not None and bool(self.api_key)
