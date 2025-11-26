@@ -453,3 +453,10 @@ Respuesta del asistente:
 
 # Instancia global del chatbot
 chatbot = ChatbotRutania()
+# Función de utilidad para obtener respuesta del chatbot
+def get_chatbot_response(
+    user_message: str,
+    user_id: Optional[str] = None,
+    user_context: Optional[Dict] = None,
+) -> Dict:
+    return chatbot.get_response(user_message, user_id, user_context)
