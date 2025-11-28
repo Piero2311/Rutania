@@ -218,7 +218,7 @@ Respuesta del asistente:
                     prompt,
                     generation_config={
                         "temperature": 0.7,
-                        "max_output_tokens": 1024,
+                        "max_output_tokens": 200,
                     },
                 )
                 logger.debug("Respuesta generada con config simple")
