@@ -138,9 +138,9 @@ class ChatbotRutania:
         """Verifica si el chatbot está disponible."""
         return GEMINI_AVAILABLE and self.model is not None and bool(self.api_key)
 
-def get_system_prompt(self) -> str:
-    """Retorna el prompt del sistema para el chatbot."""
-    return """
+    def get_system_prompt(self) -> str:
+        """Retorna el prompt del sistema para el chatbot."""
+        return """
 Eres Rutania, un asistente virtual especializado en rutinas de ejercicio y estilo de vida saludable.
 
 TU ROL:
@@ -165,9 +165,109 @@ LÍMITES:
 - Si no estás seguro de algo, dilo claramente y sugiere consultar con un profesional de la salud.
 """.strip()
 
+    def _postprocess_response(self, text: str) -> str:
+        """
+        Limpia y ordena el texto de respuesta para que se vea bien en el chat:
+        - Quita saludos típicos
+        - Elimina formato estilo Markdown (*, **)
+        - Limita el número de frases
+        """
+        if not text:
+            return ""
 
-    ##aqui de nuevo
-    
+        text = text.strip()
+
+        # Eliminar negritas tipo **texto**
+        text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+
+        # Eliminar viñetas al inicio de línea (*, -, •)
+        text = re.sub(r"(?m)^\s*[\*\-\•]\s+", "", text)
+
+        # Quitar asteriscos sueltos que quedaron por ahí
+        text = text.replace(" *", " ").replace("* ", " ").replace("*", "")
+
+        # Separar en líneas y limpiar espacios
+        lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+
+        # Quitar saludos típicos de la primera línea
+        if lines:
+            first = lines[0].lower()
+            if (
+                first.startswith("hola")
+                or "soy tu asistente" in first
+                or "gracias por contactarnos" in first
+            ):
+                lines = lines[1:]
+
+        if not lines:
+            return ""
+
+        # Unir todo en un solo texto
+        text = " ".join(lines)
+
+        # Limitar a un número razonable de frases
+        frases = re.split(r"(?<=[.!?])\s+", text)
+        max_frases = 4
+        if len(frases) > max_frases:
+            frases = frases[:max_frases]
+        text = " ".join(frases).strip()
+
+        return text
+
+    def _build_prompt(
+        self, user_message: str, user_context: Optional[Dict] = None
+    ) -> str:
+        """Construye el prompt completo con contexto del usuario."""
+        system_prompt = self.get_system_prompt()
+
+        # Construir texto de contexto del usuario
+        contexto_lineas: List[str] = []
+        if user_context:
+            if user_context.get("edad"):
+                contexto_lineas.append(
+                    f"Edad aproximada del usuario: {user_context['edad']} años."
+                )
+            if user_context.get("nivel_experiencia"):
+                contexto_lineas.append(
+                    f"Nivel de experiencia: {user_context['nivel_experiencia']}."
+                )
+            if user_context.get("objetivo"):
+                contexto_lineas.append(
+                    f"Objetivo principal: {user_context['objetivo']}."
+                )
+            if user_context.get("rutina_actual"):
+                contexto_lineas.append(
+                    f"Rutina actual: {user_context['rutina_actual']}."
+                )
+
+        if contexto_lineas:
+            contexto_usuario = "\n".join(contexto_lineas)
+        else:
+            contexto_usuario = "No hay información adicional del usuario."
+
+        prompt = f"""
+{system_prompt}
+
+Contexto del usuario:
+{contexto_usuario}
+
+Mensaje del usuario:
+\"\"\"{user_message}\"\"\"
+
+Responde de forma breve, clara y estructurada, siguiendo exactamente las instrucciones de formato indicadas arriba.
+Respuesta del asistente:
+""".strip()
+
+        # Limitar longitud del prompt (algunos modelos tienen límites)
+        max_length = 8000  # Dejar margen para la respuesta
+        if len(prompt) > max_length:
+            logger.warning(
+                f"Prompt muy largo ({len(prompt)} caracteres), truncando..."
+            )
+            prompt = prompt[:max_length] + "..."
+
+        return prompt
+
     def get_response(
         self,
         user_message: str,
@@ -176,14 +276,6 @@ LÍMITES:
     ) -> Dict:
         """
         Obtiene una respuesta del chatbot.
-
-        Args:
-            user_message: Mensaje del usuario
-            user_id: ID del usuario para mantener historial
-            user_context: Contexto del usuario (perfil, rutina actual, etc.)
-
-        Returns:
-            Diccionario con la respuesta y metadata
         """
         if not self.is_available():
             return {
@@ -217,13 +309,14 @@ Respuesta del asistente:
             response = None
             error_ultimo = None
 
-            # Método 1: API simple sin config (más compatible)
+            # Método 1: API con configuración breve y directa
             try:
                 response = self.model.generate_content(
                     prompt,
                     generation_config={
-                        "temperature": 0.7,
-                        "max_output_tokens": 200,
+                        "temperature": 0.25,      # menos creativo, más directo
+                        "top_p": 0.9,
+                        "max_output_tokens": 220, # limitar el tamaño de la respuesta
                     },
                 )
                 logger.debug("Respuesta generada con config simple")
@@ -251,10 +344,10 @@ Respuesta del asistente:
                             response = self.model.generate_content(
                                 prompt,
                                 generation_config=genai.types.GenerationConfig(
-                                    temperature=0.7,
-                                    top_p=0.8,
+                                    temperature=0.25,
+                                    top_p=0.9,
                                     top_k=40,
-                                    max_output_tokens=1024,
+                                    max_output_tokens=220,
                                 ),
                             )
                             logger.debug(
@@ -346,7 +439,6 @@ Respuesta del asistente:
                         user_id
                     ][-3:]
 
-
             logger.info(
                 f"Chatbot respondió exitosamente (longitud: {len(bot_response)} caracteres)"
             )
@@ -401,111 +493,6 @@ Respuesta del asistente:
                 "error_type": error_type,
                 "success": False,
             }
-        def _postprocess_response(self, text: str) -> str:
-            """
-        Limpia y ordena el texto de respuesta para que se vea bien en el chat:
-        - Quita saludos típicos
-        - Elimina formato estilo Markdown (*, **)
-        - Limita el número de frases
-        """
-        if not text:
-            return ""
-
-        text = text.strip()
-
-        # Eliminar negritas tipo **texto**
-        text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
-
-        # Eliminar viñetas al inicio de línea (*, -, •)
-        text = re.sub(r"(?m)^\s*[\*\-\•]\s+", "", text)
-
-        # Quitar asteriscos sueltos que quedaron por ahí
-        text = text.replace(" *", " ").replace("* ", " ").replace("*", "")
-
-        # Separar en líneas y limpiar espacios
-        lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-
-        # Quitar saludos típicos de la primera línea
-        if lines:
-            first = lines[0].lower()
-            if (
-                first.startswith("hola")
-                or "soy tu asistente" in first
-                or "gracias por contactarnos" in first
-            ):
-                lines = lines[1:]
-
-        if not lines:
-            return ""
-
-        # Unir todo en un solo texto
-        text = " ".join(lines)
-
-        # Limitar a un número razonable de frases
-        frases = re.split(r"(?<=[.!?])\s+", text)
-        max_frases = 4
-        if len(frases) > max_frases:
-            frases = frases[:max_frases]
-        text = " ".join(frases).strip()
-
-        return text
-
-
-
-
-    def _build_prompt(
-        self, user_message: str, user_context: Optional[Dict] = None
-    ) -> str:
-        """Construye el prompt completo con contexto del usuario."""
-        system_prompt = self.get_system_prompt()
-
-        # Construir texto de contexto del usuario
-        contexto_lineas: List[str] = []
-        if user_context:
-            if user_context.get("edad"):
-                contexto_lineas.append(
-                    f"Edad aproximada del usuario: {user_context['edad']} años."
-                )
-            if user_context.get("nivel_experiencia"):
-                contexto_lineas.append(
-                    f"Nivel de experiencia: {user_context['nivel_experiencia']}."
-                )
-            if user_context.get("objetivo"):
-                contexto_lineas.append(
-                    f"Objetivo principal: {user_context['objetivo']}."
-                )
-            if user_context.get("rutina_actual"):
-                contexto_lineas.append(
-                    f"Rutina actual: {user_context['rutina_actual']}."
-                )
-
-        if contexto_lineas:
-            contexto_usuario = "\n".join(contexto_lineas)
-        else:
-            contexto_usuario = "No hay información adicional del usuario."
-
-        prompt = f"""
-{system_prompt}
-
-Contexto del usuario:
-{contexto_usuario}
-
-Mensaje del usuario:
-\"\"\"{user_message}\"\"\"
-
-Responde de forma breve, clara y estructurada, siguiendo exactamente las instrucciones de formato indicadas arriba.
-Respuesta del asistente:
-""".strip()
-
-        # Limitar longitud del prompt (algunos modelos tienen límites)
-        max_length = 8000  # Dejar margen para la respuesta
-        if len(prompt) > max_length:
-            logger.warning(
-                f"Prompt muy largo ({len(prompt)} caracteres), truncando..."
-            )
-            prompt = prompt[:max_length] + "..."
-
-        return prompt
 
     def clear_history(self, user_id: str):
         """Limpia el historial de conversación de un usuario."""
@@ -515,10 +502,12 @@ Respuesta del asistente:
 
 # Instancia global del chatbot
 chatbot = ChatbotRutania()
-# Función de utilidad para obtener respuesta del chatbot
+
+
 def get_chatbot_response(
     user_message: str,
     user_id: Optional[str] = None,
     user_context: Optional[Dict] = None,
 ) -> Dict:
+    """Función de utilidad para obtener respuesta del chatbot."""
     return chatbot.get_response(user_message, user_id, user_context)
