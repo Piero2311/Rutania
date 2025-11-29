@@ -3,6 +3,7 @@ Chatbot con API de Gemini para recomendaciones personalizadas.
 """
 import os
 import logging
+import re
 from typing import Dict, List, Optional
 from django.conf import settings
 
@@ -137,22 +138,33 @@ class ChatbotRutania:
         """Verifica si el chatbot está disponible."""
         return GEMINI_AVAILABLE and self.model is not None and bool(self.api_key)
 
-    def get_system_prompt(self) -> str:
-        return (
-        "Eres Rutania, un asistente virtual especializado en rutinas de ejercicio, salud y bienestar "
-        "para personas jóvenes y adultas. Das recomendaciones generales, NO diagnósticos médicos.\n\n"
-        "INSTRUCCIONES DE ESTILO (OBLIGATORIAS):\n"
-        "1) Responde SIEMPRE en español.\n"
-        "2) No uses emojis, exclamaciones innecesarias ni saludos iniciales (nada de 'Hola', '¡Qué bueno', etc.).\n"
-        "3) Responde de forma MUY breve y directa: máximo 3–4 frases en total.\n"
-        "4) Si corresponde, organiza la respuesta en una lista numerada simple: 1., 2., 3.\n"
-        "5) Responde SOLO a lo que el usuario pregunta; no ofrezcas otros temas ni listas de opciones adicionales.\n"
-        "6) No uses viñetas con asteriscos ni ningún formato de Markdown, solo texto plano.\n"
-        "7) Si la pregunta es simple, responde en 1–2 frases como máximo.\n\n"
-        "RESTRICCIONES MÉDICAS:\n"
-        "- No hagas diagnósticos, no reemplazas a un médico.\n"
-        "- Si el usuario describe síntomas graves, recomiéndale acudir a un profesional de la salud.\n"
-    )
+def get_system_prompt(self) -> str:
+    """Retorna el prompt del sistema para el chatbot."""
+    return """
+Eres Rutania, un asistente virtual especializado en rutinas de ejercicio y estilo de vida saludable.
+
+TU ROL:
+- Ayudar a los usuarios con preguntas sobre rutinas de ejercicio.
+- Dar consejos generales de salud y fitness.
+- Explicar recomendaciones de forma clara y sencilla.
+- Responder preguntas básicas de nutrición relacionada con el ejercicio.
+
+INSTRUCCIONES DE ESTILO (OBLIGATORIAS):
+- Responde SIEMPRE en español.
+- No uses saludos ni despedidas (no empieces con "Hola", "Buenas", etc.).
+- No uses emojis ni signos de exclamación innecesarios.
+- No uses ningún formato de Markdown: nada de **negritas**, *, -, # u otros símbolos de formato.
+- Responde de forma MUY breve y directa: máximo 3–4 frases en total.
+- Si son varios puntos, usa una lista numerada simple en texto plano, por ejemplo: "1. ... 2. ...".
+- Responde SOLO a lo que el usuario pregunta; no ofrezcas temas extra si no los ha pedido.
+- Evita hacer demasiadas preguntas al usuario; solo pregunta algo más si es estrictamente necesario.
+
+LÍMITES:
+- Siempre recomienda consultar con un médico antes de empezar una rutina nueva o cambiar algo importante.
+- No des diagnósticos médicos ni trates enfermedades.
+- Si no estás seguro de algo, dilo claramente y sugiere consultar con un profesional de la salud.
+""".strip()
+
 
     ##aqui de nuevo
     
@@ -316,6 +328,11 @@ Respuesta del asistente:
             if not bot_response or len(bot_response) < 1:
                 raise ValueError("Respuesta vacía o inválida de Gemini")
 
+            # Post-procesar para ordenar el texto y quitar formato raro
+            cleaned = self._postprocess_response(bot_response)
+            if cleaned:
+                bot_response = cleaned
+
             # Guardar en historial
             if user_id:
                 if user_id not in self.conversation_history:
@@ -323,11 +340,12 @@ Respuesta del asistente:
                 self.conversation_history[user_id].append(
                     {"user": user_message, "bot": bot_response}
                 )
-                # Limitar historial a últimas 10 interacciones
-                if len(self.conversation_history[user_id]) > 10:
+                # Limitar historial a últimas 3 interacciones (menos contexto, más foco)
+                if len(self.conversation_history[user_id]) > 3:
                     self.conversation_history[user_id] = self.conversation_history[
                         user_id
-                    ][-5:]
+                    ][-3:]
+
 
             logger.info(
                 f"Chatbot respondió exitosamente (longitud: {len(bot_response)} caracteres)"
@@ -383,6 +401,57 @@ Respuesta del asistente:
                 "error_type": error_type,
                 "success": False,
             }
+        def _postprocess_response(self, text: str) -> str:
+            """
+        Limpia y ordena el texto de respuesta para que se vea bien en el chat:
+        - Quita saludos típicos
+        - Elimina formato estilo Markdown (*, **)
+        - Limita el número de frases
+        """
+        if not text:
+            return ""
+
+        text = text.strip()
+
+        # Eliminar negritas tipo **texto**
+        text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
+
+        # Eliminar viñetas al inicio de línea (*, -, •)
+        text = re.sub(r"(?m)^\s*[\*\-\•]\s+", "", text)
+
+        # Quitar asteriscos sueltos que quedaron por ahí
+        text = text.replace(" *", " ").replace("* ", " ").replace("*", "")
+
+        # Separar en líneas y limpiar espacios
+        lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+
+        # Quitar saludos típicos de la primera línea
+        if lines:
+            first = lines[0].lower()
+            if (
+                first.startswith("hola")
+                or "soy tu asistente" in first
+                or "gracias por contactarnos" in first
+            ):
+                lines = lines[1:]
+
+        if not lines:
+            return ""
+
+        # Unir todo en un solo texto
+        text = " ".join(lines)
+
+        # Limitar a un número razonable de frases
+        frases = re.split(r"(?<=[.!?])\s+", text)
+        max_frases = 4
+        if len(frases) > max_frases:
+            frases = frases[:max_frases]
+        text = " ".join(frases).strip()
+
+        return text
+
+
+
 
     def _build_prompt(
         self, user_message: str, user_context: Optional[Dict] = None
