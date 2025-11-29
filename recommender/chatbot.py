@@ -168,52 +168,89 @@ LÍMITES:
     def _postprocess_response(self, text: str) -> str:
         """
         Limpia y ordena el texto de respuesta para que se vea bien en el chat:
-        - Quita saludos típicos
+        - Quita saludos típicos ("hola", "bienvenido", etc.)
         - Elimina formato estilo Markdown (*, **)
-        - Limita el número de frases
+        - Quita emojis y símbolos raros
+        - Resume a un máximo de 3 ideas principales + 1 aviso médico
+        - Devuelve el texto como lista numerada (1., 2., 3.)
         """
         if not text:
             return ""
 
+        # Recortar espacios
         text = text.strip()
+
+        # Eliminar emojis y símbolos no habituales (dejamos letras, números, puntuación básica y espacios)
+        text = re.sub(r"[^\w\s.,;:¡!¿?áéíóúñÁÉÍÓÚüÜ-]", "", text)
 
         # Eliminar negritas tipo **texto**
         text = re.sub(r"\*\*(.+?)\*\*", r"\1", text)
 
         # Eliminar viñetas al inicio de línea (*, -, •)
-        text = re.sub(r"(?m)^\s*[\*\-\•]\s+", "", text)
+        text = re.sub(r"(?m)^\s*[\*\-\•]\s*", "", text)
 
-        # Quitar asteriscos sueltos que quedaron por ahí
-        text = text.replace(" *", " ").replace("* ", " ").replace("*", "")
+        # Normalizar espacios
+        text = re.sub(r"\s+", " ", text)
 
-        # Separar en líneas y limpiar espacios
-        lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
-
-        # Quitar saludos típicos de la primera línea
-        if lines:
-            first = lines[0].lower()
-            if (
-                first.startswith("hola")
-                or "soy tu asistente" in first
-                or "gracias por contactarnos" in first
-            ):
-                lines = lines[1:]
-
-        if not lines:
-            return ""
-
-        # Unir todo en un solo texto
-        text = " ".join(lines)
-
-        # Limitar a un número razonable de frases
+        # Separar en frases
         frases = re.split(r"(?<=[.!?])\s+", text)
-        max_frases = 4
-        if len(frases) > max_frases:
-            frases = frases[:max_frases]
-        text = " ".join(frases).strip()
+        frases = [f.strip() for f in frases if f.strip()]
 
-        return text
+        def normalizar_inicio(frase: str) -> str:
+            # Quitar signos iniciales como ¡ ! ¿ ? y espacios
+            return frase.lower().lstrip("¡!¿? ").strip()
 
+        def es_saludo(frase: str) -> bool:
+            f = normalizar_inicio(frase)
+            return (
+                f.startswith("hola")
+                or f.startswith("buenos dias")
+                or f.startswith("buenas tardes")
+                or f.startswith("buenas noches")
+                or "bienvenido" in f
+                or "gracias por contactarnos" in f
+                or "soy tu asistente" in f
+            )
+
+        def es_disclaimer_medico(frase: str) -> bool:
+            f = frase.lower()
+            return ("medic" in f or "profesional de la salud" in f) and (
+                "consulta" in f or "consult" in f
+            )
+
+        # Clasificar frases: saludos, contenido y avisos médicos
+        contenido = []
+        disclaimers = []
+        for frase in frases:
+            if es_saludo(frase):
+                continue
+            elif es_disclaimer_medico(frase):
+                disclaimers.append(frase)
+            else:
+                contenido.append(frase)
+
+        # Limitar contenido principal
+        max_contenido = 3
+        contenido = contenido[:max_contenido]
+
+        # Añadir un solo aviso médico al final (si existe)
+        if disclaimers:
+            contenido.append(disclaimers[0])
+
+        # Si no quedó nada, devolver la primera frase original como fallback
+        if not contenido:
+            return frases[0] if frases else ""
+
+        # Si solo hay una frase, devolverla tal cual
+        if len(contenido) == 1:
+            return contenido[0]
+
+        # Formatear como lista numerada en una sola línea (1. ..., 2. ..., 3. ...)
+        lineas = [f"{i + 1}. {frase}" for i, frase in enumerate(contenido)]
+        return " ".join(lineas).strip()
+
+
+##esto aqui es el metodo get_response asi que mirar, esto sirve para ver todo el tema del chatbot
     def _build_prompt(
         self, user_message: str, user_context: Optional[Dict] = None
     ) -> str:
