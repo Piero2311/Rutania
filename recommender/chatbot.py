@@ -351,7 +351,7 @@ Respuesta del asistente:
                 response = self.model.generate_content(
                     prompt,
                     generation_config={
-                        "temperature": 0.25,      # menos creativo, más directo
+                        "temperature": 0.7,      # menos creativo, más directo
                         "top_p": 0.9,
                         "max_output_tokens": 220, # limitar el tamaño de la respuesta
                     },
@@ -457,6 +457,11 @@ Respuesta del asistente:
 
             if not bot_response or len(bot_response) < 1:
                 raise ValueError("Respuesta vacía o inválida de Gemini")
+            # Post-procesar para ordenar el texto y quitar formato raro
+            cleaned = self._postprocess_response(bot_response)
+            if cleaned:
+                bot_response = cleaned
+
 
             # Post-procesar para ordenar el texto y quitar formato raro
             cleaned = self._postprocess_response(bot_response)
