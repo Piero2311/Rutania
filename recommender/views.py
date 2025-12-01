@@ -13,7 +13,7 @@ from .forms import (
     FormularioActualizarUsuario,
     FormularioSeguimiento
 )
-from .models import UsuarioPersonalizado, PerfilMedico, RecomendacionMedica, SeguimientoUsuario, Rutina
+from .models import UsuarioPersonalizado, PerfilMedico, RecomendacionMedica, SeguimientoUsuario, Rutina, SeguimientoEjercicio
 from .motor_recomendacion import motor_recomendacion
 from .chatbot import chatbot
 from django.http import JsonResponse
@@ -582,49 +582,61 @@ def rutina_semanal(request: HttpRequest, rutina_id: int) -> HttpResponse:
         messages.warning(request, 'No tienes esta rutina recomendada.')
         return redirect('recommender:dashboard')
     
-    # Obtener o crear plan semanal
-    plan_semanal = rutina.plan_semanal or {}
-    if not plan_semanal:
-        # Si no hay plan semanal, crear uno básico desde ejercicios
-        dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
-        ejercicios = rutina.ejercicios if isinstance(rutina.ejercicios, list) else []
-        for i, dia in enumerate(dias[:rutina.dias_semana]):
-            plan_semanal[dia] = ejercicios if ejercicios else [f'Ejercicio {i+1}']
-        rutina.plan_semanal = plan_semanal
-        rutina.save()
-    
-    # Obtener seguimientos de la semana actual
-    from datetime import datetime, timedelta
-    hoy = datetime.now().date()
-    inicio_semana = hoy - timedelta(days=hoy.weekday())
-    fin_semana = inicio_semana + timedelta(days=6)
-    
-    seguimientos = SeguimientoEjercicio.objects.filter(
-        usuario=usuario,
-        rutina=rutina,
-        fecha__gte=inicio_semana,
-        fecha__lte=fin_semana
-    )
-    
-    # Calcular progreso semanal
-    total_ejercicios_semana = sum(len(ejercicios) for ejercicios in plan_semanal.values())
-    ejercicios_completados_semana = sum(
-        len(seg.ejercicios_completados) for seg in seguimientos
-    )
-    progreso_semanal = round((ejercicios_completados_semana / total_ejercicios_semana * 100), 2) if total_ejercicios_semana > 0 else 0
-    
-    context = {
-        'rutina': rutina,
-        'plan_semanal': plan_semanal,
-        'seguimientos': {seg.dia_semana: seg for seg in seguimientos},
-        'progreso_semanal': progreso_semanal,
-        'ejercicios_completados_semana': ejercicios_completados_semana,
-        'total_ejercicios_semana': total_ejercicios_semana,
-        'inicio_semana': inicio_semana,
-        'fin_semana': fin_semana,
-    }
-    
-    return render(request, 'recommender/rutina_semanal.html', context)
+    try:
+        # Obtener o crear plan semanal
+        plan_semanal = rutina.plan_semanal or {}
+        if not plan_semanal:
+            # Si no hay plan semanal, crear uno básico desde ejercicios
+            dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+            ejercicios = rutina.ejercicios if isinstance(rutina.ejercicios, list) else []
+            for i, dia in enumerate(dias[:rutina.dias_semana]):
+                plan_semanal[dia] = ejercicios if ejercicios else [f'Ejercicio {i+1}']
+            rutina.plan_semanal = plan_semanal
+            rutina.save()
+        
+        # Obtener seguimientos de la semana actual
+        from datetime import datetime, timedelta
+        hoy = datetime.now().date()
+        inicio_semana = hoy - timedelta(days=hoy.weekday())
+        fin_semana = inicio_semana + timedelta(days=6)
+        
+        seguimientos = SeguimientoEjercicio.objects.filter(
+            usuario=usuario,
+            rutina=rutina,
+            fecha__gte=inicio_semana,
+            fecha__lte=fin_semana
+        )
+        
+        # Convertir seguimientos a diccionario por día
+        seguimientos_dict = {}
+        for seg in seguimientos:
+            seguimientos_dict[seg.dia_semana] = seg
+        
+        # Calcular progreso semanal
+        total_ejercicios_semana = sum(len(ejercicios) if isinstance(ejercicios, list) else 0 for ejercicios in plan_semanal.values())
+        ejercicios_completados_semana = sum(
+            len(seg.ejercicios_completados) if seg.ejercicios_completados else 0 for seg in seguimientos
+        )
+        progreso_semanal = round((ejercicios_completados_semana / total_ejercicios_semana * 100), 2) if total_ejercicios_semana > 0 else 0
+        
+        context = {
+            'rutina': rutina,
+            'plan_semanal': plan_semanal,
+            'seguimientos': seguimientos_dict,
+            'progreso_semanal': progreso_semanal,
+            'ejercicios_completados_semana': ejercicios_completados_semana,
+            'total_ejercicios_semana': total_ejercicios_semana,
+            'inicio_semana': inicio_semana,
+            'fin_semana': fin_semana,
+        }
+        
+        return render(request, 'recommender/rutina_semanal.html', context)
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error en rutina_semanal: {str(e)}", exc_info=True)
+        messages.error(request, f'Error al cargar el seguimiento semanal: {str(e)}')
+        return redirect('recommender:dashboard')
 
 
 @login_required
