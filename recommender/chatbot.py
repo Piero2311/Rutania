@@ -154,10 +154,11 @@ INSTRUCCIONES DE ESTILO (OBLIGATORIAS):
 - No uses saludos ni despedidas (no empieces con "Hola", "Buenas", etc.).
 - No uses emojis ni signos de exclamación innecesarios.
 - No uses ningún formato de Markdown: nada de **negritas**, *, -, # u otros símbolos de formato.
-- Responde de forma MUY breve y directa: máximo 3–4 frases en total.
-- Si son varios puntos, usa una lista numerada simple en texto plano, por ejemplo: "1. ... 2. ...".
+- Responde de forma MUY breve y directa: máximo 2-3 frases cortas en total (máximo 150 palabras).
+- Si son varios puntos, usa una lista numerada simple separada por saltos de línea.
 - Responde SOLO a lo que el usuario pregunta; no ofrezcas temas extra si no los ha pedido.
 - Evita hacer demasiadas preguntas al usuario; solo pregunta algo más si es estrictamente necesario.
+- Usa saltos de línea para separar ideas diferentes.
 
 LÍMITES:
 - Siempre recomienda consultar con un médico antes de empezar una rutina nueva o cambiar algo importante.
@@ -245,9 +246,9 @@ LÍMITES:
         if len(contenido) == 1:
             return contenido[0]
 
-        # Formatear como lista numerada en una sola línea (1. ..., 2. ..., 3. ...)
+        # Formatear como lista numerada con saltos de línea
         lineas = [f"{i + 1}. {frase}" for i, frase in enumerate(contenido)]
-        return " ".join(lineas).strip()
+        return "\n".join(lineas).strip()
 
 
 ##esto aqui es el metodo get_response asi que mirar, esto sirve para ver todo el tema del chatbot

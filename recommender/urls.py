@@ -21,7 +21,9 @@ urlpatterns = [
     path('generar-recomendacion/', views.generar_recomendacion, name='generar_recomendacion'),
     path('seguimiento/', views.seguimiento, name='seguimiento'),
     path('historial-recomendaciones/', views.historial_recomendaciones, name='historial_recomendaciones'),
+    path('rutina/<int:rutina_id>/semanal/', views.rutina_semanal, name='rutina_semanal'),
     
     # Chatbot API
     path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
+    path('api/marcar-ejercicio/', views.marcar_ejercicio, name='marcar_ejercicio'),
 ]

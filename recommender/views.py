@@ -426,11 +426,9 @@ def perfil(request: HttpRequest) -> HttpResponse:
     
     if request.method == 'POST':
         formulario_usuario = FormularioActualizarUsuario(request.POST, instance=usuario)
-        formulario_medico = FormularioPerfilMedico(request.POST, instance=perfil_medico)
         
-        if formulario_usuario.is_valid() and formulario_medico.is_valid():
+        if formulario_usuario.is_valid():
             formulario_usuario.save()
-            formulario_medico.save()
             
             # Actualizar perfil médico con nuevos datos
             motor_recomendacion._actualizar_perfil_medico(usuario, perfil_medico)
@@ -441,13 +439,11 @@ def perfil(request: HttpRequest) -> HttpResponse:
             messages.error(request, 'Por favor corrige los errores en el formulario.')
     else:
         formulario_usuario = FormularioActualizarUsuario(instance=usuario)
-        formulario_medico = FormularioPerfilMedico(instance=perfil_medico)
     
     context = {
         'usuario': usuario,
         'perfil_medico': perfil_medico,
         'formulario_usuario': formulario_usuario,
-        'formulario_medico': formulario_medico,
     }
     
     return render(request, 'recommender/perfil.html', context)
@@ -561,3 +557,159 @@ def chatbot_api(request: HttpRequest) -> HttpResponse:
         return JsonResponse({'error': 'JSON inválido'}, status=400)
     except Exception as e:
         return JsonResponse({'error': f'Error interno: {str(e)}'}, status=500)
+
+
+@login_required
+def rutina_semanal(request: HttpRequest, rutina_id: int) -> HttpResponse:
+    """
+    Vista para mostrar y gestionar el seguimiento semanal de una rutina.
+    """
+    usuario = request.user
+    
+    try:
+        rutina = Rutina.objects.get(id=rutina_id, activa=True)
+    except Rutina.DoesNotExist:
+        messages.error(request, 'Rutina no encontrada.')
+        return redirect('recommender:dashboard')
+    
+    # Verificar que el usuario tenga esta rutina recomendada
+    tiene_recomendacion = usuario.recomendaciones.filter(
+        rutina_recomendada=rutina,
+        vigente=True
+    ).exists()
+    
+    if not tiene_recomendacion:
+        messages.warning(request, 'No tienes esta rutina recomendada.')
+        return redirect('recommender:dashboard')
+    
+    # Obtener o crear plan semanal
+    plan_semanal = rutina.plan_semanal or {}
+    if not plan_semanal:
+        # Si no hay plan semanal, crear uno básico desde ejercicios
+        dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+        ejercicios = rutina.ejercicios if isinstance(rutina.ejercicios, list) else []
+        for i, dia in enumerate(dias[:rutina.dias_semana]):
+            plan_semanal[dia] = ejercicios if ejercicios else [f'Ejercicio {i+1}']
+        rutina.plan_semanal = plan_semanal
+        rutina.save()
+    
+    # Obtener seguimientos de la semana actual
+    from datetime import datetime, timedelta
+    hoy = datetime.now().date()
+    inicio_semana = hoy - timedelta(days=hoy.weekday())
+    fin_semana = inicio_semana + timedelta(days=6)
+    
+    seguimientos = SeguimientoEjercicio.objects.filter(
+        usuario=usuario,
+        rutina=rutina,
+        fecha__gte=inicio_semana,
+        fecha__lte=fin_semana
+    )
+    
+    # Calcular progreso semanal
+    total_ejercicios_semana = sum(len(ejercicios) for ejercicios in plan_semanal.values())
+    ejercicios_completados_semana = sum(
+        len(seg.ejercicios_completados) for seg in seguimientos
+    )
+    progreso_semanal = round((ejercicios_completados_semana / total_ejercicios_semana * 100), 2) if total_ejercicios_semana > 0 else 0
+    
+    context = {
+        'rutina': rutina,
+        'plan_semanal': plan_semanal,
+        'seguimientos': {seg.dia_semana: seg for seg in seguimientos},
+        'progreso_semanal': progreso_semanal,
+        'ejercicios_completados_semana': ejercicios_completados_semana,
+        'total_ejercicios_semana': total_ejercicios_semana,
+        'inicio_semana': inicio_semana,
+        'fin_semana': fin_semana,
+    }
+    
+    return render(request, 'recommender/rutina_semanal.html', context)
+
+
+@login_required
+def marcar_ejercicio(request: HttpRequest) -> HttpResponse:
+    """
+    API endpoint para marcar ejercicios como completados.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        rutina_id = data.get('rutina_id')
+        dia_semana = data.get('dia_semana')
+        ejercicio = data.get('ejercicio')
+        fecha = data.get('fecha')
+        
+        if not all([rutina_id, dia_semana, ejercicio, fecha]):
+            return JsonResponse({'error': 'Datos incompletos'}, status=400)
+        
+        usuario = request.user
+        rutina = Rutina.objects.get(id=rutina_id, activa=True)
+        
+        # Obtener plan semanal
+        plan_semanal = rutina.plan_semanal or {}
+        ejercicios_dia = plan_semanal.get(dia_semana, [])
+        
+        # Obtener o crear seguimiento
+        from datetime import datetime
+        fecha_obj = datetime.strptime(fecha, '%Y-%m-%d').date()
+        
+        seguimiento, created = SeguimientoEjercicio.objects.get_or_create(
+            usuario=usuario,
+            rutina=rutina,
+            fecha=fecha_obj,
+            dia_semana=dia_semana,
+            defaults={
+                'ejercicios_totales': ejercicios_dia,
+                'ejercicios_completados': []
+            }
+        )
+        
+        # Agregar o quitar ejercicio
+        if ejercicio in seguimiento.ejercicios_completados:
+            seguimiento.ejercicios_completados.remove(ejercicio)
+        else:
+            if ejercicio not in seguimiento.ejercicios_completados:
+                seguimiento.ejercicios_completados.append(ejercicio)
+        
+        # Verificar si el día está completo
+        seguimiento.completado = len(seguimiento.ejercicios_completados) == len(seguimiento.ejercicios_totales)
+        seguimiento.save()
+        
+        progreso_dia = seguimiento.calcular_progreso_dia()
+        
+        # Calcular progreso semanal
+        from datetime import timedelta
+        hoy = datetime.now().date()
+        inicio_semana = hoy - timedelta(days=hoy.weekday())
+        fin_semana = inicio_semana + timedelta(days=6)
+        
+        seguimientos_semana = SeguimientoEjercicio.objects.filter(
+            usuario=usuario,
+            rutina=rutina,
+            fecha__gte=inicio_semana,
+            fecha__lte=fin_semana
+        )
+        
+        total_ejercicios_semana = sum(len(ejercicios) for ejercicios in plan_semanal.values())
+        ejercicios_completados_semana = sum(
+            len(seg.ejercicios_completados) for seg in seguimientos_semana
+        )
+        progreso_semanal = round((ejercicios_completados_semana / total_ejercicios_semana * 100), 2) if total_ejercicios_semana > 0 else 0
+        
+        return JsonResponse({
+            'success': True,
+            'progreso_dia': progreso_dia,
+            'progreso_semanal': progreso_semanal,
+            'ejercicios_completados': len(seguimiento.ejercicios_completados),
+            'ejercicios_totales': len(seguimiento.ejercicios_totales),
+            'completado': seguimiento.completado
+        })
+        
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error en marcar_ejercicio: {str(e)}", exc_info=True)
+        return JsonResponse({'error': str(e)}, status=500)

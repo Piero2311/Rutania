@@ -50,6 +50,11 @@ class UsuarioPersonalizado(AbstractUser):
         blank=True, 
         help_text="Condiciones médicas conocidas (separadas por comas)"
     )
+    condiciones_salud = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Lista de condiciones de salud destacadas que restringen rutinas"
+    )
     objetivos = models.CharField(
         max_length=100, 
         choices=OBJETIVOS_OPCIONES,
@@ -191,6 +196,16 @@ class Rutina(models.Model):
         blank=True,
         help_text="Condiciones médicas que contraindican esta rutina"
     )
+    condiciones_contraindicadas = models.JSONField(
+        default=list,
+        blank=True,
+        help_text="Lista de condiciones de salud que contraindican esta rutina"
+    )
+    plan_semanal = models.JSONField(
+        default=dict,
+        blank=True,
+        help_text="Plan semanal de ejercicios estructurado por días"
+    )
     
     # Metadata
     activa = models.BooleanField(default=True)
@@ -304,3 +319,63 @@ class SeguimientoUsuario(models.Model):
     
     def __str__(self):
         return f"Seguimiento de {self.usuario.username} - {self.fecha}"
+
+
+class SeguimientoEjercicio(models.Model):
+    """
+    Seguimiento diario de ejercicios completados en una rutina.
+    Permite marcar qué ejercicios se completaron cada día.
+    """
+    usuario = models.ForeignKey(
+        UsuarioPersonalizado,
+        on_delete=models.CASCADE,
+        related_name='seguimientos_ejercicios'
+    )
+    rutina = models.ForeignKey(
+        Rutina,
+        on_delete=models.CASCADE,
+        related_name='seguimientos_ejercicios'
+    )
+    fecha = models.DateField(
+        help_text="Fecha del entrenamiento"
+    )
+    dia_semana = models.CharField(
+        max_length=20,
+        help_text="Día de la semana (Lunes, Martes, etc.)"
+    )
+    ejercicios_completados = models.JSONField(
+        default=list,
+        help_text="Lista de ejercicios completados en este día"
+    )
+    ejercicios_totales = models.JSONField(
+        default=list,
+        help_text="Lista de todos los ejercicios programados para este día"
+    )
+    completado = models.BooleanField(
+        default=False,
+        help_text="Indica si el día completo fue completado"
+    )
+    notas = models.TextField(
+        blank=True,
+        help_text="Notas adicionales sobre el entrenamiento"
+    )
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Seguimiento de Ejercicio'
+        verbose_name_plural = 'Seguimientos de Ejercicios'
+        ordering = ['-fecha', 'dia_semana']
+        unique_together = ['usuario', 'rutina', 'fecha', 'dia_semana']
+    
+    def __str__(self):
+        return f"{self.usuario.username} - {self.rutina.nombre} - {self.dia_semana} ({self.fecha})"
+    
+    def calcular_progreso_dia(self) -> float:
+        """Calcula el porcentaje de progreso del día (0-100)."""
+        if not self.ejercicios_totales:
+            return 0.0
+        completados = len(self.ejercicios_completados)
+        totales = len(self.ejercicios_totales)
+        if totales == 0:
+            return 0.0
+        return round((completados / totales) * 100, 2)

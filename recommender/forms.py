@@ -82,14 +82,34 @@ class FormularioRegistro(UserCreationForm):
         }),
         help_text="Días disponibles para entrenar por semana"
     )
+    condiciones_salud = forms.MultipleChoiceField(
+        required=False,
+        choices=[
+            ('hipertension', 'Hipertensión'),
+            ('diabetes', 'Diabetes'),
+            ('problemas_cardiacos', 'Problemas Cardíacos'),
+            ('artritis', 'Artritis'),
+            ('osteoporosis', 'Osteoporosis'),
+            ('lesion_rodilla', 'Lesión de Rodilla'),
+            ('lesion_espalda', 'Lesión de Espalda'),
+            ('asma', 'Asma'),
+            ('embarazo', 'Embarazo'),
+            ('hernia_discal', 'Hernia Discal'),
+            ('problemas_articulares', 'Problemas Articulares'),
+        ],
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'space-y-2'
+        }),
+        help_text="Selecciona las condiciones de salud que aplican (si las tienes, algunas rutinas se restringirán automáticamente)"
+    )
     condiciones_medicas = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={
             'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
-            'rows': 3,
-            'placeholder': 'Ej: Hipertensión, Diabetes, etc. (opcional)'
+            'rows': 2,
+            'placeholder': 'Otras condiciones médicas o información adicional (opcional)'
         }),
-        help_text="Condiciones médicas conocidas (opcional)"
+        help_text="Otras condiciones médicas o información adicional (opcional)"
     )
     restricciones = forms.CharField(
         required=False,
@@ -107,7 +127,7 @@ class FormularioRegistro(UserCreationForm):
             'username', 'email', 'password1', 'password2',
             'fecha_nacimiento', 'altura', 'peso', 'objetivos',
             'nivel_experiencia', 'dias_entrenamiento',
-            'condiciones_medicas', 'restricciones'
+            'condiciones_salud', 'condiciones_medicas', 'restricciones'
         )
         widgets = {
             'username': forms.TextInput(attrs={
@@ -131,6 +151,7 @@ class FormularioRegistro(UserCreationForm):
         user.objetivos = self.cleaned_data['objetivos']
         user.nivel_experiencia = self.cleaned_data['nivel_experiencia']
         user.dias_entrenamiento = self.cleaned_data['dias_entrenamiento']
+        user.condiciones_salud = self.cleaned_data.get('condiciones_salud', [])
         user.condiciones_medicas = self.cleaned_data.get('condiciones_medicas', '')
         user.restricciones = self.cleaned_data.get('restricciones', '')
         
@@ -215,6 +236,7 @@ class FormularioActualizarUsuario(forms.ModelForm):
             'objetivos',
             'nivel_experiencia',
             'dias_entrenamiento',
+            'condiciones_salud',
             'condiciones_medicas',
             'restricciones'
         ]

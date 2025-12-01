@@ -1,0 +1,172 @@
+{% extends 'recommender/base.html' %}
+
+{% block title %}Rutina Semanal - {{ rutina.nombre }} - Rutania{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h1 class="text-4xl font-bold text-charcoal-black">{{ rutina.nombre }}</h1>
+                <p class="text-slate-gray mt-2">{{ rutina.descripcion }}</p>
+            </div>
+            <a href="{% url 'recommender:dashboard' %}" class="bg-mint-cream hover:bg-primary-emerald hover:text-white text-charcoal-black font-semibold py-2 px-4 rounded-lg transition-all">
+                ← Volver
+            </a>
+        </div>
+        
+        <!-- Progreso Semanal -->
+        <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-charcoal-black">Progreso Semanal</h2>
+                <span class="text-3xl font-bold text-primary-emerald">{{ progreso_semanal }}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-4">
+                <div class="bg-gradient-to-r from-primary-emerald to-deep-forest h-4 rounded-full transition-all duration-500" 
+                     style="width: {{ progreso_semanal }}%"></div>
+            </div>
+            <p class="text-sm text-slate-gray mt-2">
+                {{ ejercicios_completados_semana }} de {{ total_ejercicios_semana }} ejercicios completados
+            </p>
+            <p class="text-xs text-slate-gray mt-1">
+                Semana del {{ inicio_semana|date:"d/m/Y" }} al {{ fin_semana|date:"d/m/Y" }}
+            </p>
+        </div>
+    </div>
+    
+    <!-- Plan Semanal -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for dia, ejercicios in plan_semanal.items %}
+            {% if dia in seguimientos %}
+                {% with seguimiento=seguimientos.dia %}
+            {% else %}
+                {% with seguimiento=None %}
+            {% endif %}
+            <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-primary-emerald to-deep-forest px-4 py-3">
+                    <h3 class="text-lg font-bold text-white">{{ dia }}</h3>
+                    {% if seguimiento %}
+                        <p class="text-sm text-mint-cream">
+                            {{ seguimiento.calcular_progreso_dia }}% completado
+                        </p>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <div class="space-y-3">
+                        {% for ejercicio in ejercicios %}
+                            {% if seguimiento %}
+                                {% if ejercicio in seguimiento.ejercicios_completados %}
+                                    <label class="flex items-center space-x-2 cursor-pointer bg-green-50 p-2 rounded-lg">
+                                        <input type="checkbox" 
+                                               checked 
+                                               class="ejercicio-checkbox w-5 h-5 text-primary-emerald rounded focus:ring-primary-emerald"
+                                               data-rutina="{{ rutina.id }}"
+                                               data-dia="{{ dia }}"
+                                               data-ejercicio="{{ ejercicio }}"
+                                               data-fecha="{% if seguimiento.fecha %}{{ seguimiento.fecha|date:'Y-m-d' }}{% else %}{{ inicio_semana|date:'Y-m-d' }}{% endif %}">
+                                        <span class="text-sm text-charcoal-black line-through">{{ ejercicio }}</span>
+                                    </label>
+                                {% else %}
+                                    <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                        <input type="checkbox" 
+                                               class="ejercicio-checkbox w-5 h-5 text-primary-emerald rounded focus:ring-primary-emerald"
+                                               data-rutina="{{ rutina.id }}"
+                                               data-dia="{{ dia }}"
+                                               data-ejercicio="{{ ejercicio }}"
+                                               data-fecha="{% if seguimiento.fecha %}{{ seguimiento.fecha|date:'Y-m-d' }}{% else %}{{ inicio_semana|date:'Y-m-d' }}{% endif %}">
+                                        <span class="text-sm text-charcoal-black">{{ ejercicio }}</span>
+                                    </label>
+                                {% endif %}
+                            {% else %}
+                                <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors">
+                                    <input type="checkbox" 
+                                           class="ejercicio-checkbox w-5 h-5 text-primary-emerald rounded focus:ring-primary-emerald"
+                                           data-rutina="{{ rutina.id }}"
+                                           data-dia="{{ dia }}"
+                                           data-ejercicio="{{ ejercicio }}"
+                                           data-fecha="{{ inicio_semana|date:'Y-m-d' }}">
+                                    <span class="text-sm text-charcoal-black">{{ ejercicio }}</span>
+                                </label>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.ejercicio-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const rutinaId = this.dataset.rutina;
+            const dia = this.dataset.dia;
+            const ejercicio = this.dataset.ejercicio;
+            const fecha = this.dataset.fecha;
+            
+            fetch('{% url "recommender:marcar_ejercicio" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    rutina_id: rutinaId,
+                    dia_semana: dia,
+                    ejercicio: ejercicio,
+                    fecha: fecha
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Actualizar progreso semanal
+                    const progresoElement = document.querySelector('.text-3xl.font-bold');
+                    if (progresoElement) {
+                        progresoElement.textContent = data.progreso_semanal + '%';
+                    }
+                    
+                    // Actualizar barra de progreso
+                    const progressBar = document.querySelector('.bg-gradient-to-r');
+                    if (progressBar) {
+                        progressBar.style.width = data.progreso_semanal + '%';
+                    }
+                    
+                    // Actualizar texto de ejercicios completados
+                    const ejerciciosText = document.querySelector('.text-sm.text-slate-gray');
+                    if (ejerciciosText) {
+                        ejerciciosText.textContent = `${data.ejercicios_completados} de ${data.ejercicios_totales} ejercicios completados`;
+                    }
+                    
+                    // Actualizar estilo del checkbox
+                    const label = this.closest('label');
+                    if (data.completado || this.checked) {
+                        label.classList.add('bg-green-50');
+                        const span = label.querySelector('span');
+                        if (span) {
+                            span.classList.add('line-through');
+                        }
+                    } else {
+                        label.classList.remove('bg-green-50');
+                        const span = label.querySelector('span');
+                        if (span) {
+                            span.classList.remove('line-through');
+                        }
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al marcar el ejercicio. Por favor, intenta de nuevo.');
+            });
+        });
+    });
+});
+</script>
+{% endblock %}
+

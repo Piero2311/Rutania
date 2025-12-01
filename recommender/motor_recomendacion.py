@@ -82,8 +82,20 @@ class MotorRecomendacion:
                 'precauciones': evaluacion_medica.get('precauciones', [])
             }
         
+        # Filtrar por condiciones de salud primero
+        rutinas_lista = list(todas_rutinas)
+        condiciones_salud = usuario.condiciones_salud or []
+        if condiciones_salud:
+            rutinas_dict = [self._rutina_a_dict(r) for r in rutinas_lista]
+            rutinas_filtradas_dict = self._filtrar_rutinas_por_condiciones_salud(
+                rutinas_dict,
+                condiciones_salud
+            )
+            rutinas_ids_filtradas = {r['id'] for r in rutinas_filtradas_dict}
+            rutinas_lista = [r for r in rutinas_lista if r.id in rutinas_ids_filtradas]
+        
         rutinas_seguras = self._filtrar_rutinas_seguras(
-            todas_rutinas,
+            rutinas_lista,
             usuario,
             evaluacion_medica
         )
@@ -170,9 +182,33 @@ class MotorRecomendacion:
             perfil.clasificacion_imc = clasificacion
             perfil.save()
     
+    def _filtrar_rutinas_por_condiciones_salud(
+        self, rutinas: List[Dict], condiciones_salud: List[str]
+    ) -> List[Dict]:
+        """
+        Filtra rutinas que están contraindicadas por las condiciones de salud del usuario.
+        
+        PARADIGMA FUNCIONAL: Filtrado puro sin efectos secundarios.
+        """
+        if not condiciones_salud:
+            return rutinas
+        
+        def es_rutina_segura(rutina: Dict) -> bool:
+            condiciones_contraindicadas = rutina.get('condiciones_contraindicadas', [])
+            if not condiciones_contraindicadas:
+                return True
+            
+            # Verificar si alguna condición del usuario está en las contraindicadas
+            for condicion_usuario in condiciones_salud:
+                if condicion_usuario in condiciones_contraindicadas:
+                    return False
+            return True
+        
+        return list(filter(es_rutina_segura, rutinas))
+    
     def _filtrar_rutinas_seguras(
         self, 
-        rutinas: QuerySet, 
+        rutinas: List[Rutina], 
         usuario: UsuarioPersonalizado,
         evaluacion_medica: Dict
     ) -> List[Rutina]:
