@@ -21,14 +21,15 @@
         <div class="bg-white rounded-xl shadow-lg border border-green-100 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-bold text-charcoal-black">Progreso Semanal</h2>
-                <span class="text-3xl font-bold text-primary-emerald">{{ progreso_semanal }}%</span>
+                <span id="weekly-progress-text" class="text-3xl font-bold text-primary-emerald">{{ progreso_semanal }}%</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-4">
-                <div class="bg-gradient-to-r from-primary-emerald to-deep-forest h-4 rounded-full transition-all duration-500"
-                    style="width: {{ progreso_semanal|default:'0' }}%;">
+                <div id="weekly-progress-bar"
+                     class="bg-gradient-to-r from-primary-emerald to-deep-forest h-4 rounded-full transition-all duration-500"
+                     style="width: {{ progreso_semanal|default:'0' }}%;">
                 </div>
             </div>
-            <p class="text-sm text-slate-gray mt-2">
+            <p id="weekly-progress-detail" class="text-sm text-slate-gray mt-2">
                 {{ ejercicios_completados_semana|default:"0" }} de {{ total_ejercicios_semana|default:"0" }} ejercicios completados
             </p>
             <p class="text-xs text-slate-gray mt-1">
@@ -45,7 +46,7 @@
                     <div class="bg-white rounded-xl shadow-lg border border-green-100 overflow-hidden">
                         <div class="bg-gradient-to-r from-primary-emerald to-deep-forest px-4 py-3">
                             <h3 class="text-lg font-bold text-white">{{ dia }}</h3>
-                            <p class="text-sm text-mint-cream">
+                            <p class="text-sm text-mint-cream dia-progreso">
                                 {% with completados=seguimiento.ejercicios_completados|length totales=seguimiento.ejercicios_totales|length %}
                                     {% if totales > 0 %}
                                         {% widthratio completados totales 100 %}%
@@ -140,21 +141,30 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     // Actualizar progreso semanal
-                    const progresoElement = document.querySelector('.text-3xl.font-bold');
+                    const progresoElement = document.getElementById('weekly-progress-text');
                     if (progresoElement) {
                         progresoElement.textContent = data.progreso_semanal + '%';
                     }
                     
                     // Actualizar barra de progreso
-                    const progressBar = document.querySelector('.bg-gradient-to-r');
+                    const progressBar = document.getElementById('weekly-progress-bar');
                     if (progressBar) {
                         progressBar.style.width = data.progreso_semanal + '%';
                     }
                     
                     // Actualizar texto de ejercicios completados
-                    const ejerciciosText = document.querySelector('.text-sm.text-slate-gray');
+                    const ejerciciosText = document.getElementById('weekly-progress-detail');
                     if (ejerciciosText) {
-                        ejerciciosText.textContent = `${data.ejercicios_completados} de ${data.ejercicios_totales} ejercicios completados`;
+                        ejerciciosText.textContent = `${data.ejercicios_completados_semana} de ${data.total_ejercicios_semana} ejercicios completados`;
+                    }
+
+                    // Actualizar porcentaje del día en la tarjeta correspondiente
+                    const dayCard = checkbox.closest('.bg-white.rounded-xl.shadow-lg');
+                    if (dayCard) {
+                        const diaProgreso = dayCard.querySelector('.dia-progreso');
+                        if (diaProgreso) {
+                            diaProgreso.textContent = `${data.progreso_dia}% completado`;
+                        }
                     }
                     
                     // Actualizar estilo del checkbox

@@ -717,7 +717,9 @@ def marcar_ejercicio(request: HttpRequest) -> HttpResponse:
             'progreso_semanal': progreso_semanal,
             'ejercicios_completados': len(seguimiento.ejercicios_completados),
             'ejercicios_totales': len(seguimiento.ejercicios_totales),
-            'completado': seguimiento.completado
+            'completado': seguimiento.completado,
+            'ejercicios_completados_semana': ejercicios_completados_semana,
+            'total_ejercicios_semana': total_ejercicios_semana
         })
         
     except Exception as e:
