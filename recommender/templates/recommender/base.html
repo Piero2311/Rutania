@@ -356,11 +356,17 @@
                         
                         const data = await response.json();
                         
+                        // Siempre mostrar la respuesta, incluso si hay error
                         if (data.response) {
                             this.messages.push({
                                 type: 'bot',
                                 text: data.response
                             });
+                            
+                            // Si hay error pero también hay respuesta, loguear el error
+                            if (data.error && !data.success) {
+                                console.error('Error del chatbot:', data.error);
+                            }
                         } else if (data.error) {
                             this.messages.push({
                                 type: 'bot',

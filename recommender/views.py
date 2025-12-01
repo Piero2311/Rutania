@@ -532,13 +532,30 @@ def chatbot_api(request: HttpRequest) -> HttpResponse:
         
         # Obtener respuesta del chatbot
         user_id = str(usuario.id)
-        response = chatbot.get_response(user_message, user_id=user_id, user_context=user_context)
         
-        # Asegurar que siempre haya un campo 'success'
-        if 'success' not in response:
-            response['success'] = 'error' not in response
-        
-        return JsonResponse(response)
+        try:
+            response = chatbot.get_response(user_message, user_id=user_id, user_context=user_context)
+            
+            # Asegurar que siempre haya un campo 'success'
+            if 'success' not in response:
+                response['success'] = 'error' not in response
+            
+            # Logging para debugging (solo en desarrollo)
+            import logging
+            logger = logging.getLogger(__name__)
+            if 'error' in response:
+                logger.warning(f"Chatbot retornó error: {response.get('error')}")
+            
+            return JsonResponse(response)
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error en chatbot_api: {str(e)}", exc_info=True)
+            return JsonResponse({
+                'response': f'Error interno del servidor: {str(e)}',
+                'error': str(e),
+                'success': False
+            }, status=500)
         
     except json.JSONDecodeError:
         return JsonResponse({'error': 'JSON inválido'}, status=400)
