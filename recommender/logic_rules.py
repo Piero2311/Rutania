@@ -1,27 +1,25 @@
 """
-Motor de reglas lógicas usando pydatalog para el paradigma lógico.
-Implementa inferencia basada en hechos y reglas usando pydatalog.
+Reglas lógicas de alto nivel para el motor de recomendación.
+
+IMPORTANTE:
+- El motor lógico principal basado en Prolog/pyswip está en `prolog_engine.py`.
+- Aquí definimos reglas de conveniencia en Python puro que se usan para:
+  - Determinar nivel del usuario
+  - Determinar objetivo recomendado
+  - Determinar intensidad segura
+  - Validar seguridad de rutinas a alto nivel
+
+Estas reglas están pensadas para ser coherentes con el comportamiento del
+motor Prolog (`MotorProlog`) pero no dependen directamente de pyswip,
+lo que mantiene el sistema robusto aunque Prolog no esté disponible.
 """
-try:
-    from pydatalog import pyDatalog
-    PYDATALOG_AVAILABLE = True
-except ImportError:
-    PYDATALOG_AVAILABLE = False
-    # Fallback a implementación simple si pydatalog no está disponible
-    import logging
-    logger = logging.getLogger(__name__)
-    logger.warning("pydatalog no disponible, usando implementación fallback")
 
 from typing import Dict, Tuple, Any
-
-if PYDATALOG_AVAILABLE:
-    # Inicializar pydatalog
-    pyDatalog.create_terms('edad, dias_disponibles, imc_clasificacion, objetivo_usuario, nivel_usuario, intensidad_segura, rutina_segura, rutina_intensidad, rutina_dias, rutina_nivel, usuario_nivel, usuario_edad, usuario_imc, objetivo_recomendado')
 
 
 def determinar_nivel_usuario(edad: int, dias_disponibles: int, imc_clasificacion: str) -> str:
     """
-    Determina el nivel del usuario usando pydatalog.
+    Determina el nivel del usuario (reglas lógicas en Python puro).
     
     Args:
         edad: Edad del usuario
@@ -31,43 +29,7 @@ def determinar_nivel_usuario(edad: int, dias_disponibles: int, imc_clasificacion
     Returns:
         Nivel del usuario: 'principiante', 'intermedio' o 'avanzado'
     """
-    if not PYDATALOG_AVAILABLE:
-        return _determinar_nivel_usuario_fallback(edad, dias_disponibles, imc_clasificacion)
-    
-    try:
-        # Limpiar hechos previos
-        pyDatalog.clear()
-        
-        # Definir reglas
-        pyDatalog.load("""
-            nivel_usuario('principiante') <= (edad(X), X > 50)
-            nivel_usuario('principiante') <= (dias_disponibles(X), X < 3)
-            nivel_usuario('principiante') <= (imc_clasificacion('obesidad'))
-            nivel_usuario('avanzado') <= (dias_disponibles(X), X >= 5) & (edad(Y), Y < 30) & (imc_clasificacion(Z), Z.in_(['normal', 'sobrepeso']))
-            nivel_usuario('intermedio') <= (dias_disponibles(X), X >= 3) & (X < 5) & (edad(Y), Y < 50) & (imc_clasificacion(Z), Z != 'obesidad')
-        """)
-        
-        # Agregar hechos
-        + edad(edad)
-        + dias_disponibles(dias_disponibles)
-        + imc_clasificacion(imc_clasificacion)
-        
-        # Consultar nivel
-        resultado = pyDatalog.ask('nivel_usuario(X)')
-        
-        if resultado:
-            nivel = list(resultado)[0][0]
-            return nivel
-    except Exception as e:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.warning(f"Error en pydatalog, usando fallback: {str(e)}")
-    
-    return _determinar_nivel_usuario_fallback(edad, dias_disponibles, imc_clasificacion)
-
-
-def _determinar_nivel_usuario_fallback(edad: int, dias_disponibles: int, imc_clasificacion: str) -> str:
-    """Fallback si pydatalog no está disponible."""
+    # Reglas simples coherentes con el modelo lógico general
     if edad > 50 or dias_disponibles < 3 or imc_clasificacion == 'obesidad':
         return 'principiante'
     elif dias_disponibles >= 5 and edad < 30 and imc_clasificacion in ['normal', 'sobrepeso']:
@@ -78,7 +40,7 @@ def _determinar_nivel_usuario_fallback(edad: int, dias_disponibles: int, imc_cla
 
 def determinar_objetivo_recomendado(objetivo_usuario: str, imc_clasificacion: str) -> str:
     """
-    Determina el objetivo recomendado usando pydatalog.
+    Determina el objetivo recomendado (reglas lógicas en Python puro).
     
     Args:
         objetivo_usuario: Objetivo del usuario
@@ -87,35 +49,7 @@ def determinar_objetivo_recomendado(objetivo_usuario: str, imc_clasificacion: st
     Returns:
         Objetivo recomendado
     """
-    if not PYDATALOG_AVAILABLE:
-        return _determinar_objetivo_recomendado_fallback(objetivo_usuario, imc_clasificacion)
-    
-    try:
-        pyDatalog.clear()
-        pyDatalog.load("""
-            objetivo_recomendado('peso') <= (imc_clasificacion(X), X.in_(['obesidad', 'sobrepeso']))
-            objetivo_recomendado('musculacion') <= (imc_clasificacion('bajo_peso'))
-            objetivo_recomendado(X) <= (imc_clasificacion('normal')) & (objetivo_usuario(X))
-        """)
-        
-        + imc_clasificacion(imc_clasificacion)
-        + objetivo_usuario(objetivo_usuario)
-        
-        resultado = pyDatalog.ask('objetivo_recomendado(X)')
-        
-        if resultado:
-            objetivo = list(resultado)[0][0]
-            return objetivo
-    except Exception as e:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.warning(f"Error en pydatalog, usando fallback: {str(e)}")
-    
-    return _determinar_objetivo_recomendado_fallback(objetivo_usuario, imc_clasificacion)
-
-
-def _determinar_objetivo_recomendado_fallback(objetivo_usuario: str, imc_clasificacion: str) -> str:
-    """Fallback si pydatalog no está disponible."""
+    # Reglas simples coherentes con el motor lógico
     if imc_clasificacion in ['obesidad', 'sobrepeso']:
         return 'peso'
     elif imc_clasificacion == 'bajo_peso':
@@ -126,7 +60,7 @@ def _determinar_objetivo_recomendado_fallback(objetivo_usuario: str, imc_clasifi
 
 def determinar_intensidad_segura(edad: int, imc_clasificacion: str, nivel: str) -> str:
     """
-    Determina la intensidad segura usando pydatalog.
+    Determina la intensidad segura (reglas lógicas en Python puro).
     
     Args:
         edad: Edad del usuario
@@ -136,38 +70,7 @@ def determinar_intensidad_segura(edad: int, imc_clasificacion: str, nivel: str) 
     Returns:
         Intensidad segura: 'baja', 'media' o 'alta'
     """
-    if not PYDATALOG_AVAILABLE:
-        return _determinar_intensidad_segura_fallback(edad, imc_clasificacion, nivel)
-    
-    try:
-        pyDatalog.clear()
-        pyDatalog.load("""
-            intensidad_segura('baja') <= (edad(X), X > 50)
-            intensidad_segura('baja') <= (imc_clasificacion('obesidad'))
-            intensidad_segura('baja') <= (nivel_usuario('principiante')) & (edad(X), X <= 50)
-            intensidad_segura('alta') <= (nivel_usuario('avanzado')) & (edad(X), X < 40)
-            intensidad_segura('media') <= (nivel_usuario('intermedio')) & (edad(X), X < 50)
-        """)
-        
-        + edad(edad)
-        + imc_clasificacion(imc_clasificacion)
-        + nivel_usuario(nivel)
-        
-        resultado = pyDatalog.ask('intensidad_segura(X)')
-        
-        if resultado:
-            intensidad = list(resultado)[0][0]
-            return intensidad
-    except Exception as e:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.warning(f"Error en pydatalog, usando fallback: {str(e)}")
-    
-    return _determinar_intensidad_segura_fallback(edad, imc_clasificacion, nivel)
-
-
-def _determinar_intensidad_segura_fallback(edad: int, imc_clasificacion: str, nivel: str) -> str:
-    """Fallback si pydatalog no está disponible."""
+    # Reglas coherentes con las de Prolog
     if edad > 50 or imc_clasificacion == 'obesidad' or (nivel == 'principiante' and edad <= 50):
         return 'baja'
     elif nivel == 'avanzado' and edad < 40:
@@ -178,7 +81,7 @@ def _determinar_intensidad_segura_fallback(edad: int, imc_clasificacion: str, ni
 
 def validar_seguridad_rutina(rutina: dict, usuario_data: dict) -> Tuple[bool, str]:
     """
-    Valida si una rutina es segura usando pydatalog.
+    Valida si una rutina es segura (reglas lógicas en Python puro).
     
     Args:
         rutina: Diccionario con datos de la rutina
