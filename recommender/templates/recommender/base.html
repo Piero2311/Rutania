@@ -1,405 +1,631 @@
 <!DOCTYPE html>
 <html lang="es" class="h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Rutania - Tu camino inteligente hacia una vida saludable{% endblock %}</title>
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}Rutania - Tu camino inteligente hacia una vida
+      saludable{% endblock %}
+    </title>
+
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>">
-    
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏋️</text></svg>"
+    />
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Alpine.js para interactividad -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+
     <!-- Heroicons -->
-    <script src="https://unpkg.com/@heroicons/react@2.0.18/24/outline/index.js" type="module"></script>
-    
+    <script
+      src="https://unpkg.com/@heroicons/react@2.0.18/24/outline/index.js"
+      type="module"
+    ></script>
+
     <!-- Custom Tailwind Config -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-emerald': '#10B981',
-                        'deep-forest': '#047857',
-                        'mint-cream': '#ECFDF5',
-                        'charcoal-black': '#1F2937',
-                        'slate-gray': '#374151',
-                        'accent-teal': '#0D9488',
-                        'gold-accents': '#F59E0B',
-                    },
-                    fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'sans-serif'],
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "primary-emerald": "#10B981",
+              "deep-forest": "#047857",
+              "mint-cream": "#ECFDF5",
+              "charcoal-black": "#1F2937",
+              "slate-gray": "#374151",
+              "accent-teal": "#0D9488",
+              "gold-accents": "#F59E0B",
+            },
+            fontFamily: {
+              sans: ["Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
     </script>
-    
+
     <!-- Google Fonts - Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
     <style>
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-        }
+      body {
+        font-family: "Inter", system-ui, sans-serif;
+      }
     </style>
     {% block extra_css %}{% endblock %}
-</head>
-<body class="h-full bg-mint-cream">
+  </head>
+  <body class="h-full bg-mint-cream">
     <!-- Navigation -->
-    <header class="bg-white shadow-sm border-b border-green-100 sticky top-0 z-50">
-        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo -->
-                <a href="{% url 'recommender:index' %}" class="flex items-center space-x-2 group">
-                    <div class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-lg group-hover:scale-105 transition-transform">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                        </svg>
-                    </div>
-                    <span class="text-2xl font-bold bg-gradient-to-r from-primary-emerald to-deep-forest bg-clip-text text-transparent">
-                        Rutania
-                    </span>
-                </a>
-                
-                <!-- Desktop Navigation -->
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="{% url 'recommender:index' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">
-                        Inicio
-                    </a>
-                    <a href="{% url 'recommender:rutinas' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">
-                        Rutinas
-                    </a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'recommender:dashboard' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">
-                        Dashboard
-                    </a>
-                    <a href="{% url 'recommender:perfil' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">
-                        Perfil
-                    </a>
-                    {% endif %}
-                    <a href="{% url 'recommender:acerca' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">
-                        Acerca de
-                    </a>
-                </div>
-                
-                <!-- Auth Buttons -->
-                <div class="hidden md:flex items-center space-x-4">
-                    {% if user.is_authenticated %}
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open" class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-mint-cream hover:bg-primary-emerald hover:text-white transition-colors">
-                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-emerald to-deep-forest flex items-center justify-center text-white font-semibold text-sm">
-                                {{ user.username|first|upper }}
-                            </div>
-                            <span class="font-medium text-charcoal-black">{{ user.username }}</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </button>
-                        <div x-show="open" @click.away="open = false" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-green-100 py-2">
-                            <a href="{% url 'recommender:perfil' %}" class="block px-4 py-2 text-slate-gray hover:bg-mint-cream transition-colors">Mi Perfil</a>
-                            <a href="{% url 'recommender:historial_recomendaciones' %}" class="block px-4 py-2 text-slate-gray hover:bg-mint-cream transition-colors">Historial</a>
-                            <hr class="my-2 border-green-100">
-                            <a href="{% url 'recommender:logout' %}" class="block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors">Cerrar Sesión</a>
-                        </div>
-                    </div>
-                    {% else %}
-                    <a href="{% url 'recommender:login' %}" class="px-4 py-2 text-primary-emerald font-medium hover:text-deep-forest transition-colors">
-                        Iniciar Sesión
-                    </a>
-                    <a href="{% url 'recommender:registro' %}" class="px-6 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg hover:shadow-lg transition-all transform hover:scale-105">
-                        Registrarse
-                    </a>
-                    {% endif %}
-                </div>
-                
-                <!-- Mobile Menu Button -->
-                <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg text-slate-gray hover:bg-mint-cream">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
-                </button>
+    <header
+      class="bg-white shadow-sm border-b border-green-100 sticky top-0 z-50"
+    >
+      <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <!-- Logo -->
+          <a
+            href="{% url 'recommender:index' %}"
+            class="flex items-center space-x-2 group"
+          >
+            <div
+              class="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-lg group-hover:scale-105 transition-transform"
+            >
+              <svg
+                class="w-6 h-6 text-white"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                ></path>
+              </svg>
             </div>
-            
-            <!-- Mobile Menu -->
-            <div x-data="{ mobileMenuOpen: false }" x-show="mobileMenuOpen" x-transition class="md:hidden border-t border-green-100 py-4">
-                <div class="flex flex-col space-y-4">
-                    <a href="{% url 'recommender:index' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Inicio</a>
-                    <a href="{% url 'recommender:rutinas' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Rutinas</a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'recommender:dashboard' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Dashboard</a>
-                    <a href="{% url 'recommender:perfil' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Perfil</a>
-                    {% endif %}
-                    <a href="{% url 'recommender:acerca' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Acerca de</a>
-                    {% if user.is_authenticated %}
-                    <a href="{% url 'recommender:logout' %}" class="text-red-600 font-medium">Cerrar Sesión</a>
-                    {% else %}
-                    <div class="flex space-x-4 pt-4">
-                        <a href="{% url 'recommender:login' %}" class="flex-1 text-center px-4 py-2 text-primary-emerald font-medium border border-primary-emerald rounded-lg">Iniciar Sesión</a>
-                        <a href="{% url 'recommender:registro' %}" class="flex-1 text-center px-4 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg">Registrarse</a>
-                    </div>
-                    {% endif %}
+            <span
+              class="text-2xl font-bold bg-gradient-to-r from-primary-emerald to-deep-forest bg-clip-text text-transparent"
+            >
+              Rutania
+            </span>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <div class="hidden md:flex items-center space-x-8">
+            <a
+              href="{% url 'recommender:index' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium transition-colors"
+            >
+              Inicio
+            </a>
+            <a
+              href="{% url 'recommender:rutinas' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium transition-colors"
+            >
+              Rutinas
+            </a>
+            {% if user.is_authenticated %}
+            <a
+              href="{% url 'recommender:dashboard' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium transition-colors"
+            >
+              Dashboard
+            </a>
+            <a
+              href="{% url 'recommender:perfil' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium transition-colors"
+            >
+              Perfil
+            </a>
+            {% endif %}
+            <a
+              href="{% url 'recommender:acerca' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium transition-colors"
+            >
+              Acerca de
+            </a>
+          </div>
+
+          <!-- Auth Buttons -->
+          <div class="hidden md:flex items-center space-x-4">
+            {% if user.is_authenticated %}
+            <div x-data="{ open: false }" class="relative">
+              <button
+                @click="open = !open"
+                class="flex items-center space-x-2 px-4 py-2 rounded-lg bg-mint-cream hover:bg-primary-emerald hover:text-white transition-colors"
+              >
+                <div
+                  class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-emerald to-deep-forest flex items-center justify-center text-white font-semibold text-sm"
+                >
+                  {{ user.username|first|upper }}
                 </div>
+                <span class="font-medium text-charcoal-black"
+                  >{{ user.username }}</span
+                >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  ></path>
+                </svg>
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                x-transition
+                class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-green-100 py-2"
+              >
+                <a
+                  href="{% url 'recommender:perfil' %}"
+                  class="block px-4 py-2 text-slate-gray hover:bg-mint-cream transition-colors"
+                  >Mi Perfil</a
+                >
+                <a
+                  href="{% url 'recommender:historial_recomendaciones' %}"
+                  class="block px-4 py-2 text-slate-gray hover:bg-mint-cream transition-colors"
+                  >Historial</a
+                >
+                <hr class="my-2 border-green-100" />
+                <a
+                  href="{% url 'recommender:logout' %}"
+                  class="block px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
+                  >Cerrar Sesión</a
+                >
+              </div>
             </div>
-        </nav>
+            {% else %}
+            <a
+              href="{% url 'recommender:login' %}"
+              class="px-4 py-2 text-primary-emerald font-medium hover:text-deep-forest transition-colors"
+            >
+              Iniciar Sesión
+            </a>
+            <a
+              href="{% url 'recommender:registro' %}"
+              class="px-6 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg hover:shadow-lg transition-all transform hover:scale-105"
+            >
+              Registrarse
+            </a>
+            {% endif %}
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button
+            @click="mobileMenuOpen = !mobileMenuOpen"
+            class="md:hidden p-2 rounded-lg text-slate-gray hover:bg-mint-cream"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div
+          x-data="{ mobileMenuOpen: false }"
+          x-show="mobileMenuOpen"
+          x-transition
+          class="md:hidden border-t border-green-100 py-4"
+        >
+          <div class="flex flex-col space-y-4">
+            <a
+              href="{% url 'recommender:index' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium"
+              >Inicio</a
+            >
+            <a
+              href="{% url 'recommender:rutinas' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium"
+              >Rutinas</a
+            >
+            {% if user.is_authenticated %}
+            <a
+              href="{% url 'recommender:dashboard' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium"
+              >Dashboard</a
+            >
+            <a
+              href="{% url 'recommender:perfil' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium"
+              >Perfil</a
+            >
+            {% endif %}
+            <a
+              href="{% url 'recommender:acerca' %}"
+              class="text-slate-gray hover:text-primary-emerald font-medium"
+              >Acerca de</a
+            >
+            {% if user.is_authenticated %}
+            <a
+              href="{% url 'recommender:logout' %}"
+              class="text-red-600 font-medium"
+              >Cerrar Sesión</a
+            >
+            {% else %}
+            <div class="flex space-x-4 pt-4">
+              <a
+                href="{% url 'recommender:login' %}"
+                class="flex-1 text-center px-4 py-2 text-primary-emerald font-medium border border-primary-emerald rounded-lg"
+                >Iniciar Sesión</a
+              >
+              <a
+                href="{% url 'recommender:registro' %}"
+                class="flex-1 text-center px-4 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg"
+                >Registrarse</a
+              >
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </nav>
     </header>
 
     <!-- Messages -->
     {% if messages %}
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        {% for message in messages %}
-        <div class="mb-4 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-500 text-red-800{% elif message.tags == 'success' %}bg-green-50 border-green-500 text-green-800{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-800{% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %} flex items-center justify-between">
-            <div class="flex items-center">
-                {% if message.tags == 'error' %}
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
-                </svg>
-                {% elif message.tags == 'success' %}
-                <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                </svg>
-                {% endif %}
-                <span>{{ message }}</span>
-            </div>
-            <button onclick="this.parentElement.remove()" class="ml-4 text-current opacity-50 hover:opacity-100">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </button>
+      {% for message in messages %}
+      <div
+        class="mb-4 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-500 text-red-800{% elif message.tags == 'success' %}bg-green-50 border-green-500 text-green-800{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-800{% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %} flex items-center justify-between"
+      >
+        <div class="flex items-center">
+          {% if message.tags == 'error' %}
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          {% elif message.tags == 'success' %}
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          {% endif %}
+          <span>{{ message }}</span>
         </div>
-        {% endfor %}
+        <button
+          onclick="this.parentElement.remove()"
+          class="ml-4 text-current opacity-50 hover:opacity-100"
+        >
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      {% endfor %}
     </div>
     {% endif %}
 
     <!-- Main Content -->
-    <main class="min-h-screen">
-        {% block content %}{% endblock %}
-    </main>
+    <main class="min-h-screen">{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     <footer class="bg-charcoal-black text-white mt-16">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-lg flex items-center justify-center">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
-                            </svg>
-                        </div>
-                        <span class="text-2xl font-bold">Rutania</span>
-                    </div>
-                    <p class="text-gray-400 text-sm">Tu camino inteligente hacia una vida saludable</p>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold mb-4">Enlaces</h3>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="{% url 'recommender:index' %}" class="hover:text-primary-emerald transition-colors">Inicio</a></li>
-                        <li><a href="{% url 'recommender:rutinas' %}" class="hover:text-primary-emerald transition-colors">Rutinas</a></li>
-                        <li><a href="{% url 'recommender:acerca' %}" class="hover:text-primary-emerald transition-colors">Acerca de</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold mb-4">Tecnología</h3>
-                    <p class="text-gray-400 text-sm">Django 4.2.7 | PostgreSQL | Prolog</p>
-                    <p class="text-gray-400 text-sm mt-2">Multiparadigma: Imperativo + Funcional + Lógico</p>
-                </div>
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <div
+                class="w-10 h-10 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-lg flex items-center justify-center"
+              >
+                <svg
+                  class="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+                  ></path>
+                </svg>
+              </div>
+              <span class="text-2xl font-bold">Rutania</span>
             </div>
-            
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
-                <p>&copy; 2025 Rutania. Todos los derechos reservados.</p>
-            </div>
+            <p class="text-gray-400 text-sm">
+              Tu camino inteligente hacia una vida saludable
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-4">Enlaces</h3>
+            <ul class="space-y-2 text-gray-400 text-sm">
+              <li>
+                <a
+                  href="{% url 'recommender:index' %}"
+                  class="hover:text-primary-emerald transition-colors"
+                  >Inicio</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'recommender:rutinas' %}"
+                  class="hover:text-primary-emerald transition-colors"
+                  >Rutinas</a
+                >
+              </li>
+              <li>
+                <a
+                  href="{% url 'recommender:acerca' %}"
+                  class="hover:text-primary-emerald transition-colors"
+                  >Acerca de</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-4">Tecnología</h3>
+            <p class="text-gray-400 text-sm">
+              Django 4.2.7 | PostgreSQL | Prolog
+            </p>
+            <p class="text-gray-400 text-sm mt-2">
+              Multiparadigma: Imperativo + Funcional + Lógico
+            </p>
+          </div>
         </div>
+
+        <div
+          class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm"
+          <p>&copy; 2025 Rutania. Todos los derechos reservados.</p>
+        </div>
+      </div>
     </footer>
 
     {% block extra_js %}{% endblock %}
-    
+
     <!-- Chatbot Component (solo para usuarios autenticados) -->
     {% if user.is_authenticated %}
     <div x-data="chatbot()" class="fixed bottom-6 right-6 z-50">
-        <!-- Chat Button -->
-        <button 
-            @click="toggleChat()"
-            class="bg-primary-emerald hover:bg-deep-forest text-white rounded-full p-4 shadow-lg transition-all transform hover:scale-110"
-            :class="{'rotate-180': isOpen}"
+      <!-- Chat Button -->
+      <button
+        @click="toggleChat()"
+        class="bg-primary-emerald hover:bg-deep-forest text-white rounded-full p-4 shadow-lg transition-all transform hover:scale-110"
+        :class="{'rotate-180': isOpen}"
+      >
+        <svg
+          x-show="!isOpen"
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-            <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-            </svg>
-            <svg x-show="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-            </svg>
-        </button>
-        
-        <!-- Chat Window -->
-        <div 
-            x-show="isOpen"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 scale-95"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-95"
-            class="absolute bottom-20 right-0 w-96 h-[500px] bg-white rounded-lg shadow-2xl flex flex-col border border-gray-200"
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          ></path>
+        </svg>
+        <svg
+          x-show="isOpen"
+          class="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-            <!-- Header -->
-            <div class="bg-primary-emerald text-white p-4 rounded-t-lg flex justify-between items-center">
-                <div>
-                    <h3 class="font-bold text-lg">Asistente Rutania</h3>
-                    <p class="text-sm text-mint-cream">¿En qué puedo ayudarte?</p>
-                </div>
-            </div>
-            
-            <!-- Messages -->
-            <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages">
-                <template x-for="(msg, index) in messages" :key="index">
-                    <div :class="msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'">
-                        <div 
-                            :class="msg.type === 'user' 
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          ></path>
+        </svg>
+      </button>
+
+      <!-- Chat Window -->
+      <div
+        x-show="isOpen"
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95"
+        class="absolute bottom-20 right-0 w-96 h-[500px] bg-white rounded-lg shadow-2xl flex flex-col border border-gray-200"
+      >
+        <!-- Header -->
+        <div
+          class="bg-primary-emerald text-white p-4 rounded-t-lg flex justify-between items-center"
+        >
+          <div>
+            <h3 class="font-bold text-lg">Asistente Rutania</h3>
+            <p class="text-sm text-mint-cream">¿En qué puedo ayudarte?</p>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-messages">
+          <template x-for="(msg, index) in messages" :key="index">
+            <div
+              :class="msg.type === 'user' ? 'flex justify-end' : 'flex justify-start'"
+            >
+              <div
+                :class="msg.type === 'user' 
                                 ? 'bg-primary-emerald text-white rounded-lg px-4 py-2 max-w-[80%]' 
                                 : 'bg-gray-100 text-gray-800 rounded-lg px-4 py-2 max-w-[80%]'"
-                        >
-                            <p x-text="msg.text" class="text-sm"></p>
-                        </div>
-                    </div>
-                </template>
-                <div x-show="loading" class="flex justify-start">
-                    <div class="bg-gray-100 text-gray-800 rounded-lg px-4 py-2">
-                        <p class="text-sm">Pensando...</p>
-                    </div>
-                </div>
+              >
+                <p x-text="msg.text" class="text-sm"></p>
+              </div>
             </div>
-            
-            <!-- Input -->
-            <div class="p-4 border-t border-gray-200">
-                <form @submit.prevent="sendMessage()" class="flex gap-2">
-                    <input 
-                        type="text"
-                        x-model="inputMessage"
-                        placeholder="Escribe tu pregunta..."
-                        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent"
-                        :disabled="loading"
-                    >
-                    <button 
-                        type="submit"
-                        :disabled="loading || !inputMessage.trim()"
-                        class="bg-primary-emerald text-white px-4 py-2 rounded-lg hover:bg-deep-forest transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                        </svg>
-                    </button>
-                </form>
+          </template>
+          <div x-show="loading" class="flex justify-start">
+            <div class="bg-gray-100 text-gray-800 rounded-lg px-4 py-2">
+              <p class="text-sm">Pensando...</p>
             </div>
+          </div>
         </div>
+
+        <!-- Input -->
+        <div class="p-4 border-t border-gray-200">
+          <form @submit.prevent="sendMessage()" class="flex gap-2">
+            <input
+              type="text"
+              x-model="inputMessage"
+              placeholder="Escribe tu pregunta..."
+              class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent"
+              :disabled="loading"
+            />
+            <button
+              type="submit"
+              :disabled="loading || !inputMessage.trim()"
+              class="bg-primary-emerald text-white px-4 py-2 rounded-lg hover:bg-deep-forest transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                ></path>
+              </svg>
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
-    
+
     <script>
-        function chatbot() {
-            return {
-                isOpen: false,
-                messages: [],
-                inputMessage: '',
-                loading: false,
-                
-                init() {
-                    // Mensaje de bienvenida
-                    this.messages.push({
-                        type: 'bot',
-                        text: '¡Hola! Soy tu asistente virtual de Rutania. Puedo ayudarte con preguntas sobre rutinas, ejercicios y recomendaciones. ¿En qué puedo ayudarte?'
-                    });
-                },
-                
-                toggleChat() {
-                    this.isOpen = !this.isOpen;
-                    if (this.isOpen) {
-                        this.$nextTick(() => {
-                            this.scrollToBottom();
-                        });
-                    }
-                },
-                
-                async sendMessage() {
-                    if (!this.inputMessage.trim() || this.loading) return;
-                    
-                    const userMessage = this.inputMessage.trim();
-                    this.messages.push({
-                        type: 'user',
-                        text: userMessage
-                    });
-                    this.inputMessage = '';
-                    this.loading = true;
-                    
-                    this.$nextTick(() => {
-                        this.scrollToBottom();
-                    });
-                    
-                    try {
-                        const response = await fetch('{% url "recommender:chatbot_api" %}', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': '{{ csrf_token }}'
-                            },
-                            body: JSON.stringify({
-                                message: userMessage
-                            })
-                        });
-                        
-                        const data = await response.json();
-                        
-                        // Siempre mostrar la respuesta, incluso si hay error
-                        if (data.response) {
-                            this.messages.push({
-                                type: 'bot',
-                                text: data.response
-                            });
-                            
-                            // Si hay error pero también hay respuesta, loguear el error
-                            if (data.error && !data.success) {
-                                console.error('Error del chatbot:', data.error);
-                            }
-                        } else if (data.error) {
-                            this.messages.push({
-                                type: 'bot',
-                                text: data.error || 'Lo siento, hubo un error al procesar tu mensaje.'
-                            });
-                        } else {
-                            this.messages.push({
-                                type: 'bot',
-                                text: 'Lo siento, hubo un error al procesar tu mensaje.'
-                            });
-                        }
-                    } catch (error) {
-                        this.messages.push({
-                            type: 'bot',
-                            text: 'Lo siento, hubo un error de conexión. Por favor, intenta de nuevo.'
-                        });
-                    } finally {
-                        this.loading = false;
-                        this.$nextTick(() => {
-                            this.scrollToBottom();
-                        });
-                    }
-                },
-                
-                scrollToBottom() {
-                    const messagesContainer = document.getElementById('chat-messages');
-                    if (messagesContainer) {
-                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                    }
-                }
+      function chatbot() {
+        return {
+          isOpen: false,
+          messages: [],
+          inputMessage: "",
+          loading: false,
+
+          init() {
+            // Mensaje de bienvenida más corto y ordenado
+            this.messages.push({
+              type: "bot",
+              text: "Asistente de Rutania listo. Escribe en una frase qué necesitas sobre rutinas o ejercicio.",
+            });
+          },
+
+          toggleChat() {
+            this.isOpen = !this.isOpen;
+            if (this.isOpen) {
+              this.$nextTick(() => {
+                this.scrollToBottom();
+              });
             }
-        }
+          },
+
+          async sendMessage() {
+            if (!this.inputMessage.trim() || this.loading) return;
+
+            const userMessage = this.inputMessage.trim();
+            this.messages.push({
+              type: "user",
+              text: userMessage,
+            });
+            this.inputMessage = "";
+            this.loading = true;
+
+            this.$nextTick(() => {
+              this.scrollToBottom();
+            });
+
+            try {
+              const response = await fetch(
+                '{% url "recommender:chatbot_api" %}',
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                  },
+                  body: JSON.stringify({
+                    message: userMessage,
+                  }),
+                }
+              );
+
+              const data = await response.json();
+
+              if (data.response) {
+                this.messages.push({
+                  type: "bot",
+                  text: data.response,
+                });
+              } else if (data.error) {
+                this.messages.push({
+                  type: "bot",
+                  text:
+                    data.error ||
+                    "Lo siento, hubo un error al procesar tu mensaje.",
+                });
+              } else {
+                this.messages.push({
+                  type: "bot",
+                  text: "Lo siento, hubo un error al procesar tu mensaje.",
+                });
+              }
+            } catch (error) {
+              this.messages.push({
+                type: "bot",
+                text: "Lo siento, hubo un error de conexión. Por favor, intenta de nuevo.",
+              });
+            } finally {
+              this.loading = false;
+              this.$nextTick(() => {
+                this.scrollToBottom();
+              });
+            }
+          },
+
+          scrollToBottom() {
+            const messagesContainer = document.getElementById("chat-messages");
+            if (messagesContainer) {
+              messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+          },
+        };
+      }
     </script>
     {% endif %}
-</body>
+  </body>
 </html>
