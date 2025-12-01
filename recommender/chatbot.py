@@ -154,11 +154,10 @@ INSTRUCCIONES DE ESTILO (OBLIGATORIAS):
 - No uses saludos ni despedidas (no empieces con "Hola", "Buenas", etc.).
 - No uses emojis ni signos de exclamación innecesarios.
 - No uses ningún formato de Markdown: nada de **negritas**, *, -, # u otros símbolos de formato.
-- Responde de forma MUY breve y directa: máximo 2-3 frases cortas en total (máximo 150 palabras).
-- Si son varios puntos, usa una lista numerada simple separada por saltos de línea.
+- Responde de forma MUY breve y directa: máximo 3–4 frases en total.
+- Si son varios puntos, usa una lista numerada simple en texto plano, por ejemplo: "1. ... 2. ...".
 - Responde SOLO a lo que el usuario pregunta; no ofrezcas temas extra si no los ha pedido.
 - Evita hacer demasiadas preguntas al usuario; solo pregunta algo más si es estrictamente necesario.
-- Usa saltos de línea para separar ideas diferentes.
 
 LÍMITES:
 - Siempre recomienda consultar con un médico antes de empezar una rutina nueva o cambiar algo importante.
@@ -246,9 +245,9 @@ LÍMITES:
         if len(contenido) == 1:
             return contenido[0]
 
-        # Formatear como lista numerada con saltos de línea
+        # Formatear como lista numerada en una sola línea (1. ..., 2. ..., 3. ...)
         lineas = [f"{i + 1}. {frase}" for i, frase in enumerate(contenido)]
-        return "\n".join(lineas).strip()
+        return " ".join(lineas).strip()
 
 
 ##esto aqui es el metodo get_response asi que mirar, esto sirve para ver todo el tema del chatbot
@@ -352,7 +351,7 @@ Respuesta del asistente:
                 response = self.model.generate_content(
                     prompt,
                     generation_config={
-                        "temperature": 0.7,      # menos creativo, más directo
+                        "temperature": 0.25,      # menos creativo, más directo
                         "top_p": 0.9,
                         "max_output_tokens": 220, # limitar el tamaño de la respuesta
                     },
@@ -458,11 +457,6 @@ Respuesta del asistente:
 
             if not bot_response or len(bot_response) < 1:
                 raise ValueError("Respuesta vacía o inválida de Gemini")
-            # Post-procesar para ordenar el texto y quitar formato raro
-            cleaned = self._postprocess_response(bot_response)
-            if cleaned:
-                bot_response = cleaned
-
 
             # Post-procesar para ordenar el texto y quitar formato raro
             cleaned = self._postprocess_response(bot_response)
