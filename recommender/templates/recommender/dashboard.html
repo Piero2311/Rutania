@@ -115,11 +115,21 @@
                     </div>
                     
                     {% if recomendacion_actual.precauciones %}
-                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg">
+                    <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-lg mb-4">
                         <p class="font-semibold text-yellow-900 mb-2">Precauciones:</p>
                         <p class="text-yellow-800">{{ recomendacion_actual.precauciones }}</p>
                     </div>
                     {% endif %}
+                    
+                    <!-- Botones de acción -->
+                    <div class="flex flex-wrap gap-3 mt-6">
+                        <a href="{% url 'recommender:generar_recomendacion' %}" class="inline-block bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
+                            Ver Detalles
+                        </a>
+                        <a href="{% url 'recommender:rutina_semanal' recomendacion_actual.rutina_recomendada.id %}" class="inline-block bg-gradient-to-r from-accent-teal to-primary-emerald text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
+                            📅 Seguimiento Semanal
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="lg:col-span-1">

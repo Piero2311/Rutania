@@ -55,9 +55,16 @@
                 </div>
                 {% endif %}
                 
-                <a href="{% url 'recommender:dashboard' %}" class="inline-block w-full text-center bg-mint-cream hover:bg-primary-emerald hover:text-white text-charcoal-black font-semibold py-2 px-4 rounded-lg transition-all">
-                    Ver Detalles
-                </a>
+                <div class="flex gap-2">
+                    {% if recomendacion.vigente %}
+                    <a href="{% url 'recommender:rutina_semanal' recomendacion.rutina_recomendada.id %}" class="flex-1 text-center bg-gradient-to-r from-accent-teal to-primary-emerald hover:from-primary-emerald hover:to-deep-forest text-white font-semibold py-2 px-4 rounded-lg transition-all">
+                        📅 Seguimiento
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'recommender:dashboard' %}" class="flex-1 text-center bg-mint-cream hover:bg-primary-emerald hover:text-white text-charcoal-black font-semibold py-2 px-4 rounded-lg transition-all">
+                        Ver Detalles
+                    </a>
+                </div>
             </div>
         </div>
         {% endfor %}
