@@ -67,7 +67,7 @@
     {% block extra_css %}{% endblock %}
   </head>
   <body class="h-full bg-mint-cream">
-    <!-- Navigation -->
+<!-- Navigation -->
 <header
   x-data="{ mobileMenuOpen: false }"
   class="bg-white shadow-sm border-b border-green-100 sticky top-0 z-50"
@@ -79,27 +79,101 @@
         href="{% url 'recommender:index' %}"
         class="flex items-center space-x-2 group"
       >
-        ...
+        <div
+          class="w-10 h-10 bg-gradient-to-br from-primary-emerald to-deep-forest rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform"
+        >
+          <svg
+            class="w-6 h-6 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+            ></path>
+          </svg>
+        </div>
+        <span class="text-xl font-bold text-charcoal-black group-hover:text-primary-emerald transition-colors">Rutania</span>
       </a>
 
       <!-- Desktop Navigation -->
       <div class="hidden md:flex items-center space-x-8">
-        ...
+        <a href="{% url 'recommender:index' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">Inicio</a>
+        <a href="{% url 'recommender:rutinas' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">Rutinas</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'recommender:dashboard' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">Dashboard</a>
+        <a href="{% url 'recommender:perfil' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">Perfil</a>
+        {% endif %}
+        <a href="{% url 'recommender:acerca' %}" class="text-slate-gray hover:text-primary-emerald font-medium transition-colors">Acerca de</a>
       </div>
 
-      <!-- Auth Buttons -->
+      <!-- Auth Buttons Desktop -->
       <div class="hidden md:flex items-center space-x-4">
-        ...
+        {% if user.is_authenticated %}
+        <span class="text-sm text-slate-gray">Hola, {{ user.username }}</span>
+        <a
+          href="{% url 'recommender:logout' %}"
+          class="px-4 py-2 text-red-600 hover:text-red-700 font-medium transition-colors"
+        >
+          Cerrar Sesión
+        </a>
+        {% else %}
+        <a
+          href="{% url 'recommender:login' %}"
+          class="px-4 py-2 text-primary-emerald hover:text-deep-forest font-medium transition-colors"
+        >
+          Iniciar Sesión
+        </a>
+        <a
+          href="{% url 'recommender:registro' %}"
+          class="px-6 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg hover:shadow-lg transition-all"
+        >
+          Registrarse
+        </a>
+        {% endif %}
       </div>
 
       <!-- Mobile Menu Button -->
       <button
         @click="mobileMenuOpen = !mobileMenuOpen"
-        class="md:hidden p-2 rounded-lg text-slate-gray hover:bg-mint-cream"
+        type="button"
+        class="md:hidden p-2 rounded-lg text-slate-gray hover:bg-mint-cream focus:outline-none focus:ring-2 focus:ring-primary-emerald transition-colors"
+        :aria-expanded="mobileMenuOpen"
+        aria-label="Menú principal"
       >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16" />
+        <!-- Icono Hamburguesa -->
+        <svg 
+          x-show="!mobileMenuOpen"
+          class="w-6 h-6" 
+          fill="none" 
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16" 
+          />
+        </svg>
+        <!-- Icono X -->
+        <svg 
+          x-show="mobileMenuOpen"
+          class="w-6 h-6" 
+          fill="none" 
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          style="display: none;"
+        >
+          <path 
+            stroke-linecap="round" 
+            stroke-linejoin="round" 
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12" 
+          />
         </svg>
       </button>
     </div>
@@ -107,75 +181,79 @@
     <!-- Mobile Menu -->
     <div
       x-show="mobileMenuOpen"
-      x-transition
+      x-transition:enter="transition ease-out duration-200"
+      x-transition:enter-start="opacity-0 -translate-y-2"
+      x-transition:enter-end="opacity-100 translate-y-0"
+      x-transition:leave="transition ease-in duration-150"
+      x-transition:leave-start="opacity-100 translate-y-0"
+      x-transition:leave-end="opacity-0 -translate-y-2"
       class="md:hidden border-t border-green-100 py-4"
+      style="display: none;"
     >
       <div class="flex flex-col space-y-4">
-        <a href="{% url 'recommender:index' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Inicio</a>
-        <a href="{% url 'recommender:rutinas' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Rutinas</a>
+        <a 
+          href="{% url 'recommender:index' %}" 
+          class="text-slate-gray hover:text-primary-emerald font-medium px-2 py-1 rounded hover:bg-mint-cream transition-colors"
+        >
+          Inicio
+        </a>
+        <a 
+          href="{% url 'recommender:rutinas' %}" 
+          class="text-slate-gray hover:text-primary-emerald font-medium px-2 py-1 rounded hover:bg-mint-cream transition-colors"
+        >
+          Rutinas
+        </a>
         {% if user.is_authenticated %}
-        <a href="{% url 'recommender:dashboard' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Dashboard</a>
-        <a href="{% url 'recommender:perfil' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Perfil</a>
+        <a 
+          href="{% url 'recommender:dashboard' %}" 
+          class="text-slate-gray hover:text-primary-emerald font-medium px-2 py-1 rounded hover:bg-mint-cream transition-colors"
+        >
+          Dashboard
+        </a>
+        <a 
+          href="{% url 'recommender:perfil' %}" 
+          class="text-slate-gray hover:text-primary-emerald font-medium px-2 py-1 rounded hover:bg-mint-cream transition-colors"
+        >
+          Perfil
+        </a>
         {% endif %}
-        <a href="{% url 'recommender:acerca' %}" class="text-slate-gray hover:text-primary-emerald font-medium">Acerca de</a>
+        <a 
+          href="{% url 'recommender:acerca' %}" 
+          class="text-slate-gray hover:text-primary-emerald font-medium px-2 py-1 rounded hover:bg-mint-cream transition-colors"
+        >
+          Acerca de
+        </a>
 
         {% if user.is_authenticated %}
-        <a href="{% url 'recommender:logout' %}" class="text-red-600 font-medium">Cerrar Sesión</a>
+        <div class="pt-4 border-t border-green-100">
+          <p class="text-sm text-slate-gray mb-2 px-2">Hola, {{ user.username }}</p>
+          <a 
+            href="{% url 'recommender:logout' %}" 
+            class="block text-red-600 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors"
+          >
+            Cerrar Sesión
+          </a>
+        </div>
         {% else %}
-        <div class="flex space-x-4 pt-4">
-          <a href="{% url 'recommender:login' %}" class="flex-1 text-center px-4 py-2 text-primary-emerald font-medium border border-primary-emerald rounded-lg">Iniciar Sesión</a>
-          <a href="{% url 'recommender:registro' %}" class="flex-1 text-center px-4 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg">Registrarse</a>
+        <div class="flex flex-col space-y-2 pt-4 border-t border-green-100">
+          <a 
+            href="{% url 'recommender:login' %}" 
+            class="text-center px-4 py-2 text-primary-emerald font-medium border-2 border-primary-emerald rounded-lg hover:bg-mint-cream transition-colors"
+          >
+            Iniciar Sesión
+          </a>
+          <a 
+            href="{% url 'recommender:registro' %}" 
+            class="text-center px-4 py-2 bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-medium rounded-lg hover:shadow-lg transition-all"
+          >
+            Registrarse
+          </a>
         </div>
         {% endif %}
       </div>
     </div>
   </nav>
 </header>
-
-
-    <!-- Messages -->
-    {% if messages %}
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-      {% for message in messages %}
-      <div
-        class="mb-4 p-4 rounded-lg border-l-4 {% if message.tags == 'error' %}bg-red-50 border-red-500 text-red-800{% elif message.tags == 'success' %}bg-green-50 border-green-500 text-green-800{% elif message.tags == 'warning' %}bg-yellow-50 border-yellow-500 text-yellow-800{% else %}bg-blue-50 border-blue-500 text-blue-800{% endif %} flex items-center justify-between"
-      >
-        <div class="flex items-center">
-          {% if message.tags == 'error' %}
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-          {% elif message.tags == 'success' %}
-          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-          {% endif %}
-          <span>{{ message }}</span>
-        </div>
-        <button
-          onclick="this.parentElement.remove()"
-          class="ml-4 text-current opacity-50 hover:opacity-100"
-        >
-          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fill-rule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-        </button>
-      </div>
-      {% endfor %}
-    </div>
-    {% endif %}
 
     <!-- Main Content -->
     <main class="min-h-screen">{% block content %}{% endblock %}</main>
