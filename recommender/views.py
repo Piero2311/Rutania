@@ -428,7 +428,10 @@ def perfil(request: HttpRequest) -> HttpResponse:
         formulario_usuario = FormularioActualizarUsuario(request.POST, instance=usuario)
         
         if formulario_usuario.is_valid():
-            formulario_usuario.save()
+            usuario_actualizado = formulario_usuario.save()
+            
+            # Refrescar el usuario desde la BD para obtener los datos actualizados
+            usuario.refresh_from_db()
             
             # Actualizar perfil médico con nuevos datos
             motor_recomendacion._actualizar_perfil_medico(usuario, perfil_medico)

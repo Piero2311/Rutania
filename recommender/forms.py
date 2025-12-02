@@ -228,6 +228,47 @@ class FormularioActualizarUsuario(forms.ModelForm):
     """
     Formulario para actualizar datos básicos del usuario.
     """
+    condiciones_salud = forms.MultipleChoiceField(
+        required=False,
+        choices=[
+            ('hipertension', 'Hipertensión'),
+            ('diabetes', 'Diabetes'),
+            ('problemas_cardiacos', 'Problemas Cardíacos'),
+            ('artritis', 'Artritis'),
+            ('osteoporosis', 'Osteoporosis'),
+            ('lesion_rodilla', 'Lesión de Rodilla'),
+            ('lesion_espalda', 'Lesión de Espalda'),
+            ('asma', 'Asma'),
+            ('embarazo', 'Embarazo'),
+            ('hernia_discal', 'Hernia Discal'),
+            ('problemas_articulares', 'Problemas Articulares'),
+        ],
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'space-y-2'
+        }),
+        help_text="Selecciona las condiciones de salud que aplican (si las tienes, algunas rutinas se restringirán automáticamente)"
+    )
+    
+    condiciones_medicas = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
+            'rows': 3,
+            'placeholder': 'Otras condiciones médicas o información adicional (opcional)'
+        }),
+        help_text="Otras condiciones médicas o información adicional (opcional)"
+    )
+    
+    restricciones = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
+            'rows': 2,
+            'placeholder': 'Restricciones físicas o médicas adicionales (opcional)'
+        }),
+        help_text="Restricciones adicionales (opcional)"
+    )
+    
     class Meta:
         model = UsuarioPersonalizado
         fields = [
@@ -243,26 +284,79 @@ class FormularioActualizarUsuario(forms.ModelForm):
         widgets = {
             'altura': forms.NumberInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
-                'step': '0.1'
+                'step': '0.1',
+                'placeholder': 'Altura en cm (ej: 175)'
             }),
             'peso': forms.NumberInput(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
-                'step': '0.1'
+                'step': '0.1',
+                'placeholder': 'Peso en kg (ej: 70)'
             }),
-            'objetivos': forms.Select(attrs={'class': 'form-control'}),
-            'nivel_experiencia': forms.Select(attrs={'class': 'form-control'}),
+            'objetivos': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all'
+            }),
+            'nivel_experiencia': forms.Select(attrs={
+                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all'
+            }),
             'dias_entrenamiento': forms.NumberInput(attrs={
-                'class': 'form-control'
-            }),
-            'condiciones_medicas': forms.Textarea(attrs={
                 'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
-                'rows': 3
-            }),
-            'restricciones': forms.Textarea(attrs={
-                'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-emerald focus:border-transparent transition-all',
-                'rows': 2
+                'placeholder': 'Días disponibles por semana (1-7)'
             }),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Inicializar condiciones_salud con los valores actuales del usuario
+        if self.instance and self.instance.pk:
+            # Si el usuario ya existe, cargar sus condiciones_salud actuales
+            condiciones_actuales = self.instance.condiciones_salud or []
+            self.initial['condiciones_salud'] = condiciones_actuales
+            
+            # Limpiar valores vacíos o "ninguna" de condiciones_medicas y restricciones
+            if self.instance.condiciones_medicas:
+                condiciones_medicas_value = self.instance.condiciones_medicas.strip()
+                if condiciones_medicas_value.lower() in ['ninguna', 'none', '']:
+                    self.initial['condiciones_medicas'] = ''
+                else:
+                    self.initial['condiciones_medicas'] = condiciones_medicas_value
+            
+            if self.instance.restricciones:
+                restricciones_value = self.instance.restricciones.strip()
+                if restricciones_value.lower() in ['ninguna', 'none', '']:
+                    self.initial['restricciones'] = ''
+                else:
+                    self.initial['restricciones'] = restricciones_value
+    
+    def clean_condiciones_medicas(self):
+        """Limpia el campo condiciones_medicas."""
+        value = self.cleaned_data.get('condiciones_medicas', '').strip()
+        if value.lower() in ['ninguna', 'none']:
+            return ''
+        return value
+    
+    def clean_restricciones(self):
+        """Limpia el campo restricciones."""
+        value = self.cleaned_data.get('restricciones', '').strip()
+        if value.lower() in ['ninguna', 'none']:
+            return ''
+        return value
+    
+    def save(self, commit=True):
+        """Guarda el formulario y actualiza los campos correctamente."""
+        usuario = super().save(commit=False)
+        
+        # Guardar condiciones_salud como lista
+        condiciones_salud = self.cleaned_data.get('condiciones_salud', [])
+        usuario.condiciones_salud = list(condiciones_salud) if condiciones_salud else []
+        
+        # Guardar condiciones_medicas y restricciones limpiadas
+        usuario.condiciones_medicas = self.cleaned_data.get('condiciones_medicas', '').strip()
+        usuario.restricciones = self.cleaned_data.get('restricciones', '').strip()
+        
+        if commit:
+            usuario.save()
+        
+        return usuario
 
 
 class FormularioSeguimiento(forms.ModelForm):

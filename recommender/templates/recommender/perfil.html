@@ -17,17 +17,115 @@
                 <div class="p-6">
                     <form method="POST" class="space-y-6">
                         {% csrf_token %}
-                        {% for field in formulario_usuario %}
+                        
+                        <!-- Altura -->
                         <div>
-                            <label for="{{ field.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
-                                {{ field.label }}
+                            <label for="{{ formulario_usuario.altura.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.altura.label }}
                             </label>
-                            {{ field }}
-                            {% if field.errors %}
-                            <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+                            {{ formulario_usuario.altura }}
+                            {% if formulario_usuario.altura.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.altura.errors.0 }}</p>
                             {% endif %}
                         </div>
-                        {% endfor %}
+                        
+                        <!-- Peso -->
+                        <div>
+                            <label for="{{ formulario_usuario.peso.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.peso.label }}
+                            </label>
+                            {{ formulario_usuario.peso }}
+                            {% if formulario_usuario.peso.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.peso.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Objetivos -->
+                        <div>
+                            <label for="{{ formulario_usuario.objetivos.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.objetivos.label }}
+                            </label>
+                            {{ formulario_usuario.objetivos }}
+                            {% if formulario_usuario.objetivos.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.objetivos.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Nivel de Experiencia -->
+                        <div>
+                            <label for="{{ formulario_usuario.nivel_experiencia.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.nivel_experiencia.label }}
+                            </label>
+                            {{ formulario_usuario.nivel_experiencia }}
+                            {% if formulario_usuario.nivel_experiencia.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.nivel_experiencia.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Días de Entrenamiento -->
+                        <div>
+                            <label for="{{ formulario_usuario.dias_entrenamiento.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.dias_entrenamiento.label }}
+                            </label>
+                            {{ formulario_usuario.dias_entrenamiento }}
+                            {% if formulario_usuario.dias_entrenamiento.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.dias_entrenamiento.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Condiciones de Salud -->
+                        <div>
+                            <label for="{{ formulario_usuario.condiciones_salud.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.condiciones_salud.label }}
+                            </label>
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {% for checkbox in formulario_usuario.condiciones_salud %}
+                                    <div class="flex items-center space-x-2">
+                                        {{ checkbox.tag }}
+                                        <label for="{{ checkbox.id_for_label }}" class="text-sm text-charcoal-black cursor-pointer">
+                                            {{ checkbox.choice_label }}
+                                        </label>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if formulario_usuario.condiciones_salud.help_text %}
+                            <p class="mt-2 text-xs text-slate-gray">{{ formulario_usuario.condiciones_salud.help_text }}</p>
+                            {% endif %}
+                            {% if formulario_usuario.condiciones_salud.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.condiciones_salud.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Condiciones Médicas -->
+                        <div>
+                            <label for="{{ formulario_usuario.condiciones_medicas.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.condiciones_medicas.label }}
+                            </label>
+                            {{ formulario_usuario.condiciones_medicas }}
+                            {% if formulario_usuario.condiciones_medicas.help_text %}
+                            <p class="mt-1 text-xs text-slate-gray">{{ formulario_usuario.condiciones_medicas.help_text }}</p>
+                            {% endif %}
+                            {% if formulario_usuario.condiciones_medicas.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.condiciones_medicas.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Restricciones -->
+                        <div>
+                            <label for="{{ formulario_usuario.restricciones.id_for_label }}" class="block text-sm font-semibold text-charcoal-black mb-2">
+                                {{ formulario_usuario.restricciones.label }}
+                            </label>
+                            {{ formulario_usuario.restricciones }}
+                            {% if formulario_usuario.restricciones.help_text %}
+                            <p class="mt-1 text-xs text-slate-gray">{{ formulario_usuario.restricciones.help_text }}</p>
+                            {% endif %}
+                            {% if formulario_usuario.restricciones.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ formulario_usuario.restricciones.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                        
                         <button type="submit" class="w-full bg-gradient-to-r from-primary-emerald to-deep-forest text-white font-semibold py-3 px-6 rounded-lg hover:shadow-lg transform hover:scale-[1.02] transition-all">
                             Guardar Cambios
                         </button>
