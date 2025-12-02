@@ -7,7 +7,9 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 - ✅ **Sistema de Autenticación Seguro**: Registro, login y gestión de usuarios personalizados
 - ✅ **Perfil Médico Completo**: IMC, condiciones médicas, alergias, medicamentos, historial de lesiones
 - ✅ **Motor de Recomendación Híbrido**: Integra los tres paradigmas para generar recomendaciones personalizadas
-- ✅ **Paradigma Lógico con pydatalog**: Motor de inferencia lógica basado en Datalog
+- ✅ **Paradigma Lógico con Prolog**: Motor de inferencia lógica con pyswip (fallback a Python puro)
+- ✅ **Filtrado por Condiciones de Salud**: Sistema que excluye rutinas contraindicadas según condiciones médicas
+- ✅ **Seguimiento Semanal de Ejercicios**: Sistema para marcar ejercicios completados día a día
 - ✅ **Chatbot Inteligente**: Asistente virtual con API de Gemini para recomendaciones personalizadas
 - ✅ **Dashboard Personalizado**: Seguimiento de progreso, historial de recomendaciones
 - ✅ **Base de Datos PostgreSQL**: Configurado para Render.com
@@ -29,14 +31,16 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 - **reduce()**: Calcular promedios y estadísticas
 
 ### 3. Paradigma LÓGICO (`logic_rules.py`, `prolog_engine.py`)
-- **pydatalog**: Motor de inferencia lógica basado en Datalog
+- **pyswip**: Motor de inferencia lógica con Prolog (opcional)
+- **Motor Alternativo**: Implementación Python pura cuando pyswip no está disponible
 - Reglas de inferencia médica declarativas:
-  - `nivel_usuario('principiante') <= (edad(X), X > 50)`
-  - `objetivo_recomendado('peso') <= (imc_clasificacion(X), X.in_(['obesidad', 'sobrepeso']))`
-  - `intensidad_segura('baja') <= (imc_clasificacion('obesidad'))`
-- Validación de seguridad basada en reglas lógicas
-- Fallback a implementación Python pura si pydatalog no está disponible
+  - Determinación de nivel de usuario según edad, días disponibles e IMC
+  - Determinación de objetivo recomendado según IMC y objetivos del usuario
+  - Determinación de intensidad segura según edad, IMC y nivel
+  - Validación de seguridad de rutinas basada en reglas lógicas
+- Filtrado por condiciones de salud: Excluye rutinas contraindicadas
 - Explicaciones médicas generadas lógicamente
+- Evaluación de precauciones y recomendaciones personalizadas
 
 ## 🚀 Instalación y Configuración
 
@@ -119,12 +123,13 @@ Rutania/
     ├── models.py             # UsuarioPersonalizado, PerfilMedico, Rutina, etc.
     ├── views.py              # ✅ PARADIGMA IMPERATIVO
     ├── processor.py          # ✅ PARADIGMA FUNCIONAL
-    ├── logic_rules.py        # ✅ PARADIGMA LÓGICO (pydatalog)
-    ├── prolog_engine.py      # ✅ PARADIGMA LÓGICO (Prolog - legacy)
+    ├── logic_rules.py        # ✅ PARADIGMA LÓGICO (reglas Python puras)
+    ├── prolog_engine.py      # ✅ PARADIGMA LÓGICO (Prolog/pyswip + fallback)
     ├── chatbot.py            # 🤖 Chatbot con Gemini API
     ├── motor_recomendacion.py  # Motor híbrido multiparadigma
     ├── forms.py              # Formularios Django
     ├── admin.py              # Configuración admin
+    ├── datos.py              # Datos iniciales de rutinas
     │
     ├── templates/recommender/
     │   ├── base.html         # Template base con Tailwind CSS
@@ -134,6 +139,9 @@ Rutania/
     │   ├── dashboard.html    # Dashboard personalizado
     │   ├── perfil.html        # Perfil del usuario
     │   ├── seguimiento.html   # Registro de seguimiento
+    │   ├── rutina_semanal.html # Seguimiento semanal de ejercicios
+    │   ├── rutinas.html       # Catálogo de rutinas
+    │   ├── resultado.html     # Resultado de recomendación
     │   └── historial_recomendaciones.html
     │
     └── static/
@@ -145,23 +153,30 @@ Rutania/
 
 ### UsuarioPersonalizado
 - Extiende `AbstractUser` de Django
-- Campos: fecha_nacimiento, altura, peso, objetivos, nivel_experiencia, condiciones_medicas, etc.
+- Campos: fecha_nacimiento, altura, peso, objetivos, nivel_experiencia, condiciones_medicas, condiciones_salud (JSON), dias_entrenamiento, restricciones
 
 ### PerfilMedico
 - Relación 1:1 con UsuarioPersonalizado
 - Campos: IMC, clasificación_IMC, presión arterial, frecuencia cardíaca, alergias, medicamentos, historial de lesiones
+- Se actualiza automáticamente cuando cambian peso/altura
 
 ### Rutina
 - Rutinas deportivas estructuradas
-- Campos: nombre, descripción, nivel, objetivo, ejercicios (JSON), duración, intensidad, calorías estimadas
+- Campos: nombre, descripción, nivel, objetivo, ejercicios (JSON), duración, intensidad, calorías estimadas, condiciones_contraindicadas (JSON), plan_semanal (JSON)
+- Soporta plan semanal estructurado por días
 
 ### RecomendacionMedica
 - Recomendaciones generadas por el motor
-- Campos: usuario, rutina_recomendada, explicación_medica, precauciones, reglas_aplicadas (JSON), score_confianza
+- Campos: usuario, rutina_recomendada, explicación_medica, precauciones, reglas_aplicadas (JSON), score_confianza, vigente
 
 ### SeguimientoUsuario
 - Historial de progreso del usuario
 - Campos: fecha, peso_actual, IMC_actual, rutina_realizada, satisfacción, comentarios
+
+### SeguimientoEjercicio
+- Seguimiento diario de ejercicios completados
+- Campos: usuario, rutina, fecha, dia_semana, ejercicios_completados (JSON), ejercicios_totales (JSON), completado, notas
+- Permite marcar ejercicios completados día a día
 
 ## 🎨 Diseño con Tailwind CSS
 
@@ -208,8 +223,10 @@ Rutania/
 - `/perfil/` - Editar perfil y datos médicos
 - `/generar-recomendacion/` - Generar nueva recomendación
 - `/seguimiento/` - Registrar seguimiento de progreso
+- `/rutina-semanal/<rutina_id>/` - Seguimiento semanal de ejercicios de una rutina
 - `/historial-recomendaciones/` - Ver historial completo
 - `/api/chatbot/` - API del chatbot (POST) - Asistente virtual con Gemini
+- `/api/marcar-ejercicio/` - API para marcar ejercicios como completados (POST)
 
 ## 🔬 Ejemplos de Paradigmas
 
@@ -229,26 +246,35 @@ puntuaciones = map(lambda r: calcular_compatibilidad(r, usuario), rutinas)
 promedio = reduce(lambda acc, s: acc + s.imc_actual, seguimientos, 0) / len(seguimientos)
 ```
 
-### Paradigma Lógico (pydatalog)
+### Paradigma Lógico (Prolog/Python)
 ```python
-from pydatalog import pyDatalog
+from recommender import logic_rules
+from recommender.prolog_engine import motor_prolog
 
-# Definir reglas lógicas
-pyDatalog.load("""
-    nivel_usuario('principiante') <= (edad(X), X > 50)
-    nivel_usuario('principiante') <= (dias_disponibles(X), X < 3)
-    nivel_usuario('avanzado') <= (dias_disponibles(X), X >= 5) & (edad(Y), Y < 30)
-    objetivo_recomendado('peso') <= (imc_clasificacion(X), X.in_(['obesidad', 'sobrepeso']))
-    intensidad_segura('baja') <= (edad(X), X > 50)
-""")
+# Reglas lógicas en Python puro (logic_rules.py)
+nivel = logic_rules.determinar_nivel_usuario(
+    edad=55,
+    dias_disponibles=2,
+    imc_clasificacion='sobrepeso'
+)  # Retorna 'principiante'
 
-# Agregar hechos
-+ edad(55)
-+ dias_disponibles(2)
-+ imc_clasificacion('sobrepeso')
+objetivo = logic_rules.determinar_objetivo_recomendado(
+    objetivo_usuario='salud',
+    imc_clasificacion='obesidad'
+)  # Retorna 'peso'
 
-# Consultar
-resultado = pyDatalog.ask('nivel_usuario(X)')
+# Motor Prolog (prolog_engine.py) - con fallback automático
+usuario_data = {'edad': 55, 'imc': 30.5, 'nivel_experiencia': 'principiante'}
+rutina_data = {'id': 1, 'intensidad': 'alta', 'dias_semana': 6}
+
+# Evaluar seguridad
+es_seguro, razon = motor_prolog.evaluar_seguridad_rutina(
+    usuario_data, rutina_data
+)  # Retorna (False, "Intensidad alta no recomendada para mayores de 60 años")
+
+# Evaluar condiciones médicas
+evaluacion = motor_prolog.evaluar_condiciones(usuario_data)
+# Retorna dict con intensidad_recomendada, objetivo_prioritario, precauciones
 ```
 
 ### Paradigma Imperativo
@@ -273,24 +299,76 @@ def dashboard(request):
 - **Django 4.2.7** - Framework web
 - **PostgreSQL** - Base de datos (producción en Render.com)
 - **SQLite** - Base de datos (desarrollo local)
-- **pydatalog 0.17.3** - Motor de inferencia lógica (paradigma lógico)
-- **google-generativeai 0.3.2** - API de Gemini para chatbot
+- **pyswip 0.2.10** - Interfaz Python para SWI-Prolog (opcional, con fallback)
+- **google-generativeai >=0.8.0** - API de Gemini para chatbot
 - **Pillow 11.0.0** - Procesamiento de imágenes
 - **Tailwind CSS 3.3+** - Framework CSS utility-first
 - **Alpine.js 3.x** - Framework JavaScript ligero
 - **Heroicons** - Sistema de iconos
-- **Whitenoise** - Servir archivos estáticos
-- **Gunicorn** - Servidor WSGI
-- **dj-database-url** - Configuración de BD
+- **Whitenoise 6.5.0** - Servir archivos estáticos
+- **Gunicorn 21.2.0** - Servidor WSGI
+- **dj-database-url 1.3.0** - Configuración de BD
+- **python-dotenv 1.0.0** - Gestión de variables de entorno
 
 ## 📊 Motor de Recomendación
 
 El `MotorRecomendacion` integra los tres paradigmas:
 
-1. **Análisis Médico (Lógico)**: Evalúa condiciones médicas con pydatalog
+1. **Análisis Médico (Lógico)**: Evalúa condiciones médicas con motor Prolog (o fallback Python)
+   - Determina nivel recomendado, objetivo prioritario e intensidad segura
+   - Genera precauciones médicas personalizadas
+   - Valida seguridad de rutinas según perfil del usuario
+
 2. **Filtrado Funcional**: Filtra rutinas seguras usando funciones puras
+   - Filtra por condiciones de salud contraindicadas
+   - Filtra por seguridad médica (edad, IMC, nivel)
+   - Usa `filter()` para aplicar múltiples criterios
+
 3. **Cálculo de Compatibilidad (Funcional)**: Calcula scores usando map/sorted
+   - Calcula compatibilidad entre rutina y usuario (0-100)
+   - Ordena rutinas por score de compatibilidad
+   - Genera rutinas alternativas
+
 4. **Coordinación Imperativa**: Orquesta todo el proceso en las vistas
+   - Valida datos del usuario
+   - Coordina módulos funcional y lógico
+   - Genera recomendación final y la guarda en BD
+
+## 🏥 Sistema de Condiciones de Salud
+
+El sistema incluye un filtrado inteligente basado en condiciones de salud:
+
+- **Condiciones Contraindicadas**: Cada rutina puede tener una lista de condiciones de salud que la contraindican
+- **Filtrado Automático**: Las rutinas se filtran automáticamente según las condiciones del usuario
+- **Seguridad Médica**: El motor evalúa la seguridad de cada rutina antes de recomendarla
+- **Precauciones Personalizadas**: Se generan precauciones específicas según el perfil médico del usuario
+
+### Ejemplo de Uso
+
+```python
+# El usuario tiene condiciones de salud
+usuario.condiciones_salud = ['hipertension', 'diabetes']
+
+# El motor automáticamente excluye rutinas contraindicadas
+resultado = motor_recomendacion.generar_recomendacion_completa(usuario)
+# Solo retorna rutinas seguras para hipertensión y diabetes
+```
+
+## 📅 Seguimiento Semanal de Ejercicios
+
+El sistema permite hacer seguimiento detallado de los ejercicios completados:
+
+- **Plan Semanal**: Cada rutina tiene un plan semanal estructurado por días
+- **Marcado de Ejercicios**: Los usuarios pueden marcar ejercicios como completados día a día
+- **Progreso Visual**: Se muestra el progreso diario y semanal
+- **Historial Completo**: Se guarda el historial de todos los ejercicios completados
+
+### Características
+
+- Vista semanal de la rutina con todos los días
+- Marcar/desmarcar ejercicios individuales
+- Cálculo automático de progreso (porcentaje completado)
+- Notas personalizadas por día de entrenamiento
 
 ## 🤖 Chatbot con Gemini
 
@@ -316,6 +394,18 @@ El sistema incluye un chatbot inteligente integrado que utiliza la API de Gemini
 - Click en el icono de chat (esquina inferior derecha)
 - Escribe tu pregunta
 - El chatbot responderá basándose en tu perfil y contexto
+- Mantiene historial de las últimas 3 interacciones
+- Respuestas breves y directas (máximo 3-4 frases)
+- Siempre incluye recomendación de consultar con médico cuando es apropiado
+
+### Modelos Soportados
+
+El chatbot intenta usar automáticamente el mejor modelo disponible:
+- `models/gemini-1.5-flash` (por defecto, rápido y eficiente)
+- `models/gemini-1.5-pro` (más potente)
+- `models/gemini-pro` (compatibilidad con versiones anteriores)
+
+Puedes configurar el modelo con la variable de entorno `GEMINI_MODEL_NAME`.
 
 ## 🚀 Despliegue
 
@@ -330,8 +420,73 @@ El sistema incluye un chatbot inteligente integrado que utiliza la API de Gemini
 - `DEBUG` - Modo debug (False en producción)
 - `DATABASE_URL` - URL de conexión PostgreSQL (configurada automáticamente en Render)
 - `ALLOWED_HOSTS` - Hosts permitidos (`.onrender.com` en producción)
+- `CSRF_TRUSTED_ORIGINS` - Orígenes confiables para CSRF (ej: `https://tu-app.onrender.com`)
 - `GEMINI_API_KEY` - API Key de Gemini para el chatbot (opcional)
-- `PYTHON_VERSION` - Versión de Python (3.11.11 recomendado)
+- `GEMINI_MODEL_NAME` - Nombre del modelo de Gemini a usar (opcional, por defecto `models/gemini-1.5-flash`)
+- `PYTHON_VERSION` - Versión de Python (3.11+ recomendado)
+
+### Cargar Rutinas Iniciales
+
+Después del despliegue, carga las rutinas iniciales:
+
+```bash
+python manage.py cargar_rutinas
+```
+
+Este comando carga rutinas desde `recommender/datos.py` a la base de datos.
+
+## 🔄 Comandos de Gestión
+
+### Cargar Rutinas Iniciales
+
+```bash
+python manage.py cargar_rutinas
+```
+
+Este comando carga las rutinas desde `recommender/datos.py` a la base de datos. Útil después de:
+- Primera instalación
+- Reset de base de datos
+- Despliegue en producción
+
+### Crear Superusuario
+
+```bash
+python manage.py createsuperuser
+```
+
+### Ejecutar Migraciones
+
+```bash
+python manage.py migrate
+```
+
+### Recopilar Archivos Estáticos
+
+```bash
+python manage.py collectstatic --noinput
+```
+
+## 📝 Notas Técnicas
+
+### Motor Prolog
+
+- El sistema intenta usar `pyswip` (requiere SWI-Prolog instalado)
+- Si `pyswip` no está disponible, usa automáticamente `MotorLogicoAlternativo` (Python puro)
+- No es necesario instalar SWI-Prolog para que el sistema funcione
+- El motor alternativo implementa las mismas reglas lógicas en Python
+
+### Base de Datos
+
+- **Desarrollo**: SQLite (automático si `DATABASE_URL` no está configurada)
+- **Producción**: PostgreSQL (configurada con `DATABASE_URL`)
+- El sistema detecta automáticamente qué base de datos usar
+
+### Chatbot
+
+- Funciona sin API key (muestra mensaje de error amigable)
+- Soporta múltiples modelos de Gemini con fallback automático
+- Limita respuestas a 220 tokens para mantenerlas breves
+- Mantiene historial de últimas 3 interacciones por usuario
 
 ## 📝 Licencia
 

@@ -96,6 +96,8 @@ Usar Neon.tech como base de datos externa es más flexible y gratuito.
    DEBUG=False
    ALLOWED_HOSTS=tu-app.onrender.com
    CSRF_TRUSTED_ORIGINS=https://tu-app.onrender.com
+   GEMINI_API_KEY=tu-api-key-de-gemini (opcional, para chatbot)
+   GEMINI_MODEL_NAME=models/gemini-1.5-flash (opcional)
    ```
 
    **Generar SECRET_KEY:**
@@ -112,6 +114,13 @@ Usar Neon.tech como base de datos externa es más flexible y gratuito.
 6. **Verificar despliegue**
    - Espera a que el build termine (5-10 min)
    - Visita tu URL: `https://tu-app.onrender.com`
+
+7. **Cargar rutinas iniciales**
+   - Una vez desplegado, ejecuta en la consola de Render:
+   ```bash
+   python manage.py cargar_rutinas
+   ```
+   - Esto carga las rutinas desde `recommender/datos.py` a la base de datos
 
 ---
 
@@ -139,6 +148,8 @@ Railway es otra excelente opción para desplegar Django.
    SECRET_KEY=tu-clave-secreta
    DEBUG=False
    ALLOWED_HOSTS=*.railway.app
+   CSRF_TRUSTED_ORIGINS=https://*.railway.app
+   GEMINI_API_KEY=tu-api-key-de-gemini (opcional)
    ```
 
 4. **Agregar base de datos (opcional)**
@@ -190,9 +201,13 @@ Railway es otra excelente opción para desplegar Django.
    heroku config:set SECRET_KEY="tu-clave-secreta"
    heroku config:set DEBUG="False"
    heroku config:set ALLOWED_HOSTS="tu-app.herokuapp.com"
+   heroku config:set CSRF_TRUSTED_ORIGINS="https://tu-app.herokuapp.com"
    
    # Si usas Neon.tech:
    heroku config:set DATABASE_URL="postgresql://user:pass@ep-xxx.neon.tech/db?sslmode=require"
+   
+   # Opcional: Chatbot con Gemini
+   heroku config:set GEMINI_API_KEY="tu-api-key"
    ```
 
 6. **Crear Procfile**
@@ -207,9 +222,10 @@ Railway es otra excelente opción para desplegar Django.
    git push heroku main
    ```
 
-8. **Crear superusuario**
+8. **Crear superusuario y cargar rutinas**
    ```bash
    heroku run python manage.py createsuperuser
+   heroku run python manage.py cargar_rutinas
    ```
 
 ---
@@ -303,11 +319,12 @@ Si prefieres desplegar en tu propio servidor (VPS, AWS, DigitalOcean, etc.):
    nano .env  # Editar con tus credenciales
    ```
 
-6. **Ejecutar migraciones**
+6. **Ejecutar migraciones y cargar datos**
    ```bash
    python manage.py migrate
    python manage.py collectstatic --noinput
    python manage.py createsuperuser
+   python manage.py cargar_rutinas
    ```
 
 7. **Configurar Gunicorn**
@@ -426,8 +443,10 @@ Antes de desplegar, verifica:
 - [ ] `ALLOWED_HOSTS` incluye tu dominio
 - [ ] `CSRF_TRUSTED_ORIGINS` configurado
 - [ ] `DATABASE_URL` configurada correctamente
+- [ ] `GEMINI_API_KEY` configurada (opcional, para chatbot)
 - [ ] Migraciones ejecutadas
 - [ ] Archivos estáticos recopilados (`collectstatic`)
+- [ ] Rutinas iniciales cargadas (`cargar_rutinas`)
 - [ ] Superusuario creado
 - [ ] Logs verificados (sin errores críticos)
 
