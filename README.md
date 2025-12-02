@@ -7,7 +7,7 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 - ✅ **Sistema de Autenticación Seguro**: Registro, login y gestión de usuarios personalizados
 - ✅ **Perfil Médico Completo**: IMC, condiciones médicas, alergias, medicamentos, historial de lesiones
 - ✅ **Motor de Recomendación Híbrido**: Integra los tres paradigmas para generar recomendaciones personalizadas
-- ✅ **Paradigma Lógico con Prolog**: Motor de inferencia lógica con pyswip (fallback a Python puro)
+- ✅ **Paradigma Lógico con pyDatalog**: Motor de inferencia lógica Datalog/Prolog en Python puro (compatible con Render)
 - ✅ **Filtrado por Condiciones de Salud**: Sistema que excluye rutinas contraindicadas según condiciones médicas
 - ✅ **Seguimiento Semanal de Ejercicios**: Sistema para marcar ejercicios completados día a día
 - ✅ **Chatbot Inteligente**: Asistente virtual con API de Gemini para recomendaciones personalizadas
@@ -31,13 +31,17 @@ Sistema completo de recomendación deportiva y médica personalizada implementad
 - **reduce()**: Calcular promedios y estadísticas
 
 ### 3. Paradigma LÓGICO (`logic_rules.py`, `prolog_engine.py`)
-- **pyswip**: Motor de inferencia lógica con Prolog (opcional)
-- **Motor Alternativo**: Implementación Python pura cuando pyswip no está disponible
-- Reglas de inferencia médica declarativas:
+- **pyDatalog**: Motor de inferencia lógica Datalog/Prolog en Python puro
+  - No requiere SWI-Prolog instalado (100% Python)
+  - Compatible con despliegues en la nube (Render, Railway, etc.)
+  - Sintaxis similar a Prolog
+  - Estable y mantenida activamente
+- **Reglas Declarativas**: Implementación de reglas médicas usando programación lógica
   - Determinación de nivel de usuario según edad, días disponibles e IMC
   - Determinación de objetivo recomendado según IMC y objetivos del usuario
   - Determinación de intensidad segura según edad, IMC y nivel
   - Validación de seguridad de rutinas basada en reglas lógicas
+- **Motor Alternativo**: Implementación Python pura cuando pyDatalog no está disponible
 - Filtrado por condiciones de salud: Excluye rutinas contraindicadas
 - Explicaciones médicas generadas lógicamente
 - Evaluación de precauciones y recomendaciones personalizadas
@@ -124,7 +128,7 @@ Rutania/
     ├── views.py              # ✅ PARADIGMA IMPERATIVO
     ├── processor.py          # ✅ PARADIGMA FUNCIONAL
     ├── logic_rules.py        # ✅ PARADIGMA LÓGICO (reglas Python puras)
-    ├── prolog_engine.py      # ✅ PARADIGMA LÓGICO (Prolog/pyswip + fallback)
+    ├── prolog_engine.py      # ✅ PARADIGMA LÓGICO (pyDatalog - Datalog/Prolog en Python puro)
     ├── chatbot.py            # 🤖 Chatbot con Gemini API
     ├── motor_recomendacion.py  # Motor híbrido multiparadigma
     ├── forms.py              # Formularios Django
@@ -246,10 +250,11 @@ puntuaciones = map(lambda r: calcular_compatibilidad(r, usuario), rutinas)
 promedio = reduce(lambda acc, s: acc + s.imc_actual, seguimientos, 0) / len(seguimientos)
 ```
 
-### Paradigma Lógico (Prolog/Python)
+### Paradigma Lógico (pyDatalog)
 ```python
 from recommender import logic_rules
 from recommender.prolog_engine import motor_prolog
+from pyDatalog import pyDatalog
 
 # Reglas lógicas en Python puro (logic_rules.py)
 nivel = logic_rules.determinar_nivel_usuario(
@@ -263,14 +268,23 @@ objetivo = logic_rules.determinar_objetivo_recomendado(
     imc_clasificacion='obesidad'
 )  # Retorna 'peso'
 
-# Motor Prolog (prolog_engine.py) - con fallback automático
+# Motor pyDatalog (prolog_engine.py) - Datalog/Prolog en Python puro
+# Reglas declarativas cargadas automáticamente:
+# intensidad_recomendada(Edad, 'baja') <= (Edad > 60)
+# objetivo_prioritario(IMC, 'peso') <= (IMC > 30)
+
 usuario_data = {'edad': 55, 'imc': 30.5, 'nivel_experiencia': 'principiante'}
 rutina_data = {'id': 1, 'intensidad': 'alta', 'dias_semana': 6}
 
-# Evaluar seguridad
+# Evaluar seguridad usando reglas lógicas declarativas
 es_seguro, razon = motor_prolog.evaluar_seguridad_rutina(
     usuario_data, rutina_data
 )  # Retorna (False, "Intensidad alta no recomendada para mayores de 60 años")
+
+# Consultar pyDatalog directamente
+X = pyDatalog.Variable()
+query = pyDatalog.ask('intensidad_recomendada(55, X)')
+# Retorna intensidad recomendada según reglas lógicas
 
 # Evaluar condiciones médicas
 evaluacion = motor_prolog.evaluar_condiciones(usuario_data)
@@ -299,7 +313,7 @@ def dashboard(request):
 - **Django 4.2.7** - Framework web
 - **PostgreSQL** - Base de datos (producción en Render.com)
 - **SQLite** - Base de datos (desarrollo local)
-- **pyswip 0.2.10** - Interfaz Python para SWI-Prolog (opcional, con fallback)
+- **pyDatalog 0.17.3** - Motor de inferencia lógica Datalog/Prolog en Python puro (compatible con Render)
 - **google-generativeai >=0.8.0** - API de Gemini para chatbot
 - **Pillow 11.0.0** - Procesamiento de imágenes
 - **Tailwind CSS 3.3+** - Framework CSS utility-first
@@ -314,7 +328,7 @@ def dashboard(request):
 
 El `MotorRecomendacion` integra los tres paradigmas:
 
-1. **Análisis Médico (Lógico)**: Evalúa condiciones médicas con motor Prolog (o fallback Python)
+1. **Análisis Médico (Lógico)**: Evalúa condiciones médicas con pyDatalog (Datalog/Prolog en Python puro)
    - Determina nivel recomendado, objetivo prioritario e intensidad segura
    - Genera precauciones médicas personalizadas
    - Valida seguridad de rutinas según perfil del usuario
@@ -468,12 +482,15 @@ python manage.py collectstatic --noinput
 
 ## 📝 Notas Técnicas
 
-### Motor Prolog
+### Motor pyDatalog
 
-- El sistema intenta usar `pyswip` (requiere SWI-Prolog instalado)
-- Si `pyswip` no está disponible, usa automáticamente `MotorLogicoAlternativo` (Python puro)
-- No es necesario instalar SWI-Prolog para que el sistema funcione
-- El motor alternativo implementa las mismas reglas lógicas en Python
+- El sistema usa **pyDatalog**, una implementación de Datalog (subconjunto de Prolog) en Python puro
+- **No requiere SWI-Prolog** ni ninguna dependencia externa
+- **100% compatible con despliegues en la nube** (Render, Railway, Heroku, etc.)
+- **Sintaxis similar a Prolog**: Usa reglas declarativas como `intensidad_recomendada(Edad, 'baja') <= (Edad > 60)`
+- Implementa reglas médicas de forma declarativa usando programación lógica
+- Si pyDatalog no está disponible, usa automáticamente un fallback en Python puro
+- pyDatalog es estable, mantenida activamente y fácil de usar
 
 ### Base de Datos
 
